@@ -27,7 +27,7 @@ const Experience = () => {
         receiveShadow
       >
         <planeBufferGeometry args={[10, 10, 10, 10]} />
-        <meshStandardMaterial />
+        <meshStandardMaterial wireframe />
       </mesh>
     </>
   );

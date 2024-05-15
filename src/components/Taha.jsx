@@ -11,7 +11,7 @@ const Taha = (props)  => {
   const { actions, names } = useAnimations(animations, group)
   console.log(names)
   useEffect(() => {
-    actions[names[0]].reset().fadeIn(0.5).play();
+    actions[names[9]].reset().fadeIn(0.5).play();
   }, [])
   return (
     <group ref={group} {...props} dispose={null}>
@@ -20,7 +20,7 @@ const Taha = (props)  => {
           <skinnedMesh
             name="EyeLeft"
             geometry={nodes.EyeLeft.geometry}
-            material={materials.Wolf3D_Eye}
+            material={materials['Wolf3D_Eye.011']}
             skeleton={nodes.EyeLeft.skeleton}
             morphTargetDictionary={nodes.EyeLeft.morphTargetDictionary}
             morphTargetInfluences={nodes.EyeLeft.morphTargetInfluences}
@@ -28,7 +28,7 @@ const Taha = (props)  => {
           <skinnedMesh
             name="EyeRight"
             geometry={nodes.EyeRight.geometry}
-            material={materials.Wolf3D_Eye}
+            material={materials['Wolf3D_Eye.011']}
             skeleton={nodes.EyeRight.skeleton}
             morphTargetDictionary={nodes.EyeRight.morphTargetDictionary}
             morphTargetInfluences={nodes.EyeRight.morphTargetInfluences}
@@ -36,25 +36,25 @@ const Taha = (props)  => {
           <skinnedMesh
             name="Wolf3D_Body"
             geometry={nodes.Wolf3D_Body.geometry}
-            material={materials.Wolf3D_Body}
+            material={materials['Wolf3D_Body.011']}
             skeleton={nodes.Wolf3D_Body.skeleton}
           />
           <skinnedMesh
             name="Wolf3D_Glasses"
             geometry={nodes.Wolf3D_Glasses.geometry}
-            material={materials.Wolf3D_Glasses}
+            material={materials['Wolf3D_Glasses.011']}
             skeleton={nodes.Wolf3D_Glasses.skeleton}
           />
           <skinnedMesh
             name="Wolf3D_Hair"
             geometry={nodes.Wolf3D_Hair.geometry}
-            material={materials.Wolf3D_Hair}
+            material={materials['Wolf3D_Hair.011']}
             skeleton={nodes.Wolf3D_Hair.skeleton}
           />
           <skinnedMesh
             name="Wolf3D_Head"
             geometry={nodes.Wolf3D_Head.geometry}
-            material={materials.Wolf3D_Skin}
+            material={materials['Wolf3D_Skin.011']}
             skeleton={nodes.Wolf3D_Head.skeleton}
             morphTargetDictionary={nodes.Wolf3D_Head.morphTargetDictionary}
             morphTargetInfluences={nodes.Wolf3D_Head.morphTargetInfluences}
@@ -62,25 +62,25 @@ const Taha = (props)  => {
           <skinnedMesh
             name="Wolf3D_Outfit_Bottom"
             geometry={nodes.Wolf3D_Outfit_Bottom.geometry}
-            material={materials.Wolf3D_Outfit_Bottom}
+            material={materials['Wolf3D_Outfit_Bottom.011']}
             skeleton={nodes.Wolf3D_Outfit_Bottom.skeleton}
           />
           <skinnedMesh
             name="Wolf3D_Outfit_Footwear"
             geometry={nodes.Wolf3D_Outfit_Footwear.geometry}
-            material={materials.Wolf3D_Outfit_Footwear}
+            material={materials['Wolf3D_Outfit_Footwear.011']}
             skeleton={nodes.Wolf3D_Outfit_Footwear.skeleton}
           />
           <skinnedMesh
             name="Wolf3D_Outfit_Top001"
             geometry={nodes.Wolf3D_Outfit_Top001.geometry}
-            material={materials.Wolf3D_Outfit_Top}
+            material={materials['Wolf3D_Outfit_Top.011']}
             skeleton={nodes.Wolf3D_Outfit_Top001.skeleton}
           />
           <skinnedMesh
             name="Wolf3D_Teeth"
             geometry={nodes.Wolf3D_Teeth.geometry}
-            material={materials.Wolf3D_Teeth}
+            material={materials['Wolf3D_Teeth.011']}
             skeleton={nodes.Wolf3D_Teeth.skeleton}
             morphTargetDictionary={nodes.Wolf3D_Teeth.morphTargetDictionary}
             morphTargetInfluences={nodes.Wolf3D_Teeth.morphTargetInfluences}
