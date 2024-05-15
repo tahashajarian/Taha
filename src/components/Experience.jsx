@@ -1,6 +1,10 @@
 import { OrbitControls } from "@react-three/drei";
 import Woman from "./Woman";
 import Taha from "./Taha";
+import Chair from "./Chair";
+import Desk from "./Desk";
+import Monitor from "./Monitor";
+import Keyboard from "./Keyboard";
 
 const Experience = () => {
   return (
@@ -19,6 +23,16 @@ const Experience = () => {
 
       <group position={[0, -1, 0]}>
         <Taha />
+        <Chair />
+        <group position={[0, 0, 0.8]} scale={[1.2, 0.84, 1]}>
+          <Desk />
+        </group>
+        <group position={[0, 0.7, 1]}>
+          <Monitor />
+        </group>
+        <group  position={[0.15, 0.7, 0.65]}>
+          <Keyboard />
+        </group>
       </group>
 
       <mesh
