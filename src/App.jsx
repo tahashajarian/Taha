@@ -5,7 +5,9 @@ import Interface from "./components/Interface";
 function App() {
   return (
     <>
-      <Canvas camera={{ position: [1, 1.5, 2.5], fov: 50 }} shadows>
+      <Canvas camera={{ position: [1, 3, 2.5], fov: 50 }} shadows style={{
+        background: 'black'
+      }}>
         <Experience />
       </Canvas>
       <Interface />
