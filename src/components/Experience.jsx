@@ -8,6 +8,7 @@ import Keyboard from "./Keyboard";
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper.js';
+import Mouse from "./Mouse";
 
 
 
@@ -15,7 +16,7 @@ const Experience = () => {
   return (
     <>
       <OrbitControls />
-      {/* <ambientLight /> */}
+      <ambientLight intensity={0.4}/>
       <directionalLight
         position={[-5, 5, 5]}
         castShadow
@@ -38,6 +39,9 @@ const Experience = () => {
         </group>
         <group position={[0, 0.7, 1]}>
           <Monitor />
+        </group>
+        <group position={[-0.26, 0.7, 0.68]} scale={[1, 1.2, 1]}>
+          <Mouse />
         </group>
         <group position={[0.15, 0.7, 0.65]}>
           <Keyboard />
@@ -112,14 +116,17 @@ const RGBLight = () => {
         color="green"
       />
 
-      <rectAreaLight
-        position={[0, 1.05, 0.79]}
-        rotation={[0, -Math.PI, 0]}
+      {/* <rectAreaLight
+        position={[0, 1.05, 1.5]}
+        // rotation={[0, -Math.PI, 0]}
         width={1.2}
         height={0.5}
         intensity={10}
         color="white"
-      />
+        // lookAt={[Math.PI, Math.PI, Math.PI]}
+        rotation={[0, Math.PI * -0.01, 0]} // Initial rotation (adjust as needed)
+
+      /> */}
       {/* Add the helper */}
       {/* {lightRef.current && <RectAreaLightHelper  light={lightRef.current} />} */}
       {/* <mesh position={[0, 1.05, 0.85]} rotation={[0, -Math.PI, 0]}>
