@@ -29,11 +29,11 @@ const Lamp = (props) => {
       </group>
       <pointLight
         distance={4}
-        decay={2}
+        decay={1}
         power={10}
-        position={[5.7, 0.9, -5]}
+        position={[0, 4, 0]}
         color={"#ffaaaa"}
-        intensity={0.6}
+        intensity={0.5}
       />
     </group>
   );

@@ -8,7 +8,7 @@ const Sofa = (props) => {
   const { nodes, materials, animations } = useGLTF("/models/sofa.glb");
   const { actions } = useAnimations(animations, group);
   return (
-    <group ref={group} {...props} dispose={null} position={[4, 0, -5]}>
+    <group ref={group} {...props} dispose={null} position={[3.5, 0, -5]}>
       <group name="Scene">
         <mesh
           name="mesh_10_228nr"

@@ -49,6 +49,7 @@ const RGBLight = () => {
         intensity={10}
         color="red"
         ref={lightRefR}
+        power={0.1}
       />
       <rectAreaLight
         position={[0.0, 0.03, 0.0]}
@@ -58,6 +59,7 @@ const RGBLight = () => {
         intensity={10}
         color="blue"
         ref={lightRefB}
+        power={0.1}
       />
       <rectAreaLight
         position={[0.0, 0.03, -0.04]}
@@ -67,6 +69,7 @@ const RGBLight = () => {
         intensity={10}
         color="green"
         ref={lightRefG}
+        power={0.1}
       />
     </group>
   );
