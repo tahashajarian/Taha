@@ -43,7 +43,7 @@ const Experience = () => {
         <group position={[-0.26, 0.7, 0.68]} scale={[1, 1.2, 1]}>
           <Mouse />
         </group>
-        <group position={[0.15, 0.7, 0.65]}>
+        <group position={[0.1, 0.715, 0.65]}>
           <Keyboard />
         </group>
       </group>
@@ -52,23 +52,23 @@ const Experience = () => {
         position={[0, 0, 0]}
         receiveShadow
       >
-        <planeBufferGeometry args={[16, 16, 25, 25]} />
+        <planeGeometry args={[16, 16, 25, 25]} />
         <meshStandardMaterial wireframe />
       </mesh>
       <mesh rotation={[0, 0, 0]} position={[0, 2, -8]} receiveShadow>
-        <planeBufferGeometry args={[16, 4, 25, 25]} />
+        <planeGeometry args={[16, 4, 25, 25]} />
         <meshStandardMaterial wireframe />
       </mesh>
       <mesh rotation={[0, 0, 0]} position={[0, 2, 8]} receiveShadow>
-        <planeBufferGeometry args={[16, 4, 25, 25]} />
+        <planeGeometry args={[16, 4, 25, 25]} />
         <meshStandardMaterial wireframe />
       </mesh>
       <mesh rotation={[0, Math.PI / 2, 0]} position={[-8, 2, 0]} receiveShadow>
-        <planeBufferGeometry args={[16, 4, 25, 25]} />
+        <planeGeometry args={[16, 4, 25, 25]} />
         <meshStandardMaterial wireframe />
       </mesh>
       <mesh rotation={[0, - Math.PI / 2, 0]} position={[8, 2, 0]} receiveShadow>
-        <planeBufferGeometry args={[16, 4, 25, 25]} />
+        <planeGeometry args={[16, 4, 25, 25]} />
         <meshStandardMaterial wireframe />
       </mesh>
     </>
@@ -79,60 +79,51 @@ export default Experience;
 
 
 const RGBLight = () => {
-  const lightRef = useRef();
+  const lightRefR = useRef();
+  const lightRefG = useRef();
+  const lightRefB = useRef();
   
-  // useFrame(() => {
-  //   // Rotate the light
-  //   if (lightRef.current) {
-  //     lightRef.current.rotation.x += 0.01;
-  //     lightRef.current.rotation.y += 0.01;
-  //   }
-  // });
+  useFrame((state, delta) => {
+    const time = state.clock.getElapsedTime();
+    const r = (Math.sin(time * 2) + 1) / 2; // oscillate between 0 and 1
+    const g = (Math.sin(time * 2 + Math.PI / 2) + 1) / 2; // 90 degrees phase shift
+    const b = (Math.sin(time * 2 + Math.PI) + 1) / 2; // 180 degrees phase shift
+    
+    if (lightRefR.current) lightRefR.current.color.setRGB(r, 0, 0);
+    if (lightRefG.current) lightRefG.current.color.setRGB(0, g, 0);
+    if (lightRefB.current) lightRefB.current.color.setRGB(0, 0, b);
+  });
 
   return (
-    <>
+    <group>
       <rectAreaLight
-        position={[0.15, 0.74, 0.66]}
+        position={[0.1, 0.75, 0.7]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.5}
-        height={0.06}
-        intensity={10}
+        height={0.04}
+        intensity={5}
         color="red"
+        ref={lightRefR}
       />
       <rectAreaLight
-        position={[0.15, 0.74, 0.6]}
+        position={[0.1, 0.75, 0.65]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.5}
-        height={0.06}
-        intensity={10}
+        height={0.05}
+        intensity={5}
         color="blue"
+        ref={lightRefB}
       />
       <rectAreaLight
-        position={[0.15, 0.74, 0.7]}
+        position={[0.1, 0.75, 0.6]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.5}
-        height={0.06}
-        intensity={10}
+        height={0.04}
+        intensity={5}
         color="green"
+        ref={lightRefG}
       />
-
-      {/* <rectAreaLight
-        position={[0, 1.05, 1.5]}
-        // rotation={[0, -Math.PI, 0]}
-        width={1.2}
-        height={0.5}
-        intensity={10}
-        color="white"
-        // lookAt={[Math.PI, Math.PI, Math.PI]}
-        rotation={[0, Math.PI * -0.01, 0]} // Initial rotation (adjust as needed)
-
-      /> */}
-      {/* Add the helper */}
-      {/* {lightRef.current && <RectAreaLightHelper  light={lightRef.current} />} */}
-      {/* <mesh position={[0, 1.05, 0.85]} rotation={[0, -Math.PI, 0]}>
-        <planeBufferGeometry args={[1.2, 0.5]} />
-        <meshStandardMaterial color="red" />
-      </mesh> */}
-    </>
+    </group>
   );
 };
+

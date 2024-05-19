@@ -34,6 +34,6 @@ const Chair = (props) => {
   );
 };
 
-useGLTF.preload("/modles/chair.glb");
+useGLTF.preload("/models/chair.glb");
 
 export default Chair;
