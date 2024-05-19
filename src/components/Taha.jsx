@@ -8,20 +8,29 @@ import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 
 const Taha = (props) => {
   const group = useRef();
+  const currentAction = useRef("");
   const { nodes, materials, animations } = useGLTF("/models/Taha.glb");
   const { actions, names } = useAnimations(animations, group);
   const { setAnimations, animationIndex } = useCharacterAnimations();
   setAnimations(names);
   useEffect(() => {
     // Stop all animations
-    for (const key in actions) {
-      if (Object.hasOwnProperty.call(actions, key)) {
-        actions[key].stop();
-      }
+    if (currentAction.current !== actions[names[animationIndex]]) {
+      console.log(currentAction, actions, animationIndex);
+      const nextActionToPlay = actions[names[animationIndex]];
+      const current = actions[currentAction.current];
+      current?.fadeOut(0.5);
+      nextActionToPlay?.reset().fadeIn(0.2).play();
+      currentAction.current = names[animationIndex];
     }
+    // for (const key in actions) {
+    //   if (Object.hasOwnProperty.call(actions, key)) {
+    //     actions[key].stop();
+    //   }
+    // }
 
-    // Play the new animation
-    actions[names[animationIndex]].reset().fadeIn(0.5).play();
+    // // Play the new animation
+    // actions[names[animationIndex]].reset().fadeIn(0.5).play();
   }, [animationIndex, actions, names]);
 
   return (
