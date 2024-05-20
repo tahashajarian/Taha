@@ -4,6 +4,7 @@ import Desk from "./Desk";
 import Monitor from "./Monitor";
 import Keyboard from "./Keyboard";
 import Mouse from "./Mouse";
+import Monitor2 from "./Monitor2";
 
 const TableSetup = () => {
   return (
@@ -12,8 +13,8 @@ const TableSetup = () => {
       <group position={[0, 0, 0.8]} scale={[1.2, 0.84, 1]}>
         <Desk />
       </group>
-      <group position={[0, 0.7, 1]}>
-        <Monitor />
+      <group position={[0, 0.71, 1]}>
+        <Monitor2 />
       </group>
       <group position={[-0.26, 0.7, 0.68]} scale={[1, 1.2, 1]}>
         <Mouse />
