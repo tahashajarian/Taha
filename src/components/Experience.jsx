@@ -1,23 +1,36 @@
-import React from "react";
-import { OrbitControls } from "@react-three/drei";
-import Taha from "./Taha";
-import Lights from "./Lights";
-import Walls from "./Walls";
-import TableSetup from "./TableSetup";
-import Sofa from "./Sofa";
-import Mobleman from "./Mobleman";
-import Mirror from "./Mirror";
+import React, { lazy, Suspense } from "react";
+import { Float, Html, OrbitControls } from "@react-three/drei";
+import LoaderComponent from "./LoaderComponent";
+const Lights = lazy(() => import("./Lights"));
+const Walls = lazy(() => import("./Walls"));
+const TableSetup = lazy(() => import("./TableSetup"));
+const Sofa = lazy(() => import("./Sofa"));
+const Mobleman = lazy(() => import("./Mobleman"));
+const Mirror = lazy(() => import("./Mirror"));
+const Taha = lazy(() => import("./Taha"));
 
 const Experience = () => {
   return (
     <>
       <OrbitControls />
+      {/* <Float speed={2} rotationIntensity={2} floatIntensity={2}> */}
       <Lights />
-      <Taha />
-      <TableSetup />
-      <Walls />
-      <Sofa />
-      <Mirror />
+      {/* </Float> */}
+      <Suspense fallback={<LoaderComponent />}>
+        <Taha />
+      </Suspense>
+      <Suspense fallback={<LoaderComponent />}>
+        <TableSetup />
+      </Suspense>
+      <Suspense fallback={<LoaderComponent />}>
+        <Walls />
+      </Suspense>
+      <Suspense fallback={<LoaderComponent />}>
+        <Sofa />
+      </Suspense>
+      <Suspense fallback={<LoaderComponent />}>
+        <Mirror />
+      </Suspense>
       {/* <Mobleman /> */}
     </>
   );

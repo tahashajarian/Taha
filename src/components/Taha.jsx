@@ -14,23 +14,13 @@ const Taha = (props) => {
   const { setAnimations, animationIndex } = useCharacterAnimations();
   setAnimations(names);
   useEffect(() => {
-    // Stop all animations
     if (currentAction.current !== actions[names[animationIndex]]) {
-      console.log(currentAction, actions, animationIndex);
       const nextActionToPlay = actions[names[animationIndex]];
       const current = actions[currentAction.current];
-      current?.fadeOut(0.5);
+      current?.fadeOut(0.2);
       nextActionToPlay?.reset().fadeIn(0.2).play();
       currentAction.current = names[animationIndex];
     }
-    // for (const key in actions) {
-    //   if (Object.hasOwnProperty.call(actions, key)) {
-    //     actions[key].stop();
-    //   }
-    // }
-
-    // // Play the new animation
-    // actions[names[animationIndex]].reset().fadeIn(0.5).play();
   }, [animationIndex, actions, names]);
 
   return (

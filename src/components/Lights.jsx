@@ -19,7 +19,6 @@ const Lights = () => {
       <group position={[-5.5, 0, -5.5]}>
         <Lamp />
       </group>
-
       <group position={[-5.5, 0, 5.5]}>
         <Lamp />
       </group>
