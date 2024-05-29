@@ -11,7 +11,7 @@ function App() {
         camera={{ position: [1, 3, 2.5], fov: 50 }}
         shadows
         style={{
-          background: "black",
+          background: "white",
         }}
         frameloop="always"
         className=""

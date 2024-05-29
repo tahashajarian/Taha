@@ -15,14 +15,14 @@ const Lamp = (props) => {
     <group {...props} dispose={null} scale={0.2}>
       <group position={[0, 3.4, 0.489]} scale={[0.875, 1.5, 0.875]}>
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Цилиндр012.geometry}
           material={shinyEmissiveMaterial}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Цилиндр012_1.geometry}
           material={materials["Matte Black"]}
         />
@@ -56,8 +56,8 @@ export default Lamp;
 //       <mesh
 //         geometry={nodes.lamp.geometry}
 //         material={shinyEmissiveMaterial}
-//         castShadow
-//         receiveShadow
+//         
+//         
 //       />
 //       <pointLight
 //         position={[0, 0.5, 0]}

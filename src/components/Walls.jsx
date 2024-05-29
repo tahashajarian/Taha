@@ -28,7 +28,7 @@ export default Walls;
 
 const Wall = ({ position, rotation, args }) => {
   return (
-    <mesh rotation={rotation} position={position} receiveShadow>
+    <mesh rotation={rotation} position={position} >
       <planeGeometry args={args} />
       <meshStandardMaterial />
     </mesh>
