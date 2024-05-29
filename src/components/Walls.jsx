@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Ground from "./Ground";
 import ReactIcon from "./ReactIcon";
 
@@ -6,7 +6,10 @@ const Walls = () => {
   return (
     <>
       <Ground />
-      <group rotation={[0, 0, Math.PI/-2]} position={[wallSize / -2, wallHeight / 2, 1]}>
+      <group
+        rotation={[0, 0, Math.PI / -2]}
+        position={[wallSize / -2, wallHeight / 2, 1]}
+      >
         <ReactIcon />
       </group>
       {wallData.map((wall, index) => (
