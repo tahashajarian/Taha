@@ -1,8 +1,10 @@
 import React from "react";
+import Ground from "./Ground";
 
 const Walls = () => {
   return (
     <>
+      <Ground />
       {wallData.map((wall, index) => (
         <Wall
           key={index}
@@ -31,11 +33,11 @@ const wallHeight = 4;
 const segments = 1;
 
 const wallData = [
-  {
-    pos: [0, 0, 0],
-    rot: [-0.5 * Math.PI, 0, 0],
-    args: [wallSize, wallSize, segments, segments],
-  },
+  // {
+  //   pos: [0, 0, 0],
+  //   rot: [-0.5 * Math.PI, 0, 0],
+  //   args: [wallSize, wallSize, segments, segments],
+  // },
   {
     pos: [0, wallHeight / 2, wallSize / 2],
     rot: [Math.PI, 0, 0],

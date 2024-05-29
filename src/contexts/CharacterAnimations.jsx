@@ -3,14 +3,14 @@ import { createContext, useContext, useState } from "react";
 const CharacterAnimationsContext = createContext({});
 
 export const CharacterAnimationsProvider = (props) => {
-  const [animationIndex, setAnimationIndex] = useState(4);
+  const [animation, setAnimation] = useState();
   const [animations, setAnimations] = useState([]);
 
   return (
     <CharacterAnimationsContext.Provider
       value={{
-        animationIndex,
-        setAnimationIndex,
+        animation,
+        setAnimation,
         animations,
         setAnimations,
       }}

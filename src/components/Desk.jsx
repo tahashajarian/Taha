@@ -13,21 +13,22 @@ const Desk = (props) => {
         castShadow
         receiveShadow
         geometry={nodes.Desk_Surface.geometry}
-        material={materials.Material}
+        material={materials["Material.001"]}
         position={[-0.004, 0.827, -0.004]}
         rotation={[-Math.PI, 0.002, 0]}
-        scale={[0.811, 0.018, 0.405]}>
+        scale={[0.811, 0.018, 0.405]}
+      >
         <mesh
           castShadow
           receiveShadow
           geometry={nodes.Desk_Legs.geometry}
-          material={materials['Material.001']}
+          material={materials["Material.002"]}
           position={[0, 23.64, 0]}
           scale={[0.964, 22.773, 0.929]}
         />
       </mesh>
     </group>
-  )
+  );
 };
 
 useGLTF.preload("/models/desk.glb");

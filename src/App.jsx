@@ -6,7 +6,7 @@ import { Loader } from "@react-three/drei";
 
 function App() {
   return (
-    <>
+    <div className="w-full h-svh">
       <Canvas
         camera={{ position: [1, 3, 2.5], fov: 50 }}
         shadows
@@ -14,6 +14,7 @@ function App() {
           background: "black",
         }}
         frameloop="always"
+        className=""
       >
         <Suspense fallback={null}>
           <Experience />
@@ -29,7 +30,7 @@ function App() {
         }}
       />
       <Interface />
-    </>
+    </div>
   );
 }
 

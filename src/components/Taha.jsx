@@ -11,17 +11,22 @@ const Taha = (props) => {
   const currentAction = useRef("");
   const { nodes, materials, animations } = useGLTF("/models/Taha.glb");
   const { actions, names } = useAnimations(animations, group);
-  const { setAnimations, animationIndex } = useCharacterAnimations();
+  const { setAnimations, animation, setAnimation } = useCharacterAnimations();
+
   setAnimations(names);
   useEffect(() => {
-    if (currentAction.current !== actions[names[animationIndex]]) {
-      const nextActionToPlay = actions[names[animationIndex]];
+    if (currentAction.current !== actions[animation]) {
+      const nextActionToPlay = actions[animation];
       const current = actions[currentAction.current];
       current?.fadeOut(0.2);
       nextActionToPlay?.reset().fadeIn(0.2).play();
-      currentAction.current = names[animationIndex];
+      currentAction.current = animation;
     }
-  }, [animationIndex, actions, names]);
+  }, [animation, actions, names]);
+
+  useEffect(() => {
+    setAnimation("typing");
+  }, []);
 
   return (
     <group ref={group} {...props} dispose={null} frustumCulled={false}>
