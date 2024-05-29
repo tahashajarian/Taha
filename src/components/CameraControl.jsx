@@ -2,12 +2,24 @@ import * as THREE from "three";
 import { CameraControls } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { button, buttonGroup, folder, useControls } from "leva";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { useCameraControl } from "../contexts/CameraControlContext";
 
 const CameraControl = () => {
   const { camera } = useThree();
   const cameraControlsRef = useRef();
   const { DEG2RAD } = THREE.MathUtils;
+  const { cameraLookAt } = useCameraControl();
+
+  // const {Camera}
+
+  useEffect(() => {
+    if (cameraLookAt) {
+      setTimeout(() => {
+        cameraControlsRef.current?.setLookAt(...cameraLookAt, true);
+      }, 2000);
+    }
+  }, [cameraControlsRef, cameraLookAt]);
 
   const {
     minDistance,
