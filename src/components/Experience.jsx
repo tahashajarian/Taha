@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { Float, Html, OrbitControls } from "@react-three/drei";
 import LoaderComponent from "./LoaderComponent";
+import CameraControl from "./CameraControl";
 const Lights = lazy(() => import("./Lights"));
 const Walls = lazy(() => import("./Walls"));
 const TableSetup = lazy(() => import("./TableSetup"));
@@ -15,6 +16,7 @@ const Experience = () => {
       <OrbitControls />
       {/* <Float speed={2} rotationIntensity={2} floatIntensity={2}> */}
       <Lights />
+      <CameraControl />
       {/* </Float> */}
       <Suspense fallback={<LoaderComponent />}>
         <Taha />
