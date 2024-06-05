@@ -15,31 +15,31 @@ const Mobleman = (props) => {
         scale={-0.025}
       >
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box014.geometry}
           material={materials["04 - Default"]}
           position={[-0.876, -23.062, 37.129]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box015.geometry}
           material={materials["04 - Default"]}
           position={[-0.876, -23.062, -37.516]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box016.geometry}
           material={materials["03 - Default"]}
           position={[0, -22.415, 37.007]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box017.geometry}
           material={materials["03 - Default"]}
           position={[0, -22.415, -37.007]}
@@ -47,15 +47,15 @@ const Mobleman = (props) => {
           scale={-1}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box018.geometry}
           material={materials["03 - Default"]}
           position={[-4.004, -24.045, 15.881]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box019.geometry}
           material={materials["06 - Default"]}
           position={[1.334, 4.145, -26.261]}
@@ -63,8 +63,8 @@ const Mobleman = (props) => {
           scale={[1.196, 1.457, 1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box020.geometry}
           material={materials["06 - Default"]}
           position={[1.334, 4.145, -18.839]}
@@ -72,8 +72,8 @@ const Mobleman = (props) => {
           scale={[1.196, 1.457, 1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box021.geometry}
           material={materials["06 - Default"]}
           position={[1.511, 4.145, 18.441]}
@@ -81,8 +81,8 @@ const Mobleman = (props) => {
           scale={[-1.196, -1.457, -1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box022.geometry}
           material={materials["06 - Default"]}
           position={[1.511, 4.145, 26.259]}
@@ -90,22 +90,22 @@ const Mobleman = (props) => {
           scale={[-1.196, -1.457, -1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object004.geometry}
           material={materials["02 - Default"]}
           position={[0, -22.415, 37.007]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object005.geometry}
           material={materials["03 - Default"]}
           position={[14.263, -11.113, 15.778]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object006.geometry}
           material={materials["02 - Default"]}
           position={[0, -22.415, -37.007]}
@@ -113,36 +113,36 @@ const Mobleman = (props) => {
           scale={-1}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object007.geometry}
           material={materials["02 - Default"]}
           position={[14.263, -11.113, 15.778]}
         />
         <group position={[-3.793, -11.084, 15.622]} scale={[1.044, 0.926, 1]}>
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh015.geometry}
             material={materials["Material #28"]}
           />
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh015_1.geometry}
             material={materials["02 - Default"]}
           />
         </group>
         <group position={[-3.793, -11.084, -19.721]} scale={[1.044, 0.926, 1]}>
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh001.geometry}
             material={materials["Material #28"]}
           />
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh001_1.geometry}
             material={materials["02 - Default"]}
           />
@@ -150,45 +150,45 @@ const Mobleman = (props) => {
       </group>
       <group position={[-0.311, 0.586, -2.147]} scale={0.025}>
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box006.geometry}
           material={materials["04 - Default"]}
           position={[-0.876, -23.062, 21.322]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box007.geometry}
           material={materials["03 - Default"]}
           position={[0, -22.415, 21.2]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box008.geometry}
           material={materials["03 - Default"]}
           position={[14.263, -11.113, -0.028]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box010.geometry}
           material={materials["03 - Default"]}
           position={[-4.004, -24.045, 0.075]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box011.geometry}
           material={materials["04 - Default"]}
           position={[-0.876, -23.062, -21.71]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box012.geometry}
           material={materials["03 - Default"]}
           position={[0, -22.415, -21.2]}
@@ -196,8 +196,8 @@ const Mobleman = (props) => {
           scale={-1}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box023.geometry}
           material={materials["06 - Default"]}
           position={[1.334, 5.126, -11.439]}
@@ -205,8 +205,8 @@ const Mobleman = (props) => {
           scale={[1.196, 1.457, 1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box024.geometry}
           material={materials["06 - Default"]}
           position={[1.334, 4.671, -5.751]}
@@ -214,15 +214,15 @@ const Mobleman = (props) => {
           scale={[1.196, 1.457, 1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object001.geometry}
           material={materials["02 - Default"]}
           position={[0, -22.415, 21.2]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object002.geometry}
           material={materials["02 - Default"]}
           position={[0, -22.415, -21.2]}
@@ -230,22 +230,22 @@ const Mobleman = (props) => {
           scale={-1}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object003.geometry}
           material={materials["02 - Default"]}
           position={[14.263, -11.113, -0.028]}
         />
         <group position={[-3.227, -11.084, -0.184]} scale={[1.044, 0.926, 1]}>
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh021.geometry}
             material={materials["Material #28"]}
           />
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh021_1.geometry}
             material={materials["02 - Default"]}
           />
@@ -257,8 +257,8 @@ const Mobleman = (props) => {
         scale={-0.025}
       >
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box028.geometry}
           material={materials["03 - Default"]}
           position={[0, -22.415, -21.2]}
@@ -266,45 +266,45 @@ const Mobleman = (props) => {
           scale={-1}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box029.geometry}
           material={materials["04 - Default"]}
           position={[-0.876, -23.062, -21.71]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box030.geometry}
           material={materials["04 - Default"]}
           position={[-0.876, -23.062, 21.322]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box031.geometry}
           material={materials["03 - Default"]}
           position={[0, -22.415, 21.2]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box032.geometry}
           material={materials["03 - Default"]}
           position={[14.263, -11.113, -0.028]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box033.geometry}
           material={materials["03 - Default"]}
           position={[-4.004, -24.045, 0.075]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box034.geometry}
           material={materials["06 - Default"]}
           position={[1.334, 5.126, -11.439]}
@@ -312,8 +312,8 @@ const Mobleman = (props) => {
           scale={[1.196, 1.457, 1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box035.geometry}
           material={materials["06 - Default"]}
           position={[1.334, 4.671, -5.751]}
@@ -321,8 +321,8 @@ const Mobleman = (props) => {
           scale={[1.196, 1.457, 1.196]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object009.geometry}
           material={materials["02 - Default"]}
           position={[0, -22.415, -21.2]}
@@ -330,29 +330,29 @@ const Mobleman = (props) => {
           scale={-1}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object010.geometry}
           material={materials["02 - Default"]}
           position={[0, -22.415, 21.2]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object011.geometry}
           material={materials["02 - Default"]}
           position={[14.263, -11.113, -0.028]}
         />
         <group position={[-3.227, -11.084, -0.184]} scale={[1.044, 0.926, 1]}>
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh033.geometry}
             material={materials["Material #28"]}
           />
           <mesh
-            castShadow
-            receiveShadow
+            
+            
             geometry={nodes.Mesh033_1.geometry}
             material={materials["02 - Default"]}
           />
@@ -360,31 +360,31 @@ const Mobleman = (props) => {
       </group>
       <group position={[-1.45, 0.238, -1.54]} scale={0.025}>
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box027.geometry}
           material={materials["04 - Default"]}
           position={[-0.263, -9.366, -31.516]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box025.geometry}
           material={materials["03 - Default"]}
           position={[0, 5.367, 0]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Box026.geometry}
           material={materials["04 - Default"]}
           position={[-0.263, -9.366, 31.583]}
           scale={[0.781, 1, 1]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Object008.geometry}
           material={materials["02 - Deww"]}
           position={[0, 5.367, 0]}

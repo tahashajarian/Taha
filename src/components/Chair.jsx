@@ -10,22 +10,22 @@ const Chair = (props) => {
   return (
     <group {...props} dispose={null}>
       <mesh
-        castShadow
-        receiveShadow
+        
+        
         geometry={nodes.chair.geometry}
         material={materials["Material.001"]}
         position={[-0.001, 0.622, -0.094]}
       />
       <mesh
-        castShadow
-        receiveShadow
+        
+        
         geometry={nodes.chair001.geometry}
         material={materials["Material.002"]}
         position={[-0.001, 0.11, 0.099]}
       />
       <mesh
-        castShadow
-        receiveShadow
+        
+        
         geometry={nodes.chair002.geometry}
         material={materials["Material.001"]}
         position={[-0.003, 0.03, 0.099]}

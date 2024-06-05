@@ -11,38 +11,38 @@ const Monitor = (props) => {
         scale={[0.6, 0.3, 0.25]}
       >
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Plane002.geometry}
           material={materials["Material.001"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Plane002_1.geometry}
           material={materials["Material.002"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Plane002_2.geometry}
           material={materials["Material.007"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Plane002_3.geometry}
           material={materials["Material.003"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Plane002_4.geometry}
           material={materials["Material.004"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Plane002_5.geometry}
           material={materials["Material.005"]}
         />
@@ -53,32 +53,32 @@ const Monitor = (props) => {
         scale={[0.215, 0.215, 0.18]}
       >
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Cylinder.geometry}
           material={materials["Material.007"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Cylinder_1.geometry}
           material={materials["Material.009"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Cylinder_2.geometry}
           material={materials["Material.008"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Cylinder_3.geometry}
           material={materials["Material.006"]}
         />
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Cylinder_4.geometry}
           material={materials["Material.010"]}
         />

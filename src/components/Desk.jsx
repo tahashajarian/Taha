@@ -10,8 +10,8 @@ const Desk = (props) => {
   return (
     <group {...props} dispose={null}>
       <mesh
-        castShadow
-        receiveShadow
+        
+        
         geometry={nodes.Desk_Surface.geometry}
         material={materials["Material.001"]}
         position={[-0.004, 0.827, -0.004]}
@@ -19,8 +19,8 @@ const Desk = (props) => {
         scale={[0.811, 0.018, 0.405]}
       >
         <mesh
-          castShadow
-          receiveShadow
+          
+          
           geometry={nodes.Desk_Legs.geometry}
           material={materials["Material.002"]}
           position={[0, 23.64, 0]}

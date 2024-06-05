@@ -6,8 +6,8 @@ const Asali = (props) => {
   return (
     <group {...props} dispose={null}>
       <mesh
-        castShadow
-        receiveShadow
+        
+        
         geometry={nodes.table001.geometry}
         material={materials.table}
       />

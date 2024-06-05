@@ -8,8 +8,8 @@ const Keyboard = (props) => {
     <group {...props} dispose={null}>
       <RGBLight />
       <mesh
-        castShadow
-        receiveShadow
+        
+        
         geometry={nodes.Cube.geometry}
         material={materials.klawisze}
         scale={1}

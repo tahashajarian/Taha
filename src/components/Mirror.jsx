@@ -6,7 +6,7 @@ const Mirror = () => {
     <mesh
       rotation={[0, 0, 0]}
       position={[0, 1.7, -5.99]}
-      receiveShadow
+      
     >
       <planeGeometry args={[1.5, 3]} />
       <MeshReflectorMaterial
