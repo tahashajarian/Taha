@@ -1,7 +1,14 @@
+import {
+  cameraLookAtConst,
+  cameraLookAtDefault,
+} from "../constances/constances";
+import { useCameraControl } from "../contexts/CameraControlContext";
 import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 
 const Interface = () => {
   const { animation, setAnimation } = useCharacterAnimations();
+  const { setCameraLookAt } = useCameraControl();
+
   return (
     <div>
       <button
@@ -9,8 +16,10 @@ const Interface = () => {
         onClick={() => {
           if (animation === "idle") {
             setAnimation("typing");
+            setCameraLookAt(cameraLookAtConst);
           } else {
             setAnimation("idle");
+            setCameraLookAt(cameraLookAtDefault);
           }
         }}
       >
