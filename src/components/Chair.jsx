@@ -14,7 +14,7 @@ const Chair = (props) => {
     <group
       {...props}
       dispose={null}
-      position={[0, 0, animation === "idle" ? -0.7 : 0]}
+      position={[0, 0, animation === "typing" ? 0 : -0.7]}
     >
       <mesh
         geometry={nodes.chair.geometry}

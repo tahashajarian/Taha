@@ -8,7 +8,7 @@ const TableSetup = lazy(() => import("./TableSetup"));
 const Sofa = lazy(() => import("./Sofa"));
 const Mobleman = lazy(() => import("./Mobleman"));
 const Mirror = lazy(() => import("./Mirror"));
-const Taha = lazy(() => import("./Taha"));
+const TahaContainer = lazy(() => import("./TahaContainer"));
 
 const Experience = () => {
   return (
@@ -19,7 +19,7 @@ const Experience = () => {
       <CameraControl />
       {/* </Float> */}
       <Suspense fallback={<LoaderComponent />}>
-        <Taha />
+        <TahaContainer />
       </Suspense>
       <Suspense fallback={<LoaderComponent />}>
         <TableSetup />

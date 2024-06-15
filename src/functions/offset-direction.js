@@ -3,11 +3,6 @@ export const directionOffset = ({
   backward,
   left,
   right,
-}: {
-  forward: boolean;
-  backward: boolean;
-  left: boolean;
-  right: boolean;
 }) => {
   let directionOffset = 0;
   if (forward) {
