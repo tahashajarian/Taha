@@ -6,6 +6,11 @@ import { useArrows } from "./../hooks/use-arrows";
 import * as THREE from "three";
 import Taha from "./Taha";
 
+const roomMinX = -5.5;
+const roomMaxX = 5.5;
+const roomMinZ = -5.5;
+const roomMaxZ = 5.5;
+
 const TahaContainer = (props) => {
   const group = useRef();
   const currentAction = useRef("");
@@ -72,6 +77,15 @@ const TahaContainer = (props) => {
       position[1],
       position[2] + transformedDirection.z,
     ];
+
+    if (
+      newPosition[0] < roomMinX ||
+      newPosition[0] > roomMaxX ||
+      newPosition[2] < roomMinZ ||
+      newPosition[2] > roomMaxZ
+    ) {
+      return; // Prevent movement if it exceeds boundaries
+    }
 
     setPosition(newPosition);
     group.current.position.set(...newPosition);
