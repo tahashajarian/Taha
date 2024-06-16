@@ -7,23 +7,25 @@ const Mug = (props) => {
   const { nodes } = useGLTF("/models/mug.glb");
   const group = useRef();
   const particlesRef = useRef();
-  const particleCount = 200; // Increase particle count for denser effect
+  const particleCount = 300;
 
   // Create particle data
   const particlesData = useRef(
     Array.from({ length: particleCount }, () => ({
       position: new THREE.Vector3(
-        (Math.random() - 0.5) * 0.1, // Random initial x position within a smaller range
-        Math.random() * 0.1, // Random initial y position closer to the mug
-        (Math.random() - 0.5) * 0.1 // Random initial z position within a smaller range
+        (Math.random() - 0.5) * 0.1,
+        Math.random() * 0.1,
+        (Math.random() - 0.5) * 0.1
       ),
       velocity: new THREE.Vector3(
-        (Math.random() - 0.5) * 0.002, // Slower horizontal speed
-        0.002 + Math.random() * 0.001, // Slower upward speed
-        (Math.random() - 0.5) * 0.002 // Slower horizontal speed
+        (Math.random() - 0.5) * 0.002,
+        0.002 + Math.random() * 0.001,
+        (Math.random() - 0.5) * 0.002
       ),
-      rotationSpeed: (Math.random() - 0.5) * 0.0005, // Random rotation speed
-      life: Math.random() * 100 + 50 // Random lifespan between 50 to 150 frames
+      rotationSpeed: (Math.random() - 0.5) * 0.0005,
+      life: Math.random() * 100 + 50,
+      size: Math.random() * 0.04 + 0.02, // Random size between 0.02 and 0.06
+      opacity: 1.0 // Initial opacity set to 1.0
     }))
   );
 
@@ -35,13 +37,17 @@ const Mug = (props) => {
   particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
   particleGeometry.setAttribute("opacity", new THREE.BufferAttribute(opacities, 1));
 
+  // Load particle texture
+  const textureLoader = new THREE.TextureLoader();
+  const particleTexture = textureLoader.load("/textures/smoke.png");
+
   const particleMaterial = new THREE.PointsMaterial({
-    color: 0xffffff,
-    size: 0.02, // Slightly larger particle size
+    size: 0.05,
+    map: particleTexture,
     transparent: true,
-    opacity: 0.1, // Lower opacity for more realistic appearance
+    opacity: 0.1, // Initial opacity set to 0.1 for fade-in effect
     depthWrite: false,
-    blending: THREE.AdditiveBlending // Additive blending for a more natural look
+    blending: THREE.AdditiveBlending
   });
 
   useEffect(() => {
@@ -56,15 +62,13 @@ const Mug = (props) => {
 
   useFrame(() => {
     particlesData.current.forEach((data, i) => {
-      // Update position
       data.position.add(data.velocity);
 
-      // Apply rotation
       const rotationMatrix = new THREE.Matrix4().makeRotationY(data.rotationSpeed);
       data.velocity.applyMatrix4(rotationMatrix);
 
-      // Reset particle position and velocity if it goes too far from the mug or lifespan ends
       if (data.position.y > 0.9 || data.life <= 0) {
+        // Reset particle properties
         data.position.set(
           (Math.random() - 0.5) * 0.1,
           Math.random() * 0.1,
@@ -75,18 +79,20 @@ const Mug = (props) => {
           0.002 + Math.random() * 0.001,
           (Math.random() - 0.5) * 0.002
         );
-        data.life = Math.random() * 100 + 50; // Reset random lifespan between 50 to 150 frames
+        data.life = Math.random() * 100 + 50;
+        data.opacity = 1.0; // Reset opacity
       }
 
-      // Update positions and opacities
+      // Update opacity based on particle's vertical position
+      data.opacity = Math.max(0, (0.9 - data.position.y) / 0.9); // Fade out as it reaches 0.9
+
       positions[i * 3] = data.position.x;
       positions[i * 3 + 1] = data.position.y;
       positions[i * 3 + 2] = data.position.z;
-      opacities[i] = Math.max(0, (data.position.y - 0.1) / 0.2); // Fade out particles as they rise
+      opacities[i] = data.opacity;
 
-      // Update rotation speed
-      data.rotationSpeed += (Math.random() - 0.5) * 0.0002; // Random variation in rotation speed
-      data.life -= 1; // Decrease lifespan
+      data.rotationSpeed += (Math.random() - 0.5) * 0.0002;
+      data.life -= 1;
     });
 
     particleGeometry.attributes.position.needsUpdate = true;
