@@ -1,10 +1,10 @@
 import React, { Suspense } from "react";
-import Chair from "./Chair";
-import Desk from "./Desk";
-import Monitor from "./Monitor";
-import Keyboard from "./Keyboard";
-import Mouse from "./Mouse";
-import Monitor2 from "./Monitor2";
+const Chair = React.lazy(() => import("./Chair"));
+const Desk = React.lazy(() => import("./Desk"));
+const Keyboard = React.lazy(() => import("./Keyboard"));
+const Mouse = React.lazy(() => import("./Mouse"));
+const Monitor2 = React.lazy(() => import("./Monitor2"));
+const Mug = React.lazy(() => import("./Mug"));
 
 const TableSetup = () => {
   return (
@@ -30,6 +30,11 @@ const TableSetup = () => {
       <group position={[0.1, 0.715, 0.65]}>
         <Suspense fallback={null}>
           <Keyboard />
+        </Suspense>
+      </group>
+      <group position={[-0.6, 0.77, 0.65]}>
+        <Suspense fallback={null}>
+          <Mug />
         </Suspense>
       </group>
     </group>
