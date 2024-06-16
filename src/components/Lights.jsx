@@ -4,14 +4,14 @@ import Lamp from "./Lamp";
 const Lights = () => {
   return (
     <>
-      <ambientLight intensity={0.2} />
+      <ambientLight intensity={0.1} />
       
       <directionalLight
         position={[-5, 5, 5]}
         
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
-        intensity={0.7}
+        intensity={0.75}
       />
       <group position={[5.5, 0, -5.5]}>
         <Lamp />
