@@ -3,12 +3,15 @@ import Experience from "./components/Experience";
 import Interface from "./components/Interface";
 import { Suspense } from "react";
 import { Loader } from "@react-three/drei";
+import { useCameraControl } from "./contexts/CameraControlContext";
+import { cameraLookAtConst } from "./constances/constances";
 
 function App() {
+  const { setCameraLookAt } = useCameraControl();
   return (
     <div className="w-full h-svh">
       <Canvas
-        camera={{ position: [1, 3, 2.5], fov: 50 }}
+        camera={{ position: [0, 3, 8], fov: 50 }}
         shadows
         style={{
           background: "white",
@@ -21,10 +24,10 @@ function App() {
         </Suspense>
       </Canvas>
       <Loader
-        onReady={() => {}}
         dataInterpolation={(persentLoaded) => {
           if (persentLoaded === 100) {
             console.log("loading compeleted");
+            setCameraLookAt(cameraLookAtConst);
           }
           return Math.ceil(persentLoaded);
         }}
