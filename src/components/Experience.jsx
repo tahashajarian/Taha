@@ -9,6 +9,7 @@ const Sofa = lazy(() => import("./Sofa"));
 const Mobleman = lazy(() => import("./Mobleman"));
 const Mirror = lazy(() => import("./Mirror"));
 const TahaContainer = lazy(() => import("./TahaContainer"));
+const StuffOnWall = lazy(() => import("./StuffOnWall/SuffOnWall"));
 
 const Experience = () => {
   return (
@@ -34,6 +35,9 @@ const Experience = () => {
         <Mirror />
       </Suspense>
       {/* <Mobleman /> */}
+      <Suspense fallback={<LoaderComponent />}>
+        <StuffOnWall />
+      </Suspense>
     </>
   );
 };
