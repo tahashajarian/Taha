@@ -12,9 +12,9 @@ const Lights = () => {
         position={[0, wallHeight, 0]}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
-        intensity={0.75}
+        intensity={1}
       />
-      <group position={[0, wallHeight, 0]} scale={0.6}>
+      <group position={[0, wallHeight, 0]} scale={[0.4, 1, 0.4]}>
         <Luster />
       </group>
       <group position={[5.5, 0, -5.5]}>

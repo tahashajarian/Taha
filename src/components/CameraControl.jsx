@@ -18,7 +18,7 @@ const CameraControl = () => {
     <CameraControls
       ref={cameraControlsRef}
       minDistance={0.001}
-      maxDistance={10}
+      maxDistance={5.5}
       verticalDragToForward={false}
       maxPolarAngle={Math.PI / 2} // Limit rotation to not show below horizon
     />
