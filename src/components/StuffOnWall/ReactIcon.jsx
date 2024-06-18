@@ -8,16 +8,16 @@ import { useFrame } from "@react-three/fiber";
 const ReactIcon = (props) => {
   const { nodes, materials } = useGLTF("/models/react.glb");
   const reactIconRef = useRef();
-  useFrame(({ clock }) => {
-    reactIconRef.current.rotation.y = clock.getElapsedTime() * -0.3;
-  });
+  // useFrame(({ clock }) => {
+  //   reactIconRef.current.rotation.y = clock.getElapsedTime() * -0.3;
+  // });
   return (
     <group {...props} dispose={null}>
-      <group position={[0, 0.049, 0]} scale={[0.9, 0.09, 0.9]}>
-        <mesh
+      <group position={[0, 0.0, 0]} scale={[0.9, 0.09, 0.9]}>
+        {/* <mesh
           geometry={nodes.Cylinder.geometry}
           material={materials["Material.002"]}
-          />
+          /> */}
         <mesh
           ref={reactIconRef}
           geometry={nodes.Cylinder_1.geometry}

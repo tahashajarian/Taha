@@ -2,6 +2,7 @@ import React from "react";
 import ReactIcon from "./ReactIcon";
 import { wallHeight, wallSize } from "../Walls";
 import ShaderFrame from "./ShaderFrame";
+import WebpackIcon3D from "./WebpackIcon";
 
 const SuffOnWall = () => {
   return (
@@ -17,6 +18,12 @@ const SuffOnWall = () => {
         position={[wallSize / 2.001, wallHeight / 2, 2]}
       >
         <ShaderFrame />
+      </group>
+      <group
+        rotation={[0, 0, Math.PI / -2]}
+        position={[wallSize / -2.2, 0.5, -3]}
+      >
+        <WebpackIcon3D />
       </group>
     </group>
   );

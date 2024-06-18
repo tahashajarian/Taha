@@ -12,7 +12,14 @@ const Lights = () => {
         position={[0, wallHeight, 0]}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
-        intensity={1}
+        intensity={0.5}
+      />
+
+      <directionalLight
+        position={[-5, wallHeight, -5]}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        intensity={0.4}
       />
       <group position={[0, wallHeight, 0]} scale={[0.4, 1, 0.4]}>
         <Luster />
