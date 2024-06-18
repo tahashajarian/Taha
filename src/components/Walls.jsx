@@ -35,8 +35,8 @@ const Wall = ({ position, rotation, args }) => {
   );
 };
 
-const wallSize = 12;
-const wallHeight = 4;
+export const wallSize = 12;
+export const wallHeight = 4;
 const segments = 1;
 
 const wallData = [

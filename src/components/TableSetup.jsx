@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import Textes from "./textes/Textes";
 const Chair = React.lazy(() => import("./Chair"));
 const Desk = React.lazy(() => import("./Desk"));
 const Keyboard = React.lazy(() => import("./Keyboard"));
@@ -34,7 +35,7 @@ const TableSetup = () => {
           <Keyboard />
         </Suspense>
       </group>
-      <group position={[-0.6, 0.77, 0.65]}>
+      <group position={[-0.6, 0.771, 0.65]}>
         <Suspense fallback={null}>
           <Mug />
         </Suspense>
@@ -49,6 +50,7 @@ const TableSetup = () => {
           <Speaker />
         </Suspense>
       </group>
+      <Textes />
     </group>
   );
 };
