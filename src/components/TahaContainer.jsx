@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useCharacterAnimations } from "../contexts/CharacterAnimations";
@@ -28,7 +28,7 @@ const TahaContainer = (props) => {
   const { backward, forward, left, right } = useArrows();
   const { camera } = useThree();
 
-  const speed = 0.04; // Adjust speed as needed
+  const speed = 2.2; // Adjust speed as needed
 
   useEffect(() => {
     if (right || left || forward || backward) {
@@ -53,13 +53,13 @@ const TahaContainer = (props) => {
     setAnimation("typing");
   }, []);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     const direction = [0, 0, 0];
 
-    if (forward) direction[2] += speed;
-    if (backward) direction[2] -= speed;
-    if (left) direction[0] += speed;
-    if (right) direction[0] -= speed;
+    if (forward) direction[2] += speed * delta;
+    if (backward) direction[2] -= speed * delta;
+    if (left) direction[0] += speed * delta;
+    if (right) direction[0] -= speed * delta;
 
     // Transform the direction based on the camera's orientation
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
@@ -106,6 +106,7 @@ const TahaContainer = (props) => {
       )
     );
   }, [position, rotation]);
+
   return <Taha charRef={group} materials={materials} nodes={nodes} />;
 };
 
