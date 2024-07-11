@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
+import { BackSide } from "three";
 
 const JSIcon = (props) => {
   const { nodes, materials } = useGLTF("/models/jsIcon.glb");
@@ -8,19 +9,19 @@ const JSIcon = (props) => {
       <mesh
         castShadow
         receiveShadow
-        geometry={nodes.Plane.geometry}
-        material={materials["SVGMat.001"]}
-        position={[-0.281, 0.005, -0.352]}
-        scale={0.677}
-      />
-      <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.Curve001.geometry}
         material={materials.JS}
-        position={[0, 0.039, 0]}
-        scale={117.068}
+        position={[0.1, 0.0, 0.2]}
+        scale={100}
       />
+      <mesh position={[0, 0, 0]} rotation={[0, 0, 0]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshBasicMaterial
+          color="#ffd600"
+          opacity={0.5}
+          side={BackSide}
+        />
+      </mesh>
     </group>
   );
 };

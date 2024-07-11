@@ -24,7 +24,7 @@ const Wall = ({ position, rotation, args }) => {
   return (
     <mesh rotation={rotation} position={position} >
       <planeGeometry args={args} />
-      <meshStandardMaterial />
+      <meshStandardMaterial color={'#cfe5f7'}/>
     </mesh>
   );
 };

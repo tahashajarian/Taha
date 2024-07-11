@@ -3,7 +3,8 @@ import ReactIcon from "./ReactIcon";
 import { wallHeight, wallSize } from "../Walls";
 import ShaderFrame from "./ShaderFrame";
 import WebpackIcon3D from "./WebpackIcon";
-import JSIcon from "../JSIcon";
+import JSIcon from "./JSIcon";
+import TailwindIcon from "./TailwindIcon";
 
 const SuffOnWall = () => {
   return (
@@ -32,6 +33,12 @@ const SuffOnWall = () => {
         position={[wallSize / -2.2, 0.5, 3]}
       >
         <JSIcon />
+      </group>
+      <group
+        rotation={[Math.PI / 2, 0, Math.PI / -2]}
+        position={[wallSize / -2.2, 0.75, -.4]}
+      >
+        <TailwindIcon />
       </group>
     </group>
   );
