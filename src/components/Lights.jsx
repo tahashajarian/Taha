@@ -24,15 +24,15 @@ const Lights = () => {
       <group position={[0, wallHeight, 0]} scale={[0.4, 1, 0.4]}>
         <Luster />
       </group>
-      <group position={[5.5, 0, -5.5]}>
+      {/* <group position={[5.5, 0, -5.5]}>
         <Lamp />
-      </group>
+      </group> */}
       <group position={[-5.5, 0, -5.5]}>
         <Lamp />
       </group>
-      <group position={[-5.5, 0, 5.5]}>
+      {/* <group position={[-5.5, 0, 5.5]}>
         <Lamp />
-      </group>
+      </group> */}
       <group position={[5.5, 0, 5.5]}>
         <Lamp />
       </group>
