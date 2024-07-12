@@ -23,7 +23,7 @@ const Desk = (props) => {
         <mesh
           geometry={nodes.Desk_Legs.geometry}
           material={
-            new MeshStandardMaterial({ color: 'yellow' })
+            new MeshStandardMaterial({ color: 'silver' })
           }
           position={[0, 23.64, 0]}
           scale={[0.964, 22.773, 0.929]}

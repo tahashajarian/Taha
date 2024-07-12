@@ -5,15 +5,16 @@ import {
 } from "../constances/constances";
 import { useCameraControl } from "../contexts/CameraControlContext";
 import { useCharacterAnimations } from "../contexts/CharacterAnimations";
+import { useModalControl } from "../contexts/ModalControlContext";
+import Modal from "./UI/Modal";
+import WelcomeMessage from "./UI/WelcomeMessage";
 
 const Interface = () => {
-  const {
-    animation,
-    setAnimation,
-    setPosition,
-    setRotation,
-  } = useCharacterAnimations();
+  const { animation, setAnimation, setPosition, setRotation } =
+    useCharacterAnimations();
   const { setCameraLookAt } = useCameraControl();
+
+  const { modalIsOpen, setModalIsOpen } = useModalControl();
 
   return (
     <div>
@@ -33,6 +34,12 @@ const Interface = () => {
       >
         {animation === "typing" ? "stand" : "sit"}
       </button>
+      <Modal
+        isOpen={modalIsOpen}
+        onClose={() => setModalIsOpen(false)}
+        onSend={() => setModalIsOpen(false)}
+      />
+      <WelcomeMessage />
     </div>
   );
 };

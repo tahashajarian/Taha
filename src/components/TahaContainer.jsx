@@ -5,6 +5,7 @@ import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 import { useArrows } from "./../hooks/use-arrows";
 import * as THREE from "three";
 import Taha from "./Taha";
+import { useModalControl } from "../contexts/ModalControlContext";
 
 const roomMinX = -5.5;
 const roomMaxX = 5.5;
@@ -27,10 +28,12 @@ const TahaContainer = (props) => {
   } = useCharacterAnimations();
   const { backward, forward, left, right } = useArrows();
   const { camera } = useThree();
+  const { modalIsOpen } = useModalControl();
 
   const speed = 2.2; // Adjust speed as needed
 
   useEffect(() => {
+    if (modalIsOpen) return;
     if (right || left || forward || backward) {
       setAnimation("walk");
     } else {
@@ -54,6 +57,7 @@ const TahaContainer = (props) => {
   }, []);
 
   useFrame((state, delta) => {
+    if (modalIsOpen) return;
     const direction = [0, 0, 0];
 
     if (forward) direction[2] += speed * delta;
