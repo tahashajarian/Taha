@@ -17,6 +17,7 @@ const GamesText = () => {
   const shotgun = useLoader(TextureLoader, "/textures/shotgun.png");
   const jeton = useLoader(TextureLoader, "/textures/jeton.png");
   const envelope = useLoader(TextureLoader, "/textures/envelope.png");
+  const github = useLoader(TextureLoader, "/textures/github.png");
   gameIcon.encoding = THREE.sRGBEncoding;
   gameIcon.format = THREE.RGBAFormat;
   gameIcon.type = THREE.UnsignedByteType;
@@ -32,6 +33,9 @@ const GamesText = () => {
   flappyBirdTexture.encoding = THREE.sRGBEncoding;
   flappyBirdTexture.format = THREE.RGBAFormat;
   flappyBirdTexture.type = THREE.UnsignedByteType;
+  github.encoding = THREE.sRGBEncoding;
+  github.format = THREE.RGBAFormat;
+  github.type = THREE.UnsignedByteType;
 
   // Reference for plane geometries
   const flappyBirdRef = useRef();
@@ -39,6 +43,7 @@ const GamesText = () => {
   const shotgunRef = useRef();
   const blackJackRef = useRef();
   const envelopeRef = useRef();
+  const githubRef = useRef();
 
   const { setModalIsOpen } = useAppStatusContext();
   const navigateTo = (address) => {
@@ -85,7 +90,7 @@ const GamesText = () => {
           color="black"
           textAlign="center"
           onClick={() => {
-            navigateTo('https://taha-shajarian.ir/projects/warland')
+            navigateTo("https://taha-shajarian.ir/projects/warland");
           }}
         >
           War Land
@@ -122,8 +127,23 @@ const GamesText = () => {
       >
         Send an Email
         <mesh position={[1.5, 0.1, 0]} ref={envelopeRef}>
-          <planeGeometry args={[0.75, 0.75]} />
+          <planeGeometry args={[0.7, 0.7]} />
           <meshBasicMaterial map={envelope} transparent />
+        </mesh>
+      </Text>
+      <Text
+        position={[2.72, -1.7, 0]}
+        fontSize={0.3}
+        color="black"
+        textAlign="center"
+        onClick={() => {
+          navigateTo("https://github.com/tahashajarian");
+        }}
+      >
+        My Github
+        <mesh position={[1.05, 0.04, 0]} ref={github}>
+          <planeGeometry args={[0.4, 0.4]} />
+          <meshBasicMaterial map={github} transparent />
         </mesh>
       </Text>
     </group>
