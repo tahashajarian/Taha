@@ -155,7 +155,8 @@ const Picture = ({ width, height }) => {
   return (
     <mesh position={[0, 0, 0.1]}>
       <planeGeometry args={[width, height]} />
-      <GradientShaderMaterial />
+      {/* <GradientShaderMaterial /> */}
+      <meshBasicMaterial />
     </mesh>
   );
 };

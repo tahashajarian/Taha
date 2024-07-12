@@ -4,16 +4,16 @@ import App from "./App";
 import { CharacterAnimationsProvider } from "./contexts/CharacterAnimations";
 import "./index.css";
 import { CameraControlProvider } from "./contexts/CameraControlContext";
-import { ModalControlProvider } from "./contexts/ModalControlContext";
+import { AppStatusContextProvider } from "./contexts/AppStatusContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ModalControlProvider>
+    <AppStatusContextProvider>
       <CameraControlProvider>
         <CharacterAnimationsProvider>
           <App />
         </CharacterAnimationsProvider>
       </CameraControlProvider>
-    </ModalControlProvider>
+    </AppStatusContextProvider>
   </React.StrictMode>
 );

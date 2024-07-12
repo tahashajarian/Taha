@@ -5,7 +5,7 @@ import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 import { useArrows } from "./../hooks/use-arrows";
 import * as THREE from "three";
 import Taha from "./Taha";
-import { useModalControl } from "../contexts/ModalControlContext";
+import { useAppStatusContext } from "../contexts/appStatusContext";
 
 const roomMinX = -5.5;
 const roomMaxX = 5.5;
@@ -28,7 +28,7 @@ const TahaContainer = (props) => {
   } = useCharacterAnimations();
   const { backward, forward, left, right } = useArrows();
   const { camera } = useThree();
-  const { modalIsOpen } = useModalControl();
+  const { modalIsOpen } = useAppStatusContext();
 
   const speed = 2.2; // Adjust speed as needed
 

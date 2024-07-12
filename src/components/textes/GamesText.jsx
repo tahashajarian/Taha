@@ -4,7 +4,7 @@ import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../Walls";
 import PortalShaderPlane from "../shaders/PortalShaderPlane";
-import { useModalControl } from "../../contexts/ModalControlContext";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
 const GamesText = () => {
   // Load textures using TextureLoader
@@ -24,7 +24,7 @@ const GamesText = () => {
   const blackJackRef = useRef();
   const envelopeRef = useRef();
 
-  const { setModalIsOpen } = useModalControl();
+  const { setModalIsOpen } = useAppStatusContext();
   const navigateTo = (address) => {
     window.open(address, "_blank");
   };

@@ -5,9 +5,11 @@ import { Suspense } from "react";
 import { Loader } from "@react-three/drei";
 import { useCameraControl } from "./contexts/CameraControlContext";
 import { cameraLookAtConst } from "./constances/constances";
+import { useAppStatusContext } from "./contexts/AppStatusContext";
 
 function App() {
   const { setCameraLookAt } = useCameraControl();
+  const { setIsAppLoaded } = useAppStatusContext();
   return (
     <div className="w-full h-svh">
       <Canvas
@@ -28,6 +30,7 @@ function App() {
           if (persentLoaded === 100) {
             console.log("loading compeleted");
             setCameraLookAt(cameraLookAtConst);
+            setIsAppLoaded(true);
           }
           return Math.ceil(persentLoaded);
         }}
