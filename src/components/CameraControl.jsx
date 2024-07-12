@@ -10,7 +10,9 @@ const CameraControl = () => {
 
   useEffect(() => {
     if (cameraLookAt) {
-      cameraControlsRef.current?.setLookAt(...cameraLookAt, true);
+      setTimeout(() => {
+        cameraControlsRef.current?.setLookAt(...cameraLookAt, true);
+      }, 500);
     }
   }, [cameraControlsRef, cameraLookAt]);
 

@@ -1,8 +1,8 @@
 import { Canvas } from "@react-three/fiber";
 import Experience from "./components/Experience";
 import Interface from "./components/Interface";
-import { Suspense } from "react";
-import { Loader } from "@react-three/drei";
+import { Suspense, useEffect } from "react";
+import { Loader, Html } from "@react-three/drei";
 import { useCameraControl } from "./contexts/CameraControlContext";
 import { cameraLookAtConst } from "./constances/constances";
 import { useAppStatusContext } from "./contexts/AppStatusContext";
@@ -10,6 +10,7 @@ import { useAppStatusContext } from "./contexts/AppStatusContext";
 function App() {
   const { setCameraLookAt } = useCameraControl();
   const { setIsAppLoaded } = useAppStatusContext();
+
   return (
     <div className="w-full h-svh">
       <Canvas
@@ -18,21 +19,19 @@ function App() {
         style={{
           background: "black",
         }}
-        frameloop="always"
+        frameloop="demand"
         className=""
       >
-        <Suspense fallback={null}>
-          <Experience />
-        </Suspense>
+        <Experience />
       </Canvas>
       <Loader
-        dataInterpolation={(persentLoaded) => {
-          if (persentLoaded === 100) {
-            console.log("loading compeleted");
+        dataInterpolation={(percentLoaded) => {
+          if (percentLoaded === 100) {
+            console.log("Loading completed");
             setCameraLookAt(cameraLookAtConst);
             setIsAppLoaded(true);
           }
-          return Math.ceil(persentLoaded);
+          return `${Math.ceil(percentLoaded)}%`;
         }}
       />
       <Interface />

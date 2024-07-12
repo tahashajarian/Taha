@@ -40,6 +40,9 @@ const Mug = (props) => {
   // Load particle texture
   const textureLoader = new THREE.TextureLoader();
   const particleTexture = textureLoader.load("/textures/smoke.png");
+  particleTexture.encoding = THREE.sRGBEncoding;
+  particleTexture.format = THREE.RGBAFormat;
+  particleTexture.type = THREE.UnsignedByteType;
 
   const particleMaterial = new THREE.PointsMaterial({
     size: 0.05,

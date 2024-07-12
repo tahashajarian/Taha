@@ -3,8 +3,9 @@ import React, { useRef } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../Walls";
-import PortalShaderPlane from "../shaders/PortalShaderPlane";
+// import PortalShaderPlane from "../shaders/PortalShaderPlane";
 import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import * as THREE from "three";
 
 const GamesText = () => {
   // Load textures using TextureLoader
@@ -16,6 +17,21 @@ const GamesText = () => {
   const shotgun = useLoader(TextureLoader, "/textures/shotgun.png");
   const jeton = useLoader(TextureLoader, "/textures/jeton.png");
   const envelope = useLoader(TextureLoader, "/textures/envelope.png");
+  gameIcon.encoding = THREE.sRGBEncoding;
+  gameIcon.format = THREE.RGBAFormat;
+  gameIcon.type = THREE.UnsignedByteType;
+  shotgun.encoding = THREE.sRGBEncoding;
+  shotgun.format = THREE.RGBAFormat;
+  shotgun.type = THREE.UnsignedByteType;
+  jeton.encoding = THREE.sRGBEncoding;
+  jeton.format = THREE.RGBAFormat;
+  jeton.type = THREE.UnsignedByteType;
+  envelope.encoding = THREE.sRGBEncoding;
+  envelope.format = THREE.RGBAFormat;
+  envelope.type = THREE.UnsignedByteType;
+  flappyBirdTexture.encoding = THREE.sRGBEncoding;
+  flappyBirdTexture.format = THREE.RGBAFormat;
+  flappyBirdTexture.type = THREE.UnsignedByteType;
 
   // Reference for plane geometries
   const flappyBirdRef = useRef();
