@@ -7,12 +7,16 @@ import {
 import { useCameraControl } from "../contexts/CameraControlContext";
 import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 import { useAppStatusContext } from "../contexts/AppStatusContext";
-import Modal from "./UI/Modal";
+import EmailModal from "./UI/EmailModal";
 import WelcomeMessage from "./UI/WelcomeMessage";
 
 const Interface = () => {
-  const { animation, setAnimation, setPosition, setRotation } =
-    useCharacterAnimations();
+  const {
+    animation,
+    setAnimation,
+    setPosition,
+    setRotation,
+  } = useCharacterAnimations();
   const { setCameraLookAt } = useCameraControl();
 
   const { modalIsOpen, setModalIsOpen, isApploaded } = useAppStatusContext();
@@ -53,10 +57,9 @@ const Interface = () => {
               {animation === "typing" ? "idle" : "working"}
             </button>
           )}
-          <Modal
+          <EmailModal
             isOpen={modalIsOpen}
             onClose={() => setModalIsOpen(false)}
-            onSend={() => setModalIsOpen(false)}
           />
           <WelcomeMessage showMessage={showMessage} handleClose={handleClose} />
         </>

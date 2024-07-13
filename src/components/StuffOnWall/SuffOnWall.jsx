@@ -1,10 +1,10 @@
 import React from "react";
 import ReactIcon from "./ReactIcon";
 import { wallHeight, wallSize } from "../Walls";
-import ShaderFrame from "./ShaderFrame";
 import WebpackIcon3D from "./WebpackIcon";
 import JSIcon from "./JSIcon";
 import TailwindIcon from "./TailwindIcon";
+import PaintFrame from "./PaintFrame";
 
 const SuffOnWall = () => {
   return (
@@ -19,7 +19,7 @@ const SuffOnWall = () => {
         rotation={[0, Math.PI / -2, 0]}
         position={[wallSize / 2.001, wallHeight / 2, 2]}
       >
-        <ShaderFrame />
+        <PaintFrame />
       </group>
       <group
         rotation={[0, 0, Math.PI / -2]}
