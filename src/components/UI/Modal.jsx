@@ -1,5 +1,5 @@
 import React, { lazy, useState } from "react";
-const emailjs = lazy(import("@emailjs/browser"));
+import emailjs from "@emailjs/browser";
 
 const EmailModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({

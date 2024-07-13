@@ -141,7 +141,7 @@ const GamesText = () => {
         }}
       >
         My Github
-        <mesh position={[1.05, 0.04, 0]} ref={github}>
+        <mesh position={[1.05, 0.04, 0]} ref={githubRef}>
           <planeGeometry args={[0.4, 0.4]} />
           <meshBasicMaterial map={github} transparent />
         </mesh>

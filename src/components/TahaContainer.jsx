@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 import { useArrows } from "./../hooks/use-arrows";
 import * as THREE from "three";
 import Taha from "./Taha";
-import { useAppStatusContext } from "../contexts/appStatusContext";
+import { useAppStatusContext } from "../contexts/AppStatusContext";
 
 const roomMinX = -5.5;
 const roomMaxX = 5.5;
@@ -33,15 +33,22 @@ const TahaContainer = (props) => {
   const speed = 2.2; // Adjust speed as needed
 
   useEffect(() => {
+    setAnimations(names);
+  }, [names, setAnimations]);
+
+  const updateAnimation = useCallback(() => {
     if (modalIsOpen) return;
     if (right || left || forward || backward) {
       setAnimation("walk");
     } else {
       setAnimation("idle");
     }
-  }, [right, left, forward, backward]);
+  }, [modalIsOpen, right, left, forward, backward, setAnimation]);
 
-  setAnimations(names);
+  useEffect(() => {
+    updateAnimation();
+  }, [updateAnimation]);
+
   useEffect(() => {
     if (currentAction.current !== actions[animation]) {
       const nextActionToPlay = actions[animation];
@@ -50,11 +57,11 @@ const TahaContainer = (props) => {
       nextActionToPlay?.reset().fadeIn(0.2).play();
       currentAction.current = animation;
     }
-  }, [animation, actions, names]);
+  }, [animation, actions]);
 
   useEffect(() => {
     setAnimation("typing");
-  }, []);
+  }, [setAnimation]);
 
   useFrame((state, delta) => {
     if (modalIsOpen) return;
@@ -109,7 +116,7 @@ const TahaContainer = (props) => {
         group.current.position.z
       )
     );
-  }, [position, rotation]);
+  }, [position, rotation, camera]);
 
   return <Taha charRef={group} materials={materials} nodes={nodes} />;
 };
