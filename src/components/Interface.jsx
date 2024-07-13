@@ -9,17 +9,20 @@ import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 import { useAppStatusContext } from "../contexts/AppStatusContext";
 import EmailModal from "./UI/EmailModal";
 import WelcomeMessage from "./UI/WelcomeMessage";
+import PaintingModal from "./UI/PaintingModal";
 
 const Interface = () => {
-  const {
-    animation,
-    setAnimation,
-    setPosition,
-    setRotation,
-  } = useCharacterAnimations();
+  const { animation, setAnimation, setPosition, setRotation } =
+    useCharacterAnimations();
   const { setCameraLookAt } = useCameraControl();
 
-  const { modalIsOpen, setModalIsOpen, isApploaded } = useAppStatusContext();
+  const {
+    modalIsOpen,
+    setModalIsOpen,
+    isApploaded,
+    paintModalIsPoen,
+    setPaintModalIsOpen,
+  } = useAppStatusContext();
   const [showMessage, setShowMessage] = useState(true);
 
   useEffect(() => {
@@ -62,6 +65,10 @@ const Interface = () => {
             onClose={() => setModalIsOpen(false)}
           />
           <WelcomeMessage showMessage={showMessage} handleClose={handleClose} />
+          <PaintingModal
+            closeModal={() => setPaintModalIsOpen(false)}
+            modalIsOpen={paintModalIsPoen}
+          />
         </>
       )}
     </div>

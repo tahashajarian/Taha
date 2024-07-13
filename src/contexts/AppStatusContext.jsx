@@ -5,6 +5,7 @@ const AppStatusContext = createContext({});
 export const AppStatusContextProvider = (props) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isApploaded, setIsAppLoaded] = useState(false);
+  const [paintModalIsPoen, setPaintModalIsOpen] = useState(false);
 
   return (
     <AppStatusContext.Provider
@@ -13,6 +14,8 @@ export const AppStatusContextProvider = (props) => {
         setModalIsOpen,
         isApploaded,
         setIsAppLoaded,
+        paintModalIsPoen,
+        setPaintModalIsOpen,
       }}
     >
       {props.children}
