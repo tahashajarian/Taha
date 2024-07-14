@@ -45,8 +45,8 @@ const RGBLight = () => {
         position={[0.0, 0.03, 0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
-        height={0.04}
-        intensity={40}
+        height={0.01}
+        intensity={50}
         color="red"
         ref={lightRefR}
         power={0.1}
@@ -55,8 +55,8 @@ const RGBLight = () => {
         position={[0.0, 0.03, 0.0]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
-        height={0.06}
-        intensity={40}
+        height={0.04}
+        intensity={50}
         color="blue"
         ref={lightRefB}
         power={0.1}
@@ -65,8 +65,8 @@ const RGBLight = () => {
         position={[0.0, 0.03, -0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
-        height={0.04}
-        intensity={40}
+        height={0.01}
+        intensity={50}
         color="green"
         ref={lightRefG}
         power={0.1}
