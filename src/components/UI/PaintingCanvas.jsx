@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from "react";
+import { usePaintingContext } from "../../contexts/PaintingContext";
 
-const PaintingCanvas = ({ width, height }) => {
-  const canvasRef = useRef(null);
+const PaintingCanvas = ({ width, height, onSave }) => {
   const containerRef = useRef(null);
+  const { canvasRef } = usePaintingContext();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,7 +43,7 @@ const PaintingCanvas = ({ width, height }) => {
       }
     };
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
 
     canvas.addEventListener("mousedown", startPosition);
@@ -50,23 +51,27 @@ const PaintingCanvas = ({ width, height }) => {
     canvas.addEventListener("mousemove", draw);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener("resize", resizeCanvas);
       canvas.removeEventListener("mousedown", startPosition);
       canvas.removeEventListener("mouseup", endPosition);
       canvas.removeEventListener("mousemove", draw);
     };
-  }, []);
+  }, [canvasRef]);
 
   const handleSave = () => {
     const dataURL = canvasRef.current.toDataURL();
-    console.log(dataURL);
+    onSave(dataURL);
   };
 
   return (
-    <div ref={containerRef} className="w-full" style={{ aspectRatio: `${width} / ${height}` }}>
+    <div
+      ref={containerRef}
+      className="w-full"
+      style={{ aspectRatio: `${width} / ${height}` }}
+    >
       <canvas
         ref={canvasRef}
-        style={{ border: "1px solid black", width: '100%', height: '100%' }}
+        style={{ border: "1px solid black", width: "100%", height: "100%" }}
       />
       <button onClick={handleSave}>Save</button>
     </div>

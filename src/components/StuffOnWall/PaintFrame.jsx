@@ -1,5 +1,7 @@
 import React from "react";
 import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import { usePaintingContext } from "../../contexts/PaintingContext";
+import { TextureLoader } from "three";
 
 const Frame = ({ width, height, thickness }) => {
   const frameWidth = width + thickness * 2;
@@ -13,16 +15,20 @@ const Frame = ({ width, height, thickness }) => {
   );
 };
 
-const Picture = ({ width, height }) => {
+const Picture = ({ width, height, map, canvasRef }) => {
+  const texture = new TextureLoader().load(map);
+  // console.log(canvasRef, map);
+
   return (
     <mesh position={[0, 0, 0.1]}>
       <planeGeometry args={[width, height]} />
-      <meshBasicMaterial />
+      <meshBasicMaterial map={texture} transparent={true} />
     </mesh>
   );
 };
 
 const ShaderFrame = () => {
+  const { paintingImage, canvasRef } = usePaintingContext();
   const pictureWidth = 3; // Adjust the width to be smaller
   const pictureHeight = 2.25; // Adjust the height to be smaller
   const frameThickness = 0.1;
@@ -35,7 +41,12 @@ const ShaderFrame = () => {
         height={pictureHeight}
         thickness={frameThickness}
       />
-      <Picture width={pictureWidth} height={pictureHeight} />
+      <Picture
+        width={pictureWidth}
+        height={pictureHeight}
+        map={paintingImage}
+        canvasRef={canvasRef}
+      />
     </group>
   );
 };
