@@ -48,7 +48,7 @@ function App() {
           camera={{ position: [0, 3, 8], fov: 50 }}
           shadows
           style={{
-            background: "#00264d",
+            background: "rgb(42 50 60)",
           }}
           frameloop="demand"
           className=""
