@@ -1,7 +1,6 @@
-// useCanvasEvents.js
 import { useEffect } from "react";
 
-const useCanvasEvents = (canvasRef, isPainting, setIsPainting, currentColor, brushSize, onSave) => {
+const useCanvasEvents = (canvasRef, isPainting, setIsPainting, currentColor, brushSize, onSave, brushType) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
@@ -26,13 +25,93 @@ const useCanvasEvents = (canvasRef, isPainting, setIsPainting, currentColor, bru
 
             context.strokeStyle = currentColor;
             context.lineWidth = brushSize;
-            context.lineCap = "round";
 
-            context.lineTo(clientX, clientY);
-            context.stroke();
+            switch (brushType) {
+                case "round":
+                    context.lineCap = "round";
+                    context.lineTo(clientX, clientY);
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    break;
 
-            context.beginPath();
-            context.moveTo(clientX, clientY);
+                case "square":
+                    context.lineCap = "butt";
+                    context.lineTo(clientX, clientY);
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    break;
+
+                case "triangle":
+                    context.save();
+                    context.beginPath();
+                    context.moveTo(clientX, clientY - brushSize / 2);
+                    context.lineTo(clientX + brushSize / 2, clientY + brushSize / 2);
+                    context.lineTo(clientX - brushSize / 2, clientY + brushSize / 2);
+                    context.closePath();
+                    context.fillStyle = currentColor;
+                    context.fill();
+                    context.restore();
+                    break;
+
+                case "line":
+                    context.lineCap = "square";
+                    context.lineTo(clientX, clientY);
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    break;
+
+                case "circle":
+                    context.beginPath();
+                    context.arc(clientX, clientY, brushSize / 2, 0, Math.PI * 2);
+                    context.fillStyle = currentColor;
+                    context.fill();
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    break;
+
+                case "spray":
+                    for (let i = 0; i < 10; i++) {
+                        const offsetX = (Math.random() - 0.5) * brushSize;
+                        const offsetY = (Math.random() - 0.5) * brushSize;
+                        context.fillStyle = currentColor;
+                        context.fillRect(clientX + offsetX, clientY + offsetY, 1, 1);
+                    }
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    break;
+
+                case "pattern":
+                    context.fillStyle = currentColor;
+                    for (let i = 0; i < brushSize; i += 5) {
+                        context.fillRect(clientX + i, clientY + i, 5, 5);
+                    }
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    break;
+
+                case "calligraphy":
+                    context.lineCap = "butt";
+                    context.lineTo(clientX, clientY);
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    context.lineWidth = brushSize / 2;
+                    context.lineTo(clientX + brushSize / 2, clientY + brushSize / 2);
+                    context.stroke();
+                    context.lineWidth = brushSize;
+                    break;
+
+                default:
+                    context.lineCap = "round";
+                    context.lineTo(clientX, clientY);
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(clientX, clientY);
+                    break;
+            }
         };
 
         const endPosition = () => {
@@ -58,7 +137,7 @@ const useCanvasEvents = (canvasRef, isPainting, setIsPainting, currentColor, bru
             canvas.removeEventListener("touchmove", draw);
             canvas.removeEventListener("touchend", endPosition);
         };
-    }, [canvasRef, isPainting, currentColor, brushSize, onSave]);
+    }, [canvasRef, isPainting, currentColor, brushSize, onSave, brushType]);
 };
 
 export default useCanvasEvents;

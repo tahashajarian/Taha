@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { usePaintingContext } from "../../contexts/PaintingContext";
-import ColorsAndRange from "./ColorsAndRange";
 import useCanvasEvents from "../../hooks/useCanvasEvents";
+import ColorAndBrushSelector from "./ColorAndBrushSelector";
 
 const PaintingCanvas = ({ width, height, onSave }) => {
   const containerRef = useRef(null);
@@ -9,6 +9,7 @@ const PaintingCanvas = ({ width, height, onSave }) => {
   const [isPainting, setIsPainting] = useState(false);
   const [currentColor, setCurrentColor] = useState("black");
   const [brushSize, setBrushSize] = useState(5);
+  const [brushType, setBrushType] = useState("round");
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
   useCanvasEvents(
@@ -17,7 +18,8 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     setIsPainting,
     currentColor,
     brushSize,
-    onSave
+    onSave,
+    brushType
   );
 
   useEffect(() => {
@@ -35,6 +37,13 @@ const PaintingCanvas = ({ width, height, onSave }) => {
 
   const onMouseMoveCanvas = (event) => {
     setCursorPosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    onSave(canvas.toDataURL());
   };
 
   const cursorStyle = {
@@ -68,10 +77,12 @@ const PaintingCanvas = ({ width, height, onSave }) => {
         }}
       />
       <div className="absolute" style={cursorStyle} />
-      <ColorsAndRange
+      <ColorAndBrushSelector
         setBrushSize={setBrushSize}
         setCurrentColor={setCurrentColor}
         brushSize={brushSize}
+        setBrushType={setBrushType}
+        clearCanvas={clearCanvas}
       />
     </div>
   );
