@@ -6,20 +6,20 @@ import { wallHeight } from "./Walls";
 const Lights = () => {
   return (
     <>
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={2} />
 
       <directionalLight
         position={[0, wallHeight, 0]}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
-        intensity={0.5}
+        intensity={1}
       />
 
       <directionalLight
         position={[-5, wallHeight, -5]}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
-        intensity={0.4}
+        intensity={1}
       />
       <group position={[0, wallHeight, 0]} scale={[0.4, 1, 0.4]}>
         <Luster />

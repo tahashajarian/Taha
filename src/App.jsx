@@ -52,6 +52,11 @@ function App() {
           }}
           frameloop="demand"
           className=""
+          onCreated={({ gl }) => {
+            gl.physicallyCorrectLights = true;
+            // gl.gammaOutput = true;
+            // gl.setClearColor(0xcccccc);
+          }}
         >
           <Experience />
         </Canvas>
