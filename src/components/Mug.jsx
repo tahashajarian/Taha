@@ -7,7 +7,7 @@ const Mug = (props) => {
   const { nodes } = useGLTF("/models/mug.glb");
   const group = useRef();
   const particlesRef = useRef();
-  const particleCount = 300;
+  const particleCount = 150;
 
   // Create particle data
   const particlesData = useRef(
