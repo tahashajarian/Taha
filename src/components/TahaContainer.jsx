@@ -43,7 +43,7 @@ const TahaContainer = (props) => {
     } else {
       setAnimation("idle");
     }
-  }, [modalIsOpen, right, left, forward, backward, setAnimation]);
+  }, [right, left, forward, backward, setAnimation]);
 
   useEffect(() => {
     updateAnimation();
