@@ -24,7 +24,7 @@ class ErrorBoundary extends React.Component {
     console.error("Error caught by boundary:", error, errorInfo);
     // Perform any additional cleanup or actions
     // Optionally, you can refresh the page here:
-    // window.location.reload();
+    window.location.reload();
   }
 
   render() {
