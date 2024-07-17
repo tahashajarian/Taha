@@ -45,11 +45,11 @@ const RGBLight = () => {
         position={[0.0, 0.03, 0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
-        height={0.01}
+        height={0.02}
         intensity={50}
         color="red"
         ref={lightRefR}
-        power={0.1}
+        power={0.5}
       />
       <rectAreaLight
         position={[0.0, 0.03, 0.0]}
@@ -59,17 +59,17 @@ const RGBLight = () => {
         intensity={50}
         color="blue"
         ref={lightRefB}
-        power={0.1}
+        power={0.5}
       />
       <rectAreaLight
         position={[0.0, 0.03, -0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
-        height={0.01}
+        height={0.02}
         intensity={50}
         color="green"
         ref={lightRefG}
-        power={0.1}
+        power={0.5}
       />
     </group>
   );

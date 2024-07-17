@@ -1,28 +1,29 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { MeshStandardMaterial } from "three";
 
 const Lamp = (props) => {
   const { nodes, materials } = useGLTF("/models/lamp.glb");
+  const [lampIsOn, setLampIsOn] = useState(true);
   const shinyEmissiveMaterial = new MeshStandardMaterial({
     color: 0xffaaaa, // white base color
     roughness: 0.1, // low roughness for shininess
     metalness: 0.9, // high metalness for reflective look
     emissive: 0xffaaaa, // light yellow emissive color
-    emissiveIntensity: 2, // intensity of the emissive color
+    emissiveIntensity: lampIsOn ? 1 : 0, // intensity of the emissive color
   });
+
+  const handleOnClick = () => {
+    setLampIsOn(!lampIsOn);
+  };
   return (
-    <group {...props} dispose={null} scale={0.2}>
+    <group {...props} dispose={null} scale={0.2} onClick={handleOnClick}>
       <group position={[0, 3.4, 0.489]} scale={[0.875, 1.5, 0.875]}>
         <mesh
-          
-          
           geometry={nodes.Цилиндр012.geometry}
           material={shinyEmissiveMaterial}
         />
         <mesh
-          
-          
           geometry={nodes.Цилиндр012_1.geometry}
           material={materials["Matte Black"]}
         />
@@ -33,7 +34,7 @@ const Lamp = (props) => {
         power={10}
         position={[0, 4, 0]}
         color={"#ffaaaa"}
-        intensity={3}
+        intensity={lampIsOn ? 3 : 0}
       />
     </group>
   );
@@ -56,8 +57,8 @@ export default Lamp;
 //       <mesh
 //         geometry={nodes.lamp.geometry}
 //         material={shinyEmissiveMaterial}
-//         
-//         
+//
+//
 //       />
 //       <pointLight
 //         position={[0, 0.5, 0]}

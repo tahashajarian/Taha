@@ -18,24 +18,6 @@ const GamesText = () => {
   const jeton = useLoader(TextureLoader, "/textures/jeton.png");
   const envelope = useLoader(TextureLoader, "/textures/envelope.png");
   const github = useLoader(TextureLoader, "/textures/github.png");
-  gameIcon.encoding = THREE.sRGBEncoding;
-  gameIcon.format = THREE.RGBAFormat;
-  gameIcon.type = THREE.UnsignedByteType;
-  shotgun.encoding = THREE.sRGBEncoding;
-  shotgun.format = THREE.RGBAFormat;
-  shotgun.type = THREE.UnsignedByteType;
-  jeton.encoding = THREE.sRGBEncoding;
-  jeton.format = THREE.RGBAFormat;
-  jeton.type = THREE.UnsignedByteType;
-  envelope.encoding = THREE.sRGBEncoding;
-  envelope.format = THREE.RGBAFormat;
-  envelope.type = THREE.UnsignedByteType;
-  flappyBirdTexture.encoding = THREE.sRGBEncoding;
-  flappyBirdTexture.format = THREE.RGBAFormat;
-  flappyBirdTexture.type = THREE.UnsignedByteType;
-  github.encoding = THREE.sRGBEncoding;
-  github.format = THREE.RGBAFormat;
-  github.type = THREE.UnsignedByteType;
 
   // Reference for plane geometries
   const flappyBirdRef = useRef();
@@ -57,6 +39,7 @@ const GamesText = () => {
     >
       <group position={[-4, 0, 0]}>
         <Text
+          font={null}
           fontSize={0.4}
           maxWidth={wallSize}
           color="black"
@@ -69,6 +52,7 @@ const GamesText = () => {
           </mesh>
         </Text>
         <Text
+          font={null}
           position={[0, -0.8, 0]}
           fontSize={0.3}
           color="black"
@@ -85,6 +69,7 @@ const GamesText = () => {
         </Text>
 
         <Text
+          font={null}
           position={[0, -1.5, 0]}
           fontSize={0.3}
           color="black"
@@ -101,6 +86,7 @@ const GamesText = () => {
         </Text>
 
         <Text
+          font={null}
           position={[0, -2.2, 0]}
           fontSize={0.3}
           color="black"
@@ -117,6 +103,7 @@ const GamesText = () => {
         </Text>
       </group>
       <Text
+        font={null}
         position={[3, -2.5, 0]}
         fontSize={0.3}
         color="black"
@@ -132,6 +119,7 @@ const GamesText = () => {
         </mesh>
       </Text>
       <Text
+        font={null}
         position={[2.72, -1.7, 0]}
         fontSize={0.3}
         color="black"
