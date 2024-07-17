@@ -1,86 +1,93 @@
-import React, { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import React, { useRef, useState, useEffect } from "react";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import Sound from "./Sound";
+
+const vertexShader = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const fragmentShader = `
+  uniform float time;
+  uniform bool isPlaying;
+  varying vec2 vUv;
+  void main() {
+    vec3 color = vec3(1.0); // Default color is white
+    if (isPlaying) {
+      color = vec3(
+        0.5 + 0.5 * cos(2.0 * time + vUv.x * 5.0),
+        0.5 + 0.5 * cos(2.0 * time + vUv.y * 5.0 + 2.0),
+        0.5 + 0.5 * cos(2.0 * time + vUv.x * 5.0 + 4.0)
+      );
+    }
+    gl_FragColor = vec4(color, 1.0);
+  }
+`;
 
 const Speaker = (props) => {
-  const { nodes, materials } = useGLTF("/models/speaker.glb");
+  const { nodes } = useGLTF("/models/speaker.glb");
   const circleRef = useRef();
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const shaderMaterial = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      time: { value: 0.0 },
+      isPlaying: { value: false },
+    },
+  });
 
   useFrame(({ clock }) => {
     if (circleRef.current) {
       circleRef.current.material.uniforms.time.value = clock.getElapsedTime();
+      circleRef.current.material.uniforms.isPlaying.value = isPlaying;
     }
   });
 
-  const shaderMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      time: { value: 0 },
-      resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-    },
-    vertexShader: `
-      uniform float time;
-      varying vec2 vUv;
-
-      void main() {
-        vUv = uv;
-        vec3 transformed = position;
-
-        // Add wave effect
-        float frequency = 2.0; // Adjust the frequency of the waves
-        float amplitude = 0.02; // Adjust the amplitude of the waves
-        transformed.z += amplitude * sin(position.x * frequency + time);
-
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float time;
-      varying vec2 vUv;
-
-      void main() {
-        vec2 uv = vUv - 0.5; // Center the UV coordinates
-        float radius = length(uv); // Compute the distance from the center
-
-        // Add concentric circles
-        float rings = 5.0; // Number of rings
-        float ringWidth = 0.05; // Width of each ring
-        float edge = 0.0;
-
-        for (float i = 0.0; i < rings; i++) {
-          float step = ringWidth * (i + 1.0);
-          edge += smoothstep(step - ringWidth, step, radius);
-        }
-
-        // RGB color gradient effect
-        vec3 rgbColor = 0.5 + 0.5 * cos(time + uv.xyx * 2.0 + vec3(0, 2, 4));
-
-        // Mix white center with RGB concentric rings
-        vec3 color = mix(vec3(1.0), rgbColor, edge / rings);
-
-        gl_FragColor = vec4(color, 1.0);
-      }
-    `,
-    transparent: true,
-  });
+  useEffect(() => {
+    if (circleRef.current) {
+      circleRef.current.material = shaderMaterial;
+    }
+  }, [shaderMaterial]);
 
   return (
-    <group {...props} dispose={null} scale={0.08} rotation={[Math.PI, 0, 0]}>
+    <group
+      {...props}
+      dispose={null}
+      scale={0.09}
+      rotation={[Math.PI, 0, 0]}
+      onClick={() => {
+        setIsPlaying(!isPlaying);
+      }}
+    >
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.Cube.geometry}
-        material={new THREE.MeshStandardMaterial({ color: "black" })}
+        material={
+          new THREE.MeshStandardMaterial({
+            color: "#333333",
+            emissive: 0xffffff, // light yellow emissive color
+            emissiveIntensity: isPlaying ? 0.05 : 0, // intensity of the emissive color
+          })
+        }
       />
       <mesh
         ref={circleRef}
-        castShadow
-        receiveShadow
         geometry={nodes.Circle.geometry}
         material={shaderMaterial}
-        position={[0, 0, 1.277]}
+        position={[0, -0.1, 1.277]}
         rotation={[Math.PI / 2, 0, 0]}
-        scale={0.764}
+        scale={0.7}
+      />
+      <Sound
+        // url={"/audio/Ludwing Van Beethoven - 5th Symphony 1st Movement.mp3"}
+        url={"/audio/Johannes-Brahms-Wiegenlied-Op-49.mp3"}
+        isPlaying={isPlaying}
       />
     </group>
   );
