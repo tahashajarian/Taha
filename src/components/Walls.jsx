@@ -16,7 +16,7 @@ const Walls = () => {
           rotation={wall.rot}
         />
       ))}
-      <Library position={[wallSize / 2 - 0.3, wallHeight / 2 + 0.5, -3]} />
+      <Library position={[wallSize / 2 - 0.3, wallHeight / 2 + 0.4, -3]} />
     </>
   );
 };

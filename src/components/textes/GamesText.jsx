@@ -3,7 +3,6 @@ import React, { useRef } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../Walls";
-// import PortalShaderPlane from "../shaders/PortalShaderPlane";
 import { useAppStatusContext } from "../../contexts/AppStatusContext";
 import * as THREE from "three";
 
@@ -32,6 +31,8 @@ const GamesText = () => {
     window.open(address, "_blank");
   };
 
+  const fontURL = "/fonts/Roboto-Regular.ttf"; // Replace with the path to your custom font
+
   return (
     <group
       position={[0, wallHeight - 0.6, wallSize / 2 - 0.001]}
@@ -39,20 +40,20 @@ const GamesText = () => {
     >
       <group position={[-4, 0, 0]}>
         <Text
-          font={null}
+          font={fontURL}
           fontSize={0.4}
           maxWidth={wallSize}
           color="black"
           textAlign="center"
         >
           Game Projects
-          <mesh position={[1.75, -0.04, 0]} ref={gameIconRef}>
+          <mesh position={[1.75, 0, 0]} ref={gameIconRef}>
             <planeGeometry args={[0.5, 0.5]} />
             <meshBasicMaterial map={gameIcon} transparent={true} />
           </mesh>
         </Text>
         <Text
-          font={null}
+          font={fontURL}
           position={[0, -0.8, 0]}
           fontSize={0.3}
           color="black"
@@ -62,14 +63,14 @@ const GamesText = () => {
           }
         >
           Flappy Bird
-          <mesh position={[1.12, 0, 0]} ref={flappyBirdRef}>
+          <mesh position={[1.12, 0.04, 0]} ref={flappyBirdRef}>
             <planeGeometry args={[0.75, 0.75]} />
             <meshBasicMaterial map={flappyBirdTexture} transparent />
           </mesh>
         </Text>
 
         <Text
-          font={null}
+          font={fontURL}
           position={[0, -1.5, 0]}
           fontSize={0.3}
           color="black"
@@ -79,14 +80,14 @@ const GamesText = () => {
           }}
         >
           War Land
-          <mesh position={[1.12, 0, 0]} ref={shotgunRef}>
+          <mesh position={[1.13, 0.05, 0]} ref={shotgunRef}>
             <planeGeometry args={[0.75, 0.75]} />
             <meshBasicMaterial map={shotgun} transparent />
           </mesh>
         </Text>
 
         <Text
-          font={null}
+          font={fontURL}
           position={[0, -2.2, 0]}
           fontSize={0.3}
           color="black"
@@ -96,14 +97,14 @@ const GamesText = () => {
           }}
         >
           Black Jack
-          <mesh position={[1.1, 0, 0]} ref={blackJackRef}>
+          <mesh position={[1.11, 0.05, 0]} ref={blackJackRef}>
             <planeGeometry args={[0.5, 0.5]} />
             <meshBasicMaterial map={jeton} transparent />
           </mesh>
         </Text>
       </group>
       <Text
-        font={null}
+        font={fontURL}
         position={[3, -2.5, 0]}
         fontSize={0.3}
         color="black"
@@ -113,13 +114,13 @@ const GamesText = () => {
         }}
       >
         Send an Email
-        <mesh position={[1.5, 0.1, 0]} ref={envelopeRef}>
+        <mesh position={[1.5, 0.12, 0]} ref={envelopeRef}>
           <planeGeometry args={[0.7, 0.7]} />
           <meshBasicMaterial map={envelope} transparent />
         </mesh>
       </Text>
       <Text
-        font={null}
+        font={fontURL}
         position={[2.72, -1.7, 0]}
         fontSize={0.3}
         color="black"
@@ -129,7 +130,7 @@ const GamesText = () => {
         }}
       >
         My Github
-        <mesh position={[1.05, 0.04, 0]} ref={githubRef}>
+        <mesh position={[1.05, 0.06, 0]} ref={githubRef}>
           <planeGeometry args={[0.4, 0.4]} />
           <meshBasicMaterial map={github} transparent />
         </mesh>
