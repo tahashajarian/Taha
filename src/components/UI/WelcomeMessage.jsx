@@ -8,14 +8,14 @@ const WelcomeMessage = ({ showMessage, handleClose }) => {
           <h1 className="text-4xl font-bold mb-4">Welcome!</h1>
           <p className="text-lg mb-4">I'm Taha and this is my website.</p>
           <p className="text-lg mb-4">
-            If you're on PC, use W,A,S,D to navigate around!
+            You can use arrows to navigate around!
           </p>
           <p className="text-lg mb-4">
             Have fun, and don't forget to send me an email.
           </p>
           <button
             onClick={handleClose}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none"
+            className="px-4 py-2 bg-[#00a6ed] hover:bg-[#10b6fd] text-white rounded-md focus:outline-none"
           >
             Close
           </button>

@@ -9,7 +9,7 @@ export const useArrows = () => {
   });
 
   const handleKey = useCallback(({ code, state }) => {
-    setArrows(prevArrows => {
+    setArrows((prevArrows) => {
       switch (code) {
         case "ArrowLeft":
         case "KeyA":
@@ -24,14 +24,18 @@ export const useArrows = () => {
         case "KeyW":
           return { ...prevArrows, forward: state };
         default:
-          return prevArrows;
+          return {...prevArrows};
       }
     });
   }, []);
 
+
+
   useEffect(() => {
-    const keydownHandler = event => handleKey({ code: event.code, state: true });
-    const keyupHandler = event => handleKey({ code: event.code, state: false });
+    const keydownHandler = (event) =>
+      handleKey({ code: event.code, state: true });
+    const keyupHandler = (event) =>
+      handleKey({ code: event.code, state: false });
 
     window.addEventListener("keydown", keydownHandler);
     window.addEventListener("keyup", keyupHandler);
@@ -42,5 +46,26 @@ export const useArrows = () => {
     };
   }, [handleKey]);
 
-  return arrows;
+  const handleButtonPress = useCallback(
+    (direction) => {
+      handleKey({ code: direction, state: true });
+    },
+    [handleKey]
+  );
+
+  const handleButtonRelease = useCallback(
+    (direction) => {
+      handleKey({ code: direction, state: false });
+    },
+    [handleKey]
+  );
+
+  return {
+    right: arrows.right,
+    left: arrows.left,
+    backward: arrows.backward,
+    forward: arrows.forward,
+    handleButtonPress,
+    handleButtonRelease,
+  };
 };

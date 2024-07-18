@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useCallback } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useCharacterAnimations } from "../contexts/CharacterAnimations";
-import { useArrows } from "./../hooks/use-arrows";
 import * as THREE from "three";
 import Taha from "./Taha";
 import { useAppStatusContext } from "../contexts/AppStatusContext";
+import { useArrows } from "../contexts/ArrowsProvider";
 
 const roomMinX = -5.5;
 const roomMaxX = 5.5;
