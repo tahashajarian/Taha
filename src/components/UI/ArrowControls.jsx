@@ -6,7 +6,7 @@ const ArrowButton = ({ direction, symbol }) => {
 
   return (
     <button
-      className="font-bold w-[30px] h-[30px] rounded-md shadow-lg transform transition-transform duration-200 active:scale-90 text-3xl flex items-center justify-center"
+      className="select-none font-bold w-[30px] h-[30px] rounded-md shadow-lg transform transition-transform duration-200 active:scale-90 text-3xl flex items-center justify-center"
       onMouseDown={() => handleButtonPress(direction)}
       onMouseUp={() => handleButtonRelease(direction)}
       onTouchStart={() => handleButtonPress(direction)}
@@ -19,7 +19,7 @@ const ArrowButton = ({ direction, symbol }) => {
 
 const ArrowControls = () => {
   return (
-    <div className="absolute bottom-10 left-10 flex flex-col items-center space-y-2">
+    <div className="absolute bottom-10 left-10 flex flex-col items-center space-y-2 select-none">
       <ArrowButton direction="ArrowUp" symbol="⬆️" />
       <div className="flex space-x-2">
         <ArrowButton direction="ArrowLeft" symbol="⬅️" />
