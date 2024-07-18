@@ -1,21 +1,13 @@
 import React from "react";
 import * as THREE from "three";
-
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
+import { randomColor } from "../constances/constances";
 
 const Papers = () => {
   const paperCount = 10;
   const papers = Array.from({ length: paperCount }, (_, index) => {
-    const rotation = new THREE.Euler(0, 0, (Math.random() * 2 * Math.PI)/12);
+    const rotation = new THREE.Euler(0, 0, (Math.random() * 2 * Math.PI) / 12);
     const position = new THREE.Vector3(0, 0, index * 0.0001);
-    const color = getRandomColor();
+    const color = randomColor();
 
     return (
       <mesh
@@ -29,7 +21,21 @@ const Papers = () => {
     );
   });
 
-  return <group>{papers}</group>;
+  return (
+    <group>
+      <Pen />
+      {papers}
+    </group>
+  );
 };
 
 export default Papers;
+
+const Pen = () => {
+  return (
+    <mesh position={[0, 0, 0.005]}>
+      <cylinderGeometry args={[0.005, 0.005, 0.118]} />
+      <meshBasicMaterial color={"black"} />
+    </mesh>
+  );
+};

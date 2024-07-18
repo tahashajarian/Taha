@@ -31,11 +31,11 @@ const Library = React.memo(({ position }) => {
         font={fontURL}
         rotation={[0, -Math.PI / 2, 0]}
         position={[-0.2, 0.8, 0]}
-        fontSize={0.2}
+        fontSize={0.1}
         color="gray"
         textAlign="center"
       >
-        The place that I want to forever
+       The place that I want to forever be inspired by
       </Text>
       {shelves}
     </group>
