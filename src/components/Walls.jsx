@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
 import Ground from "./Ground";
 import ReactIcon from "./StuffOnWall/ReactIcon";
+import { MeshWobbleMaterial } from "@react-three/drei";
+import Library from "./Library";
 
 const Walls = () => {
   return (
@@ -14,6 +16,7 @@ const Walls = () => {
           rotation={wall.rot}
         />
       ))}
+      <Library position={[wallSize / 2 - 0.3, wallHeight / 2 + 0.5, -3]} />
     </>
   );
 };
@@ -22,9 +25,9 @@ export default Walls;
 
 const Wall = ({ position, rotation, args }) => {
   return (
-    <mesh rotation={rotation} position={position} >
+    <mesh rotation={rotation} position={position}>
       <planeGeometry args={args} />
-      <meshStandardMaterial color={'#bed4e6'}/>
+      <meshStandardMaterial color={"#bed4e6"} />
     </mesh>
   );
 };
