@@ -8,6 +8,7 @@ import Monitor2 from "./Monitor2";
 import Mug from "./Mug";
 import Papers from "./Papers";
 import Speaker from "./Speaker";
+import Clock from "./Clock";
 
 const TableSetup = () => {
   return (
@@ -25,14 +26,17 @@ const TableSetup = () => {
       <group position={[0.1, 0.715, 0.65]}>
         <Keyboard />
       </group>
-      <group position={[-0.6, 0.771, 0.65]}>
+      <group position={[-0.5, 0.771, 0.55]}>
         <Mug />
       </group>
-      <group position={[0.7, 0.71, 0.65]} rotation={[-Math.PI / 2, 0, 0]}>
+      <group position={[-0.75, 0.71, 0.75]} rotation={[-Math.PI / 2, 0, 0]}>
         <Papers />
       </group>
       <group position={[0.8, 0.8, 0.99]} rotation={[0, 0, 0]}>
         <Speaker />
+      </group>
+      <group position={[0.8, 0.532, 0.506]} rotation={[0, Math.PI/2, 0]}>
+        <Clock />
       </group>
       <Textes />
     </group>
