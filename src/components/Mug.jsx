@@ -7,7 +7,7 @@ const Mug = (props) => {
   const { nodes } = useGLTF("/models/mug.glb");
   const group = useRef();
   const particlesRef = useRef();
-  const particleCount = 150;
+  const particleCount = 50;
 
   // Create particle data
   const particlesData = useRef(
@@ -45,10 +45,10 @@ const Mug = (props) => {
   particleTexture.type = THREE.UnsignedByteType;
 
   const particleMaterial = new THREE.PointsMaterial({
-    size: 0.05,
+    size: 0.1,
     map: particleTexture,
     transparent: true,
-    opacity: 0.1, // Initial opacity set to 0.1 for fade-in effect
+    opacity: 0.2, // Initial opacity set to 0.1 for fade-in effect
     depthWrite: false,
     blending: THREE.AdditiveBlending
   });
