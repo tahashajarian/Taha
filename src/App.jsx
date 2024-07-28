@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Experience from "./components/Experience";
 import Interface from "./components/Interface";
@@ -39,7 +39,8 @@ class ErrorBoundary extends React.Component {
 
 function App() {
   const { setCameraLookAt } = useCameraControl();
-  const { setIsAppLoaded, isAppLoaded } = useAppStatusContext();
+  const { setIsAppLoaded } = useAppStatusContext();
+  const [loaded, setLoaded] = useState(false)
 
   return (
     <ErrorBoundary>
@@ -60,12 +61,14 @@ function App() {
         >
           <Experience />
         </Canvas>
-        {!isAppLoaded && (
+        {!loaded && (
           <Loader
             dataInterpolation={(percentLoaded) => {
+              console.log(percentLoaded)
               if (percentLoaded === 100) {
                 setCameraLookAt(cameraLookAtConst);
                 setIsAppLoaded(true);
+                setLoaded(true)
               }
               return `${Math.ceil(percentLoaded)}%`;
             }}
