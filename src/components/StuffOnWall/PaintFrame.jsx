@@ -1,18 +1,28 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useAppStatusContext } from "../../contexts/AppStatusContext";
 import { usePaintingContext } from "../../contexts/PaintingContext";
-import { TextureLoader } from "three";
-import { Html } from "@react-three/drei";
-import { useLoader } from "@react-three/fiber";
+import { TextureLoader, ShaderMaterial, Color } from "three";
+import { useFrame, useLoader } from "@react-three/fiber";
 
-const Frame = ({ width, height, thickness, color, position }) => {
+const Frame = ({ width, height, thickness, color, position, isLoading }) => {
   const frameWidth = width + thickness * 2;
   const frameHeight = height + thickness * 2;
+  const materialRef = useRef();
+
+  useFrame((state, delta) => {
+    if (isLoading) {
+      const t = (Math.sin(state.clock.elapsedTime * 5) + 1) / 2; // Normalize to range [0, 1]
+      const color = new Color(t * 0, t * 1, t * 0); // Interpolate between black and green
+      materialRef.current.color.set(color);
+    } else {
+      materialRef.current.color.set('black');
+    }
+  });
 
   return (
     <mesh position={[0, 0, position]}>
       <boxGeometry args={[frameWidth, frameHeight, thickness]} />
-      <meshBasicMaterial color={color} />
+      <meshBasicMaterial color={color} ref={materialRef} transparent />
     </mesh>
   );
 };
@@ -27,12 +37,12 @@ const Picture = ({ width, height, map }) => {
   );
 };
 
-const RefreshIcon = () => {
+const RefreshIcon = ({ onClick }) => {
   const ref = useRef();
   const texture = useLoader(TextureLoader, "/textures/refresh.png");
 
   return (
-    <mesh position={[-1.85, 1.05, 0.2]} ref={ref}> 
+    <mesh position={[-1.85, 1.05, 0.2]} ref={ref} onClick={onClick}>
       <planeGeometry args={[0.3, 0.3]} />
       <meshBasicMaterial map={texture} transparent />
     </mesh>
@@ -49,18 +59,9 @@ const ShaderFrame = () => {
 
   return (
     <>
-      <group
-        onClick={fetchPainting}
-      >
+      <group onClick={fetchPainting}>
         <RefreshIcon />
       </group>
-      {loading && (
-        <Html center>
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-            <p className="text-white text-xl">Loading...</p>
-          </div>
-        </Html>
-      )}
       <group onClick={() => setPaintModalIsOpen(true)}>
         <Frame
           width={pictureWidth}
@@ -68,6 +69,7 @@ const ShaderFrame = () => {
           thickness={frameThickness + 0.1}
           color="black"
           position={0.01}
+          isLoading={loading}
         />
         <Frame
           width={pictureWidth}
@@ -76,7 +78,6 @@ const ShaderFrame = () => {
           color={"white"}
           position={0.1}
         />
-
         <Picture
           width={pictureWidth}
           height={pictureHeight}
