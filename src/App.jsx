@@ -39,7 +39,7 @@ class ErrorBoundary extends React.Component {
 
 function App() {
   const { setCameraLookAt } = useCameraControl();
-  const { setIsAppLoaded } = useAppStatusContext();
+  const { setIsAppLoaded, isAppLoaded } = useAppStatusContext();
 
   return (
     <ErrorBoundary>
@@ -60,15 +60,17 @@ function App() {
         >
           <Experience />
         </Canvas>
-        <Loader
-          dataInterpolation={(percentLoaded) => {
-            if (percentLoaded === 100) {
-              setCameraLookAt(cameraLookAtConst);
-              setIsAppLoaded(true);
-            }
-            return `${Math.ceil(percentLoaded)}%`;
-          }}
-        />
+        {!isAppLoaded && (
+          <Loader
+            dataInterpolation={(percentLoaded) => {
+              if (percentLoaded === 100) {
+                setCameraLookAt(cameraLookAtConst);
+                setIsAppLoaded(true);
+              }
+              return `${Math.ceil(percentLoaded)}%`;
+            }}
+          />
+        )}
         <Interface />
       </div>
     </ErrorBoundary>

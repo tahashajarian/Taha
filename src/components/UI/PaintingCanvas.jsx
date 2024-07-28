@@ -52,7 +52,7 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     height: `${brushSize}px`,
     borderRadius: "50%",
     backgroundColor: currentColor,
-    border: currentColor === "white" ? "1px solid black" : "none",
+    border: currentColor === "white" || currentColor === "#ffffff" ? "1px solid black" : "none",
     pointerEvents: "none",
     zIndex: 1000,
     transform: "translate(-50%, -50%)",

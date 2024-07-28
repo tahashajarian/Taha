@@ -1,6 +1,13 @@
 import React from "react";
 
-const ColorAndBrushSelector = ({ setCurrentColor, brushSize, setBrushSize, setBrushType, clearCanvas }) => {
+const ColorAndBrushSelector = ({
+  setCurrentColor,
+  brushSize,
+  setBrushSize,
+  setBrushType,
+  clearCanvas,
+  fetchPainting
+}) => {
   return (
     <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 flex justify-center space-x-4 items-center">
       <input

@@ -1,5 +1,5 @@
 <?php
-$servername = "https://taha-shajarian.ir";
+$servername = "127.0.0.1";
 $username = "h215195_taha";
 $password = "jJ1-hI2-eX1_cF5_";
 $dbname = "h215195_db";
