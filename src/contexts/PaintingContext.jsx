@@ -23,15 +23,12 @@ export const PaintingContextProvider = (props) => {
       });
   };
 
-  // useEffect(() => {
-  //   // Load the image from the server when the component mounts
-  //   fetchPainting();
+  useEffect(() => {
+    // Load the image from the server when the component mounts
+    fetchPainting();
 
-  //   // Set up an interval to fetch the image every 5 seconds
-  //   const interval = setInterval(fetchPainting, 5000);
-
-  //   return () => clearInterval(interval); // Clean up interval on component unmount
-  // }, []);
+    
+  }, []);
 
   // Save the image to the server whenever it changes
   useEffect(() => {
