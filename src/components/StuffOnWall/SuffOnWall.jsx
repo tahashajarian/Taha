@@ -5,6 +5,7 @@ import WebpackIcon3D from "./WebpackIcon";
 import JSIcon from "./JSIcon";
 import TailwindIcon from "./TailwindIcon";
 import PaintFrame from "./PaintFrame";
+import GodsHand from "./GodsHand";
 
 const SuffOnWall = () => {
   return (
@@ -36,9 +37,12 @@ const SuffOnWall = () => {
       </group>
       <group
         rotation={[Math.PI / 2, 0, Math.PI / -2]}
-        position={[wallSize / -2.2, 0.75, -.4]}
+        position={[wallSize / -2.2, 0.75, -0.4]}
       >
         <TailwindIcon />
+      </group>
+      <group rotation={[0, 0, 0]} position={[-3.2, 2, wallSize / -2 + 0.1]}>
+        <GodsHand />
       </group>
     </group>
   );

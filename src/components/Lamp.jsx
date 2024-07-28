@@ -34,7 +34,7 @@ const Lamp = (props) => {
         power={10}
         position={[0, 4, 0]}
         color={"#ffaaaa"}
-        intensity={lampIsOn ? 3 : 0}
+        intensity={lampIsOn ? 6 : 0}
       />
     </group>
   );
