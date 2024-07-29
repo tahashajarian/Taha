@@ -3,6 +3,7 @@ import Ground from "./Ground";
 import ReactIcon from "./StuffOnWall/ReactIcon";
 import { MeshWobbleMaterial } from "@react-three/drei";
 import Library from "./Library";
+import { wallHeight, wallSize } from "../constances/constances";
 
 const Walls = () => {
   return (
@@ -32,8 +33,7 @@ const Wall = ({ position, rotation, args }) => {
   );
 };
 
-export const wallSize = 12;
-export const wallHeight = 4;
+
 const segments = 1;
 
 const wallData = [

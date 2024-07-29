@@ -2,9 +2,8 @@ import { Text } from "@react-three/drei";
 import React, { useRef } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { wallHeight, wallSize } from "../Walls";
 import { useAppStatusContext } from "../../contexts/AppStatusContext";
-import * as THREE from "three";
+import { wallHeight, wallSize } from "../../constances/constances";
 
 const GamesText = () => {
   // Load textures using TextureLoader

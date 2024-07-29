@@ -33,7 +33,9 @@ const TahaContainer = (props) => {
   const speed = 2.2; // Adjust speed as needed
 
   useEffect(() => {
-    setAnimations(names);
+    if (setAnimation) {
+      setAnimations(names);
+    }
   }, [names, setAnimations]);
 
   const updateAnimation = useCallback(() => {

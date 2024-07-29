@@ -9,10 +9,11 @@ import Mug from "./Mug";
 import Papers from "./Papers";
 import Speaker from "./Speaker";
 import Clock from "./Clock";
+import { tablePosition, tableRotation } from "../constances/constances";
 
 const TableSetup = () => {
   return (
-    <group position={[0, 0, 0]}>
+    <group position={tablePosition} rotation={tableRotation}>
       <Chair />
       <group position={[0, 0, 0.8]} scale={[1.2, 0.84, 1]}>
         <Desk />
