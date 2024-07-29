@@ -15,7 +15,7 @@ const Frame = ({ width, height, thickness, color, position, isLoading }) => {
       const color = new Color(t * 0, t * 1, t * 0); // Interpolate between black and green
       materialRef.current.color.set(color);
     } else {
-      materialRef.current.color.set('black');
+      materialRef.current.color.set(color);
     }
   });
 
