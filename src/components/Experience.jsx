@@ -13,7 +13,7 @@ import StuffOnWall from "./StuffOnWall/SuffOnWall";
 const Experience = () => {
   return (
     <>
-      <OrbitControls />
+      {/* <OrbitControls /> */}
       {/* <Float speed={2} rotationIntensity={2} floatIntensity={2}> */}
       <Lights />
       <CameraControl />
