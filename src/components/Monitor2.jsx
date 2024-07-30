@@ -19,8 +19,8 @@ const Monitor2 = (props) => {
           new MeshStandardMaterial({
             color: "#eeeeee",
             side: DoubleSide,
-            roughness: 0,
-            metalness: 0.8
+            roughness: 0.1,
+            metalness: 1
           })
         }
         position={[0.003, 0.007, 0.006]}
@@ -41,7 +41,7 @@ const Monitor2 = (props) => {
               color: "#eeeeee",
               side: DoubleSide,
               roughness: 0,
-              metalness: 0.8
+              metalness: 1
             })
           }
         />

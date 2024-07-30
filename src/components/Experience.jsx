@@ -7,6 +7,7 @@ import TableSetup from "./TableSetup";
 import TahaContainer from "./TahaContainer";
 import StuffOnWall from "./StuffOnWall/SuffOnWall";
 import Lights from "./Lights";
+import FlightPoints from "./FlightPoints";
 
 const Experience = () => {
   return (
@@ -19,8 +20,8 @@ const Experience = () => {
       <TahaContainer />
       <TableSetup />
       <Walls />
-
       <StuffOnWall />
+      <FlightPoints />
     </>
   );
 };
