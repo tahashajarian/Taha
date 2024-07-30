@@ -30,7 +30,7 @@ const Frame = ({ width, height, thickness, color, position, isLoading }) => {
 const Picture = ({ width, height, map }) => {
   const texture = new TextureLoader().load(map);
   return (
-    <mesh position={[0, 0, 0.12]}>
+    <mesh position={[0, 0, 0.13]}>
       <planeGeometry args={[width, height]} />
       <meshBasicMaterial map={texture} transparent={true} color={"white"} />
     </mesh>
