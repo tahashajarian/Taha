@@ -44,7 +44,7 @@ const SuffOnWall = () => {
         <TailwindIcon />
       </group> */}
       <group rotation={[0, 0, 0]} position={[-3.2, 2, wallSize / -2 + 0.1]}>
-        <GodsHand />
+        <StarryNight />
       </group>
 
       <group rotation={[0, 0, 0]} position={[-wallSize/2 + 0.75, 0.98, wallSize/2 - 1]}>
@@ -52,7 +52,7 @@ const SuffOnWall = () => {
       </group>
 
       <group rotation={[0, Math.PI/2, 0]} position={[-wallSize/2 + 0.1, 2, 0]}>
-        <StarryNight />
+        <GodsHand />
       </group>
     </group>
   );

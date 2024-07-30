@@ -8,7 +8,7 @@ const GodsHand = () => {
 
   return (
     <mesh position={[0, 0, 0]} ref={ref}>
-      <planeGeometry args={[3, 3]} />
+      <planeGeometry args={[4, 3]} />
       <meshBasicMaterial map={texture} transparent />
     </mesh>
   );

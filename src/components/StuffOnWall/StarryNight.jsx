@@ -8,7 +8,7 @@ const StarryNight = () => {
 
   return (
     <mesh position={[0, 0, 0]} ref={ref}>
-      <planeGeometry args={[3, 3]} />
+      <planeGeometry args={[2, 2]} />
       <meshBasicMaterial map={texture} transparent />
     </mesh>
   );
