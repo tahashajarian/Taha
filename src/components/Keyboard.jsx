@@ -9,7 +9,8 @@ const Keyboard = (props) => {
       <RGBLight />
       <mesh
         
-        
+        castShadow
+        receiveShadow
         geometry={nodes.Cube.geometry}
         material={materials.klawisze}
         scale={1}

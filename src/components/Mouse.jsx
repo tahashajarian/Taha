@@ -8,13 +8,15 @@ const Mouse = (props) => {
       <group position={[0, 0.022, 0]} rotation={[Math.PI / 2, 0, 0]} scale={1.6}>
         <mesh
           
-          
+          castShadow
+        receiveShadow
           geometry={nodes.Cube001.geometry}
           material={materials['Material.001']}
         />
         <mesh
           
-          
+          castShadow
+        receiveShadow
           geometry={nodes.Cube001_1.geometry}
           material={materials['Material.002']}
         />

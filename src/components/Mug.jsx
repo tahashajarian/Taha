@@ -25,7 +25,7 @@ const Mug = (props) => {
       rotationSpeed: (Math.random() - 0.5) * 0.0005,
       life: Math.random() * 100 + 50,
       size: Math.random() * 0.04 + 0.02, // Random size between 0.02 and 0.06
-      opacity: 1.0 // Initial opacity set to 1.0
+      opacity: 1.0, // Initial opacity set to 1.0
     }))
   );
 
@@ -34,8 +34,14 @@ const Mug = (props) => {
   const positions = new Float32Array(particleCount * 3);
   const opacities = new Float32Array(particleCount).fill(1.0);
 
-  particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-  particleGeometry.setAttribute("opacity", new THREE.BufferAttribute(opacities, 1));
+  particleGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(positions, 3)
+  );
+  particleGeometry.setAttribute(
+    "opacity",
+    new THREE.BufferAttribute(opacities, 1)
+  );
 
   // Load particle texture
   const textureLoader = new THREE.TextureLoader();
@@ -50,7 +56,7 @@ const Mug = (props) => {
     transparent: true,
     opacity: 0.2, // Initial opacity set to 0.1 for fade-in effect
     depthWrite: false,
-    blending: THREE.AdditiveBlending
+    blending: THREE.AdditiveBlending,
   });
 
   useEffect(() => {
@@ -67,7 +73,9 @@ const Mug = (props) => {
     particlesData.current.forEach((data, i) => {
       data.position.add(data.velocity);
 
-      const rotationMatrix = new THREE.Matrix4().makeRotationY(data.rotationSpeed);
+      const rotationMatrix = new THREE.Matrix4().makeRotationY(
+        data.rotationSpeed
+      );
       data.velocity.applyMatrix4(rotationMatrix);
 
       if (data.position.y > 0.9 || data.life <= 0) {
@@ -103,9 +111,24 @@ const Mug = (props) => {
   });
 
   return (
-    <group {...props} dispose={null} scale={0.6} rotation={[0, Math.PI / 2, 0]} ref={group}>
-      <mesh geometry={nodes.Mug.geometry} material={nodes.Mug.material} />
-      <points ref={particlesRef} geometry={particleGeometry} material={particleMaterial} />
+    <group
+      {...props}
+      dispose={null}
+      scale={0.6}
+      rotation={[0, Math.PI / 2, 0]}
+      ref={group}
+    >
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Mug.geometry}
+        material={nodes.Mug.material}
+      />
+      <points
+        ref={particlesRef}
+        geometry={particleGeometry}
+        material={particleMaterial}
+      />
     </group>
   );
 };

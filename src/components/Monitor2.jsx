@@ -10,7 +10,8 @@ const Monitor2 = (props) => {
   return (
     <group {...props} dispose={null}>
       <mesh
-        
+        castShadow
+        receiveShadow
         
         geometry={nodes.Plane.geometry}
         material={materials['Material.014']}
@@ -23,13 +24,15 @@ const Monitor2 = (props) => {
         rotation={[-1.497, -1.56, -1.598]}
         scale={[0.2, 0.16, 0.2]}>
         <mesh
-          
+          castShadow
+          receiveShadow
           
           geometry={nodes.Plane006.geometry}
           material={materials['Material.014']}
         />
         <mesh
-          
+          castShadow
+          receiveShadow
           
           geometry={nodes.Plane006_1.geometry}
           material={materials['Screen.001']}

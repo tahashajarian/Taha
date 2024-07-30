@@ -10,37 +10,37 @@ import { wallHeight, wallSize } from "../../constances/constances";
 const SuffOnWall = () => {
   return (
     <group>
-      <group
+      {/* <group
         rotation={[0, 0, Math.PI / -2]}
         position={[wallSize / -2, wallHeight / 2, 1]}
       >
         <ReactIcon />
-      </group>
+      </group> */}
       <group
         rotation={[0, Math.PI / -2, 0]}
         position={[wallSize / 2.001, wallHeight / 2, 2]}
       >
         <PaintFrame />
       </group>
-      <group
+      {/* <group
         rotation={[0, 0, Math.PI / -2]}
-        position={[wallSize / -2.2, 0.5, 1]}
+        position={[wallSize / -2.2, 0.6, 1]}
       >
         <WebpackIcon3D />
-      </group>
+      </group> */}
 
-      <group
+      {/* <group
         rotation={[Math.PI / 2, 0, Math.PI / -2]}
-        position={[wallSize / -2.2, 0.5, 3]}
+        position={[wallSize / -2.2, 0.6, 3]}
       >
         <JSIcon />
-      </group>
-      <group
+      </group> */}
+      {/* <group
         rotation={[Math.PI / 2, 0, Math.PI / -2]}
         position={[wallSize / -2.2, 0.75, -0.4]}
       >
         <TailwindIcon />
-      </group>
+      </group> */}
       <group rotation={[0, 0, 0]} position={[-3.2, 2, wallSize / -2 + 0.1]}>
         <GodsHand />
       </group>

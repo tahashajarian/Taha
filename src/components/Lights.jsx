@@ -6,13 +6,19 @@ import { wallHeight } from "../constances/constances";
 const Lights = () => {
   return (
     <>
-      <ambientLight intensity={2} />
+      <ambientLight intensity={1} castShadow />
 
       <directionalLight
-        position={[-5, wallHeight, -5]}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        intensity={1}
+        position={[-5, wallHeight, 2]}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        intensity={3}
+        castShadow
+        shadow-camera-far={50}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
       />
       <group position={[0, wallHeight, 0]} scale={[0.4, 1, 0.4]}>
         <Luster />

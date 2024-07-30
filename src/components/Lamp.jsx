@@ -20,10 +20,12 @@ const Lamp = (props) => {
     <group {...props} dispose={null} scale={0.2} onClick={handleOnClick}>
       <group position={[0, 3.4, 0.489]} scale={[0.875, 1.5, 0.875]}>
         <mesh
+        castShadow
           geometry={nodes.Цилиндр012.geometry}
           material={shinyEmissiveMaterial}
         />
         <mesh
+        castShadow
           geometry={nodes.Цилиндр012_1.geometry}
           material={materials["Matte Black"]}
         />
@@ -35,6 +37,7 @@ const Lamp = (props) => {
         position={[0, 4, 0]}
         color={"#ffaaaa"}
         intensity={lampIsOn ? 6 : 0}
+        castShadow
       />
     </group>
   );

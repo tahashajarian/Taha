@@ -53,6 +53,8 @@ function App() {
           }}
           frameloop="demand"
           className=""
+          gl={{ antialias: true }}
+          dpr={[1, 2]}
           onCreated={({ gl }) => {
             gl.physicallyCorrectLights = true;
             // gl.gammaOutput = true;

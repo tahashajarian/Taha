@@ -42,7 +42,7 @@ const GamesText = () => {
           font={fontURL}
           fontSize={0.4}
           maxWidth={wallSize}
-          color="black"
+          color="silver"
           textAlign="center"
         >
           Game Projects
@@ -55,7 +55,7 @@ const GamesText = () => {
           font={fontURL}
           position={[0, -0.8, 0]}
           fontSize={0.3}
-          color="black"
+          color="silver"
           textAlign="center"
           onClick={() =>
             navigateTo("https://taha-shajarian.ir/projects/flappybird")
@@ -72,7 +72,7 @@ const GamesText = () => {
           font={fontURL}
           position={[0, -1.5, 0]}
           fontSize={0.3}
-          color="black"
+          color="silver"
           textAlign="center"
           onClick={() => {
             navigateTo("https://taha-shajarian.ir/projects/warland");
@@ -89,7 +89,7 @@ const GamesText = () => {
           font={fontURL}
           position={[0, -2.2, 0]}
           fontSize={0.3}
-          color="black"
+          color="silver"
           textAlign="center"
           onClick={() => {
             navigateTo("https://taha-shajarian.ir/projects/blackjack");
@@ -106,7 +106,7 @@ const GamesText = () => {
         font={fontURL}
         position={[3, -2.5, 0]}
         fontSize={0.3}
-        color="black"
+        color="silver"
         textAlign="center"
         onClick={() => {
           setModalIsOpen(true);
@@ -122,7 +122,7 @@ const GamesText = () => {
         font={fontURL}
         position={[2.72, -1.7, 0]}
         fontSize={0.3}
-        color="black"
+        color="silver"
         textAlign="center"
         onClick={() => {
           navigateTo("https://github.com/tahashajarian");

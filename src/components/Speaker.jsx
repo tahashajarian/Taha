@@ -67,6 +67,8 @@ const Speaker = (props) => {
       }}
     >
       <mesh
+      castShadow
+      receiveShadow
         geometry={nodes.Cube.geometry}
         material={
           new THREE.MeshStandardMaterial({
@@ -77,6 +79,8 @@ const Speaker = (props) => {
         }
       />
       <mesh
+      castShadow
+      receiveShadow
         ref={circleRef}
         geometry={nodes.Circle.geometry}
         material={shaderMaterial}

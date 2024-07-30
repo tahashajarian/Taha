@@ -21,18 +21,24 @@ const Luster = (props) => {
   const handleOnClick = () => {
     setLampIsOn(!lampIsOn);
   };
-  
+
   return (
     <group {...props} dispose={null} onClick={handleOnClick}>
       <directionalLight
         position={[0, wallHeight, 0]}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
         intensity={lampIsOn ? 2 : 0}
+        castShadow
       />
-      <group rotation={[-Math.PI, 0, 0]} scale={0.025}>
-        <mesh geometry={nodes.Mesh.geometry} material={materials.Body} />
+      <group  rotation={[-Math.PI, 0, 0]} scale={0.025}>
         <mesh
+          
+          geometry={nodes.Mesh.geometry}
+          material={materials.Body}
+        />
+        <mesh
+          
           geometry={nodes.Mesh_1.geometry}
           material={shinyEmissiveMaterial}
         />

@@ -1,8 +1,8 @@
 const Taha = ({ charRef, nodes, materials }) => {
   return (
-    <group ref={charRef} dispose={null} frustumCulled={false}>
-      <group name="Scene" frustumCulled={false}>
-        <group name="Armature001" frustumCulled={false}>
+    <group receiveShadow castShadow ref={charRef} dispose={null} frustumCulled={false}>
+      <group receiveShadow castShadow name="Scene" frustumCulled={false}>
+        <group receiveShadow castShadow name="Armature001" frustumCulled={false}>
           <skinnedMesh
             name="EyeLeft"
             geometry={nodes.EyeLeft.geometry}
@@ -11,6 +11,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             morphTargetDictionary={nodes.EyeLeft.morphTargetDictionary}
             morphTargetInfluences={nodes.EyeLeft.morphTargetInfluences}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="EyeRight"
@@ -20,6 +22,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             morphTargetDictionary={nodes.EyeRight.morphTargetDictionary}
             morphTargetInfluences={nodes.EyeRight.morphTargetInfluences}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Body"
@@ -27,6 +31,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             material={materials["Wolf3D_Body.011"]}
             skeleton={nodes.Wolf3D_Body.skeleton}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Glasses"
@@ -34,6 +40,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             material={materials["Wolf3D_Glasses.011"]}
             skeleton={nodes.Wolf3D_Glasses.skeleton}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Hair"
@@ -41,6 +49,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             material={materials["Wolf3D_Hair.011"]}
             skeleton={nodes.Wolf3D_Hair.skeleton}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Head"
@@ -50,6 +60,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             morphTargetDictionary={nodes.Wolf3D_Head.morphTargetDictionary}
             morphTargetInfluences={nodes.Wolf3D_Head.morphTargetInfluences}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Outfit_Bottom"
@@ -57,6 +69,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             material={materials["Wolf3D_Outfit_Bottom.011"]}
             skeleton={nodes.Wolf3D_Outfit_Bottom.skeleton}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Outfit_Footwear"
@@ -64,6 +78,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             material={materials["Wolf3D_Outfit_Footwear.011"]}
             skeleton={nodes.Wolf3D_Outfit_Footwear.skeleton}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Outfit_Top001"
@@ -71,6 +87,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             material={materials["Wolf3D_Outfit_Top.011"]}
             skeleton={nodes.Wolf3D_Outfit_Top001.skeleton}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <skinnedMesh
             name="Wolf3D_Teeth"
@@ -80,6 +98,8 @@ const Taha = ({ charRef, nodes, materials }) => {
             morphTargetDictionary={nodes.Wolf3D_Teeth.morphTargetDictionary}
             morphTargetInfluences={nodes.Wolf3D_Teeth.morphTargetInfluences}
             frustumCulled={false}
+            castShadow
+            receiveShadow
           />
           <primitive object={nodes.Hips} />
         </group>

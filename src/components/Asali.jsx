@@ -5,11 +5,16 @@ import Book from "./Book";
 const Asali = (props) => {
   const { nodes, materials } = useGLTF("/models/asali.glb");
   return (
-    <group {...props} dispose={null}>
+    <group castShadow receiveShadow {...props} dispose={null}>
       <Book position={[0, 0.73, 0]} rotation={[Math.PI / 2, 0, 0]} />
       <Book position={[0, 0.78, 0]} rotation={[Math.PI / 2, 0, 0]} />
       <Book position={[0, 0.83, 0]} rotation={[Math.PI / 2, 0, 0]} />
-      <mesh geometry={nodes.table001.geometry} material={materials.table} />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.table001.geometry}
+        material={materials.table}
+      />
     </group>
   );
 };
