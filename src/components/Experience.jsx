@@ -2,13 +2,13 @@ import React, { Suspense } from "react";
 import { OrbitControls } from "@react-three/drei";
 import LoaderComponent from "./LoaderComponent";
 import CameraControl from "./CameraControl";
-import Lights from "./Lights";
 import Walls from "./Walls";
 import TableSetup from "./TableSetup";
 import Sofa from "./Sofa";
 import Mirror from "./Mirror";
 import TahaContainer from "./TahaContainer";
 import StuffOnWall from "./StuffOnWall/SuffOnWall";
+import Lights from "./Lights";
 
 const Experience = () => {
   return (
