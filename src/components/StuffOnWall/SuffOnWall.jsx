@@ -11,6 +11,9 @@ const PaintFrame = React.lazy(() => import("./PaintFrame"));
 const GodsHand = React.lazy(() => import("./GodsHand"));
 const Flower = React.lazy(() => import("../Flower"));
 const StarryNight = React.lazy(() => import("./StarryNight"));
+const Mirror = React.lazy(() =>import("../Mirror") );
+const Sofa = React.lazy(() =>import("../Sofa") );
+
 
 const SuffOnWall = () => {
   const { isApploaded } = useAppStatusContext();
@@ -77,6 +80,12 @@ const SuffOnWall = () => {
             <group rotation={[0, Math.PI/2, 0]} position={[-wallSize/2 + 0.1, 2, 0]}>
               <GodsHand />
             </group>
+          </Suspense>
+          <Suspense fallback={null}>
+            <Sofa />
+          </Suspense>
+          <Suspense fallback={null}>
+            <Mirror />
           </Suspense>
         </>
       )}
