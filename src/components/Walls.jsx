@@ -39,7 +39,7 @@ const Wall = ({ position, rotation, args }) => {
   // Set the repeat and wrapping properties for each texture
   Object.values(textures2).forEach((texture) => {
     texture.wrapS = texture.wrapT = RepeatWrapping;
-    texture.repeat.set(10, 10);
+    texture.repeat.set(1, 1);
   });
 
   return (
@@ -98,8 +98,8 @@ const TexturedFloor = () => {
       "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Roughness.jpg",
   });
 
-  const repeatX = 10; // Adjust this value to scale the texture in the X direction
-  const repeatY = 10; // Adjust this value to scale the texture in the Y direction
+  const repeatX = 8; // Adjust this value to scale the texture in the X direction
+  const repeatY = 8; // Adjust this value to scale the texture in the Y direction
 
   // Set the repeat and wrapping properties for each texture
   Object.values(textures).forEach((texture) => {
