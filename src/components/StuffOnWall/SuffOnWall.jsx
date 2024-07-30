@@ -6,6 +6,8 @@ import TailwindIcon from "./TailwindIcon";
 import PaintFrame from "./PaintFrame";
 import GodsHand from "./GodsHand";
 import { wallHeight, wallSize } from "../../constances/constances";
+import Flower from "../Flower";
+import StarryNight from "./StarryNight";
 
 const SuffOnWall = () => {
   return (
@@ -43,6 +45,14 @@ const SuffOnWall = () => {
       </group> */}
       <group rotation={[0, 0, 0]} position={[-3.2, 2, wallSize / -2 + 0.1]}>
         <GodsHand />
+      </group>
+
+      <group rotation={[0, 0, 0]} position={[-wallSize/2 + 0.75, 0.98, wallSize/2 - 1]}>
+        <Flower />
+      </group>
+
+      <group rotation={[0, Math.PI/2, 0]} position={[-wallSize/2 + 0.1, 2, 0]}>
+        <StarryNight />
       </group>
     </group>
   );

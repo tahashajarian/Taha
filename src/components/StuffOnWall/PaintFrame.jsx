@@ -42,7 +42,7 @@ const RefreshIcon = ({ onClick }) => {
   const texture = useLoader(TextureLoader, "/textures/refresh.png");
 
   return (
-    <mesh position={[-1.85, 1.05, 0.2]} ref={ref} onClick={onClick}>
+    <mesh position={[-1.85, 1.05, 0.1]} ref={ref} onClick={onClick}>
       <planeGeometry args={[0.3, 0.3]} />
       <meshBasicMaterial map={texture} transparent />
     </mesh>
@@ -76,7 +76,7 @@ const ShaderFrame = () => {
           height={pictureHeight}
           thickness={frameThickness}
           color={"white"}
-          position={0.1}
+          position={0.12}
         />
         <Picture
           width={pictureWidth}
