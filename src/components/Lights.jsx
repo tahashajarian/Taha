@@ -6,7 +6,7 @@ import { wallHeight } from "../constances/constances";
 const Lights = () => {
   return (
     <>
-      <ambientLight intensity={1} castShadow />
+      <ambientLight intensity={1} />
 
       <directionalLight
         position={[-5, wallHeight, 2]}

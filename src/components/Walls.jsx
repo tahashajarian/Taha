@@ -3,13 +3,19 @@ import { TextureLoader, RepeatWrapping } from "three";
 import { wallHeight, wallSize } from "../constances/constances";
 import ReactIcon from "./StuffOnWall/ReactIcon";
 import Library from "./Library";
+import { useAppStatusContext } from "../contexts/AppStatusContext";
 
 const Walls = () => {
   return (
     <>
       <TexturedFloor />
       {wallData.map((wall, index) => (
-        <Wall key={index} args={wall.args} position={wall.pos} rotation={wall.rot} />
+        <Wall
+          key={index}
+          args={wall.args}
+          position={wall.pos}
+          rotation={wall.rot}
+        />
       ))}
       <Library position={[wallSize / 2 - 0.3, wallHeight / 2 + 0.4, -3]} />
     </>
@@ -21,15 +27,24 @@ export default Walls;
 const Wall = ({ position, rotation, args }) => {
   const [textures, setTextures] = useState(null);
   const meshRef = useRef();
+  const { isApploaded } = useAppStatusContext();
 
   useEffect(() => {
     const loader = new TextureLoader();
     const loadTextures = async () => {
       try {
-        const map = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_BaseColor.jpg");
-        const aoMap = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_AmbientOcclusion.jpg");
-        const metalnessMap = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Metallic.jpg");
-        const normalMap = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Normal.jpg");
+        const map = await loader.loadAsync(
+          "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_BaseColor.jpg"
+        );
+        const aoMap = await loader.loadAsync(
+          "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_AmbientOcclusion.jpg"
+        );
+        const metalnessMap = await loader.loadAsync(
+          "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Metallic.jpg"
+        );
+        const normalMap = await loader.loadAsync(
+          "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Normal.jpg"
+        );
 
         [map, aoMap, metalnessMap, normalMap].forEach((texture) => {
           texture.wrapS = texture.wrapT = RepeatWrapping;
@@ -41,9 +56,10 @@ const Wall = ({ position, rotation, args }) => {
         console.error("Error loading textures:", error);
       }
     };
-
-    loadTextures();
-  }, []);
+    if (isApploaded) {
+      loadTextures();
+    }
+  }, [isApploaded]);
 
   useEffect(() => {
     if (textures && meshRef.current) {
@@ -104,30 +120,44 @@ const wallData = [
 const TexturedFloor = () => {
   const [textures, setTextures] = useState(null);
   const meshRef = useRef();
+  const { isApploaded } = useAppStatusContext();
 
   useEffect(() => {
     const loader = new TextureLoader();
     const loadTextures = async () => {
       try {
-        const map = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg");
-        const aoMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_AmbientOcclusion.jpg");
-        const metalnessMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Metallic.jpg");
-        const normalMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Normal.jpg");
-        const roughnessMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Roughness.jpg");
+        const map = await loader.loadAsync(
+          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg"
+        );
+        const aoMap = await loader.loadAsync(
+          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_AmbientOcclusion.jpg"
+        );
+        const metalnessMap = await loader.loadAsync(
+          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Metallic.jpg"
+        );
+        const normalMap = await loader.loadAsync(
+          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Normal.jpg"
+        );
+        const roughnessMap = await loader.loadAsync(
+          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Roughness.jpg"
+        );
 
-        [map, aoMap, metalnessMap, normalMap, roughnessMap].forEach((texture) => {
-          texture.wrapS = texture.wrapT = RepeatWrapping;
-          texture.repeat.set(8, 8);
-        });
+        [map, aoMap, metalnessMap, normalMap, roughnessMap].forEach(
+          (texture) => {
+            texture.wrapS = texture.wrapT = RepeatWrapping;
+            texture.repeat.set(8, 8);
+          }
+        );
 
         setTextures({ map, aoMap, metalnessMap, normalMap, roughnessMap });
       } catch (error) {
         console.error("Error loading textures:", error);
       }
     };
-
-    loadTextures();
-  }, []);
+    if (isApploaded) {
+      loadTextures();
+    }
+  }, [isApploaded]);
 
   useEffect(() => {
     if (textures && meshRef.current) {
@@ -136,7 +166,12 @@ const TexturedFloor = () => {
   }, [textures]);
 
   return (
-    <mesh ref={meshRef} receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+    <mesh
+      ref={meshRef}
+      receiveShadow
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, 0, 0]}
+    >
       <planeGeometry args={[wallSize, wallSize]} />
       {textures ? (
         <meshStandardMaterial
