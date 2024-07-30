@@ -12,7 +12,8 @@ const Sofa = (props) => {
       <group name="Scene">
         <mesh
           name="mesh_10_228nr"
-          
+          castShadow
+          receiveShadow
           
           geometry={nodes.mesh_10_228nr.geometry}
           material={materials.sofa}
