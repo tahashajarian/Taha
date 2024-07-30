@@ -1,21 +1,15 @@
-import React from "react";
-import { useTexture } from "@react-three/drei";
+import React, { useState, useEffect, useRef } from "react";
+import { TextureLoader, RepeatWrapping } from "three";
 import { wallHeight, wallSize } from "../constances/constances";
 import ReactIcon from "./StuffOnWall/ReactIcon";
 import Library from "./Library";
-import { RepeatWrapping } from "three";
 
 const Walls = () => {
   return (
     <>
       <TexturedFloor />
       {wallData.map((wall, index) => (
-        <Wall
-          key={index}
-          args={wall.args}
-          position={wall.pos}
-          rotation={wall.rot}
-        />
+        <Wall key={index} args={wall.args} position={wall.pos} rotation={wall.rot} />
       ))}
       <Library position={[wallSize / 2 - 0.3, wallHeight / 2 + 0.4, -3]} />
     </>
@@ -25,32 +19,54 @@ const Walls = () => {
 export default Walls;
 
 const Wall = ({ position, rotation, args }) => {
-  const textures2 = useTexture({
-    map: "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_BaseColor.jpg",
-    aoMap:
-      "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_AmbientOcclusion.jpg",
-    metalnessMap:
-      "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Metallic.jpg",
-    normalMap:
-      "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Normal.jpg",
-    
-  });
+  const [textures, setTextures] = useState(null);
+  const meshRef = useRef();
 
-  // Set the repeat and wrapping properties for each texture
-  Object.values(textures2).forEach((texture) => {
-    texture.wrapS = texture.wrapT = RepeatWrapping;
-    texture.repeat.set(1, 1);
-  });
+  useEffect(() => {
+    const loader = new TextureLoader();
+    const loadTextures = async () => {
+      try {
+        const map = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_BaseColor.jpg");
+        const aoMap = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_AmbientOcclusion.jpg");
+        const metalnessMap = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Metallic.jpg");
+        const normalMap = await loader.loadAsync("/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Normal.jpg");
+
+        [map, aoMap, metalnessMap, normalMap].forEach((texture) => {
+          texture.wrapS = texture.wrapT = RepeatWrapping;
+          texture.repeat.set(1, 1);
+        });
+
+        setTextures({ map, aoMap, metalnessMap, normalMap });
+      } catch (error) {
+        console.error("Error loading textures:", error);
+      }
+    };
+
+    loadTextures();
+  }, []);
+
+  useEffect(() => {
+    if (textures && meshRef.current) {
+      meshRef.current.material.needsUpdate = true;
+    }
+  }, [textures]);
 
   return (
-    <mesh rotation={rotation} position={position} > 
+    <mesh ref={meshRef} rotation={rotation} position={position}>
       <planeGeometry args={args} />
-      <meshStandardMaterial
-        {...textures2}
-        metalness={0.0}  // Ensure metalness is set to zero
-        roughness={1.0}  // Ensure roughness is set to one
-        envMapIntensity={0.0}  // Set environment map intensity to zero if using environment maps
-      />
+      {textures ? (
+        <meshStandardMaterial
+          map={textures.map}
+          aoMap={textures.aoMap}
+          metalnessMap={textures.metalnessMap}
+          normalMap={textures.normalMap}
+          metalness={0.0}
+          roughness={1.0}
+          color={0xffffff}
+        />
+      ) : (
+        <meshStandardMaterial color="gray" />
+      )}
     </mesh>
   );
 };
@@ -86,31 +102,54 @@ const wallData = [
 ];
 
 const TexturedFloor = () => {
-  const textures = useTexture({
-    map: "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg",
-    aoMap:
-      "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_AmbientOcclusion.jpg",
-    metalnessMap:
-      "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Metallic.jpg",
-    normalMap:
-      "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Normal.jpg",
-    roughnessMap:
-      "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Roughness.jpg",
-  });
+  const [textures, setTextures] = useState(null);
+  const meshRef = useRef();
 
-  const repeatX = 8; // Adjust this value to scale the texture in the X direction
-  const repeatY = 8; // Adjust this value to scale the texture in the Y direction
+  useEffect(() => {
+    const loader = new TextureLoader();
+    const loadTextures = async () => {
+      try {
+        const map = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg");
+        const aoMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_AmbientOcclusion.jpg");
+        const metalnessMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Metallic.jpg");
+        const normalMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Normal.jpg");
+        const roughnessMap = await loader.loadAsync("/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Roughness.jpg");
 
-  // Set the repeat and wrapping properties for each texture
-  Object.values(textures).forEach((texture) => {
-    texture.wrapS = texture.wrapT = RepeatWrapping;
-    texture.repeat.set(repeatX, repeatY);
-  });
+        [map, aoMap, metalnessMap, normalMap, roughnessMap].forEach((texture) => {
+          texture.wrapS = texture.wrapT = RepeatWrapping;
+          texture.repeat.set(8, 8);
+        });
+
+        setTextures({ map, aoMap, metalnessMap, normalMap, roughnessMap });
+      } catch (error) {
+        console.error("Error loading textures:", error);
+      }
+    };
+
+    loadTextures();
+  }, []);
+
+  useEffect(() => {
+    if (textures && meshRef.current) {
+      meshRef.current.material.needsUpdate = true;
+    }
+  }, [textures]);
 
   return (
-    <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+    <mesh ref={meshRef} receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
       <planeGeometry args={[wallSize, wallSize]} />
-      <meshStandardMaterial {...textures} />
+      {textures ? (
+        <meshStandardMaterial
+          map={textures.map}
+          aoMap={textures.aoMap}
+          metalnessMap={textures.metalnessMap}
+          normalMap={textures.normalMap}
+          roughnessMap={textures.roughnessMap}
+          color={0xffffff}
+        />
+      ) : (
+        <meshStandardMaterial color="gray" />
+      )}
     </mesh>
   );
 };
