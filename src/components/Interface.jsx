@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import {
   cameraIdle,
   cameraLookAtConst,
@@ -8,9 +8,9 @@ import { useCameraControl } from "../contexts/CameraControlContext";
 import { useCharacterAnimations } from "../contexts/CharacterAnimations";
 import { useAppStatusContext } from "../contexts/AppStatusContext";
 import EmailModal from "./UI/EmailModal";
-const WelcomeMessage = React.lazy(() => import("./UI/WelcomeMessage"));
-const PaintingModal = React.lazy(() => import("./UI/PaintingModal"));
-const ArrowControls = React.lazy(() => import("./UI/ArrowControls"));
+import WelcomeMessage from "./UI/WelcomeMessage";
+import PaintingModal from "./UI/PaintingModal";
+import ArrowControls from "./UI/ArrowControls";
 
 const Interface = () => {
   const { animation, setAnimation, setPosition, setRotation } =
@@ -64,24 +64,15 @@ const Interface = () => {
               <ArrowControls />
             </>
           )}
-          <Suspense fallback={null}>
-            <EmailModal
-              isOpen={modalIsOpen}
-              onClose={() => setModalIsOpen(false)}
-            />
-          </Suspense>
-          <Suspense fallback={null}>
-            <WelcomeMessage
-              showMessage={showMessage}
-              handleClose={handleClose}
-            />
-          </Suspense>
-          <Suspense fallback={null}>
-            <PaintingModal
-              closeModal={() => setPaintModalIsOpen(false)}
-              modalIsOpen={paintModalIsPoen}
-            />
-          </Suspense>
+          <EmailModal
+            isOpen={modalIsOpen}
+            onClose={() => setModalIsOpen(false)}
+          />
+          <WelcomeMessage showMessage={showMessage} handleClose={handleClose} />
+          <PaintingModal
+            closeModal={() => setPaintModalIsOpen(false)}
+            modalIsOpen={paintModalIsPoen}
+          />
         </>
       )}
     </div>
