@@ -36,12 +36,6 @@ const ColorAndBrushSelector = ({
         <option value="pattern">Pattern</option>
         <option value="calligraphy">Calligraphy</option>
       </select>
-      <button
-        onClick={clearCanvas}
-        className="px-3 py-1 bg-red-500 text-white rounded-md "
-      >
-        Clear
-      </button>
     </div>
   );
 };
