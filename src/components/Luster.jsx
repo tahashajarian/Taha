@@ -26,8 +26,8 @@ const Luster = (props) => {
     <group {...props} dispose={null} onClick={handleOnClick}>
       <directionalLight
         position={[0, wallHeight, 0]}
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
         intensity={lampIsOn ? 2 : 0}
         castShadow
       />

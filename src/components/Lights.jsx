@@ -10,8 +10,8 @@ const Lights = () => {
 
       <directionalLight
         position={[-5, wallHeight, 2]}
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
         intensity={3}
         castShadow
         shadow-camera-far={50}
@@ -32,9 +32,9 @@ const Lights = () => {
       {/* <group position={[-5.5, 0, 5.5]}>
         <Lamp />
       </group> */}
-      <group position={[5.5, 0, 5.5]}>
+      {/* <group position={[5.5, 0, 5.5]}>
         <Lamp />
-      </group>
+      </group> */}
     </>
   );
 };

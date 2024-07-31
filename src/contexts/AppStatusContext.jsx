@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AppStatusContext = createContext({});
 
@@ -6,6 +6,20 @@ export const AppStatusContextProvider = (props) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isApploaded, setIsAppLoaded] = useState(false);
   const [paintModalIsPoen, setPaintModalIsOpen] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileDevice(window.innerWidth <= 768);
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <AppStatusContext.Provider
@@ -16,6 +30,7 @@ export const AppStatusContextProvider = (props) => {
         setIsAppLoaded,
         paintModalIsPoen,
         setPaintModalIsOpen,
+        isMobileDevice,
       }}
     >
       {props.children}

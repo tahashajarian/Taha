@@ -66,7 +66,6 @@ function App() {
         {!loaded && (
           <Loader
             dataInterpolation={(percentLoaded) => {
-              console.log(percentLoaded)
               if (percentLoaded === 100) {
                 setCameraLookAt(cameraLookAtConst);
                 setIsAppLoaded(true);

@@ -36,22 +36,13 @@ const Wall = ({ position, rotation, args }) => {
         const map = await loader.loadAsync(
           "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_BaseColor.jpg"
         );
-        const aoMap = await loader.loadAsync(
-          "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_AmbientOcclusion.jpg"
-        );
-        const metalnessMap = await loader.loadAsync(
-          "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Metallic.jpg"
-        );
-        const normalMap = await loader.loadAsync(
-          "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_Normal.jpg"
-        );
 
-        [map, aoMap, metalnessMap, normalMap].forEach((texture) => {
+        [map].forEach((texture) => {
           texture.wrapS = texture.wrapT = RepeatWrapping;
           texture.repeat.set(1, 1);
         });
 
-        setTextures({ map, aoMap, metalnessMap, normalMap });
+        setTextures({ map });
       } catch (error) {
         console.error("Error loading textures:", error);
       }
@@ -129,27 +120,27 @@ const TexturedFloor = () => {
         const map = await loader.loadAsync(
           "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg"
         );
-        const aoMap = await loader.loadAsync(
-          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_AmbientOcclusion.jpg"
-        );
-        const metalnessMap = await loader.loadAsync(
-          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Metallic.jpg"
-        );
-        const normalMap = await loader.loadAsync(
-          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Normal.jpg"
-        );
-        const roughnessMap = await loader.loadAsync(
-          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Roughness.jpg"
-        );
+        // const aoMap = await loader.loadAsync(
+        //   "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_AmbientOcclusion.jpg"
+        // );
+        // const metalnessMap = await loader.loadAsync(
+        //   "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Metallic.jpg"
+        // );
+        // const normalMap = await loader.loadAsync(
+        //   "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Normal.jpg"
+        // );
+        // const roughnessMap = await loader.loadAsync(
+        //   "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_Roughness.jpg"
+        // );
 
-        [map, aoMap, metalnessMap, normalMap, roughnessMap].forEach(
+        [map].forEach(
           (texture) => {
             texture.wrapS = texture.wrapT = RepeatWrapping;
             texture.repeat.set(8, 8);
           }
         );
 
-        setTextures({ map, aoMap, metalnessMap, normalMap, roughnessMap });
+        setTextures({ map });
       } catch (error) {
         console.error("Error loading textures:", error);
       }
