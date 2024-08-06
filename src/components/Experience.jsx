@@ -21,7 +21,6 @@ const Experience = () => {
       <TahaContainer />
       <TableSetup />
       <Walls />
-      <Cat />
       <StuffOnWall />
       <FlightPoints />
     </>
