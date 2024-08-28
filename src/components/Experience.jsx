@@ -23,6 +23,7 @@ const Experience = () => {
       <Walls />
       <StuffOnWall />
       <FlightPoints />
+      <Cat />
     </>
   );
 };
