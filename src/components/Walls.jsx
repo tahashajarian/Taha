@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { TextureLoader, RepeatWrapping } from "three";
 import { wallHeight, wallSize } from "../constances/constances";
-import ReactIcon from "./StuffOnWall/ReactIcon";
 import Library from "./Library";
 import { useAppStatusContext } from "../contexts/AppStatusContext";
 

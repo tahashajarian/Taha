@@ -5,7 +5,7 @@ import { Text } from "@react-three/drei";
 
 const shelfCount = new Array(3).fill(null); // Initialize array with null values
 const bookCount = new Array(18).fill(null); // Initialize array with null values
-const fontURL = "/fonts/PlaywritePE-Regular.ttf"; // Replace with the path to your custom font
+const fontURL = "/fonts/Floydian-v177.ttf"; // Replace with the path to your custom font
 
 const Library = React.memo(({ position }) => {
   // Memoize the shelves and books to avoid unnecessary re-renders
