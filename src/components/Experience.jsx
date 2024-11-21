@@ -8,8 +8,8 @@ import TahaContainer from "./TahaContainer";
 import StuffOnWall from "./StuffOnWall/SuffOnWall";
 import Lights from "./Lights";
 import FlightPoints from "./FlightPoints";
-import Cat from "./Cat";
-import Cat2 from "./Cat2";
+// import Cat from "./Cat";
+// import Cat2 from "./Cat2";
 
 const Experience = () => {
   return (
@@ -25,9 +25,9 @@ const Experience = () => {
       <StuffOnWall />
       <FlightPoints />
       {/* <Cat /> */}
-      <group position={[0,0,2]}>
+      {/* <group position={[0,0,2]}>
         <Cat2 />
-      </group>
+      </group> */}
     </>
   );
 };
