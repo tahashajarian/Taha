@@ -22,7 +22,7 @@ const SuffOnWall = () => {
             <PaintFrame />
           </group>
 
-          <group rotation={[0, 0, 0]} position={[0, 1.8, wallSize / -2 + 0.1]} receiveShadow>
+          <group rotation={[0, 0, 0]} position={[0, 1.8, wallSize / -2 + 0.01]} receiveShadow>
             <TheWallWallPaper />
           </group>
           <group

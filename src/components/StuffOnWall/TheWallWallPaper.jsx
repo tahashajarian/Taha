@@ -19,7 +19,7 @@ const TheWallWallPaper = () => {
       <Text
         font={fontURL}
         rotation={[0, 0, 0]}
-        position={[0, 0.2, 0.1]}
+        position={[0, 0.2, 0.05]}
         fontSize={0.5}
         color="red"
         textAlign="center"
