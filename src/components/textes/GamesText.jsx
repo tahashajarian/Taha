@@ -19,6 +19,7 @@ const GamesText = () => {
   const earth = useLoader(TextureLoader, "/textures/earth.png");
   const snake = useLoader(TextureLoader, "/textures/snake.png");
   const slot = useLoader(TextureLoader, "/textures/slot.png");
+  const platformer = useLoader(TextureLoader, "/textures/heart.png");
 
   // Reference for plane geometries
   const flappyBirdRef = useRef();
@@ -30,9 +31,19 @@ const GamesText = () => {
   const earthRef = useRef();
   const snakeRef = useRef();
   const slotRef = useRef();
+  const platformerRef = useRef();
 
   const yOffset = -0.4; // Vertical offset between items
   const items = [
+    {
+      label: "Platformer",
+      link: "https://taha-shajarian.ir/projects/platformer",
+      iconRef: platformerRef,
+      texture: platformer,
+      margin: -0.05,
+      iconSize: 0.2,
+      space: 0.75
+    },
     {
       label: "Slot Machine",
       link: "https://taha-shajarian.ir/projects/slot-machin",
@@ -112,7 +123,7 @@ const GamesText = () => {
             font={fontURL}
             position={[
               item.margin ? item.margin : 0,
-              -2.5 - index * yOffset,
+              -3 - index * yOffset,
               0,
             ]} // Dynamically calculated position
             fontSize={0.2}

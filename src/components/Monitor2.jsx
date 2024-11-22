@@ -25,7 +25,7 @@ const Monitor2 = (props) => {
         }
         position={[0.003, 0.007, 0.006]}
         rotation={[-1.497, -1.56, -1.51]}
-        scale={0.144}
+        scale={0.12}
       />
       <group
         position={[0.007, 0.397, -0.006]}
