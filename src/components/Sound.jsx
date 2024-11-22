@@ -12,7 +12,7 @@ const Sound = ({ url }) => {
   useEffect(() => {
     if (sound.current) {
       sound.current.setBuffer(buffer);
-      sound.current.setRefDistance(0.2);
+      sound.current.setRefDistance(0.1);
       sound.current.setLoop(true);
     }
 

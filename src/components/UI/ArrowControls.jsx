@@ -1,6 +1,10 @@
 import React from "react";
 import { useArrows } from "../../contexts/ArrowsProvider";
 
+const isMobileDevice = () => {
+  return /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+};
+
 const ArrowButton = ({ direction, symbol }) => {
   const { handleButtonPress, handleButtonRelease } = useArrows();
 
@@ -18,6 +22,10 @@ const ArrowButton = ({ direction, symbol }) => {
 };
 
 const ArrowControls = () => {
+  if (isMobileDevice()) {
+    return null;
+  }
+
   return (
     <div className="absolute bottom-10 left-10 flex flex-col items-center space-y-2 select-none">
       <ArrowButton direction="ArrowUp" symbol="⬆️" />
