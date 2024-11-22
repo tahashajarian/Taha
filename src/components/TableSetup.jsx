@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { tablePosition, tableRotation } from "../constances/constances";
 import { useAppStatusContext } from "../contexts/AppStatusContext";
 
@@ -12,6 +12,8 @@ import Mug from "./Mug";
 import Papers from "./Papers";
 import Speaker from "./Speaker";
 import Clock from "./Clock";
+
+const Cat3 = lazy(() => import("./Cat3"));
 
 const TableSetup = () => {
   const { isApploaded } = useAppStatusContext();
@@ -38,10 +40,18 @@ const TableSetup = () => {
         <Papers />
       </group>
       <group position={[0.8, 0.8, 0.99]} rotation={[0, 0, 0]}>
-        <Speaker />
+        {/* <Speaker /> */}
       </group>
       <group position={[0.8, 0.532, 0.506]} rotation={[0, Math.PI / 2, 0]}>
         <Clock />
+      </group>
+      <group position={[0.7, 0.748, 0.9]} rotation={[0, -Math.PI / 2, 0]}>
+        {/* Lazy-loaded Cat3 */}
+        {isApploaded && (
+          <Suspense fallback={null}>
+            <Cat3 />
+          </Suspense>
+        )}
       </group>
       <Textes />
     </group>

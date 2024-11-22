@@ -30,7 +30,7 @@ const Monitor2 = (props) => {
       <group
         position={[0.007, 0.397, -0.006]}
         rotation={[-1.497, -1.56, -1.598]}
-        scale={[0.21, 0.16, 0.2]}>
+        scale={[0.21, 0.14, 0.2]}>
         <mesh
           castShadow
           receiveShadow
