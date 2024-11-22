@@ -16,6 +16,9 @@ const GamesText = () => {
   const jeton = useLoader(TextureLoader, "/textures/jeton.png");
   const envelope = useLoader(TextureLoader, "/textures/envelope.png");
   const github = useLoader(TextureLoader, "/textures/github.png");
+  const earth = useLoader(TextureLoader, "/textures/earth.png");
+  const snake = useLoader(TextureLoader, "/textures/snake.png");
+  const slot = useLoader(TextureLoader, "/textures/slot.png");
 
   // Reference for plane geometries
   const flappyBirdRef = useRef();
@@ -24,6 +27,58 @@ const GamesText = () => {
   const blackJackRef = useRef();
   const envelopeRef = useRef();
   const githubRef = useRef();
+  const earthRef = useRef();
+  const snakeRef = useRef();
+  const slotRef = useRef();
+
+  const yOffset = -0.4; // Vertical offset between items
+  const items = [
+    {
+      label: "Slot Machine",
+      link: "https://taha-shajarian.ir/projects/slot-machin",
+      iconRef: slotRef,
+      texture: slot,
+      margin: 0.1,
+    },
+    {
+      label: "Simple Snake",
+      link: "https://taha-shajarian.ir/projects/simple-snake",
+      iconRef: snakeRef,
+      texture: snake,
+      margin: 0.1,
+    },
+    {
+      label: "Earh",
+      link: "https://taha-shajarian.ir/projects/earth",
+      iconRef: earthRef,
+      texture: earth,
+      margin: -0.3,
+      space: 0.5,
+    },
+    {
+      label: "Black Jack",
+      link: "https://taha-shajarian.ir/projects/blackjack",
+      iconRef: blackJackRef,
+      texture: jeton,
+      space: 0.8
+    },
+    {
+      label: "War Land",
+      link: "https://taha-shajarian.ir/projects/warland",
+      iconRef: shotgunRef,
+      texture: shotgun,
+      iconSize: 0.4,
+      margin: -0.09,
+      space: 0.7
+    },
+    {
+      label: "Flappy Bird",
+      link: "https://taha-shajarian.ir/projects/flappybird",
+      iconRef: flappyBirdRef,
+      texture: flappyBirdTexture,
+      iconSize: 0.4,
+    },
+  ];
 
   const { setModalIsOpen } = useAppStatusContext();
   const navigateTo = (address) => {
@@ -43,7 +98,7 @@ const GamesText = () => {
           fontSize={0.4}
           maxWidth={wallSize}
           color="silver"
-          textAlign="center"
+          textAlign="left"
         >
           Game Projects
           <mesh position={[1.75, 0, 0]} ref={gameIconRef}>
@@ -51,57 +106,37 @@ const GamesText = () => {
             <meshBasicMaterial map={gameIcon} transparent={true} />
           </mesh>
         </Text>
-        <Text
-          font={fontURL}
-          position={[0, -0.8, 0]}
-          fontSize={0.3}
-          color="silver"
-          textAlign="center"
-          onClick={() =>
-            navigateTo("https://taha-shajarian.ir/projects/flappybird")
-          }
-        >
-          Flappy Bird
-          <mesh position={[1.12, 0.04, 0]} ref={flappyBirdRef}>
-            <planeGeometry args={[0.75, 0.75]} />
-            <meshBasicMaterial map={flappyBirdTexture} transparent />
-          </mesh>
-        </Text>
-
-        <Text
-          font={fontURL}
-          position={[0, -1.5, 0]}
-          fontSize={0.3}
-          color="silver"
-          textAlign="center"
-          onClick={() => {
-            navigateTo("https://taha-shajarian.ir/projects/warland");
-          }}
-        >
-          War Land
-          <mesh position={[1.13, 0.05, 0]} ref={shotgunRef}>
-            <planeGeometry args={[0.75, 0.75]} />
-            <meshBasicMaterial map={shotgun} transparent />
-          </mesh>
-        </Text>
-
-        <Text
-          font={fontURL}
-          position={[0, -2.2, 0]}
-          fontSize={0.3}
-          color="silver"
-          textAlign="center"
-          onClick={() => {
-            navigateTo("https://taha-shajarian.ir/projects/blackjack");
-          }}
-        >
-          Black Jack
-          <mesh position={[1.11, 0.05, 0]} ref={blackJackRef}>
-            <planeGeometry args={[0.5, 0.5]} />
-            <meshBasicMaterial map={jeton} transparent />
-          </mesh>
-        </Text>
+        {items.map((item, index) => (
+          <Text
+            key={index}
+            font={fontURL}
+            position={[
+              item.margin ? item.margin : 0,
+              -2.5 - index * yOffset,
+              0,
+            ]} // Dynamically calculated position
+            fontSize={0.2}
+            color="silver"
+            textAlign="left"
+            onClick={() => navigateTo(item.link)}
+          >
+            {item.label}
+            <mesh
+              position={[item.space ? item.space : 0.85, 0.033, 0]}
+              ref={item.iconRef}
+            >
+              <planeGeometry
+                args={[
+                  item.iconSize ? item.iconSize : 0.25,
+                  item.iconSize ? item.iconSize : 0.25,
+                ]}
+              />
+              <meshBasicMaterial map={item.texture} transparent />
+            </mesh>
+          </Text>
+        ))}
       </group>
+      ;
       <Text
         font={fontURL}
         position={[3, -2.5, 0]}
