@@ -10,7 +10,6 @@ import Mouse from "./Mouse";
 import Monitor2 from "./Monitor2";
 import Mug from "./Mug";
 import Papers from "./Papers";
-import Speaker from "./Speaker";
 import Clock from "./Clock";
 
 const Cat3 = lazy(() => import("./Cat3"));
@@ -46,7 +45,6 @@ const TableSetup = () => {
         <Clock />
       </group>
       <group position={[0.7, 0.748, 0.9]} rotation={[0, -Math.PI / 2, 0]}>
-        {/* Lazy-loaded Cat3 */}
         {isApploaded && (
           <Suspense fallback={null}>
             <Cat3 />

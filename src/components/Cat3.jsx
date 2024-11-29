@@ -44,6 +44,6 @@ export const Cat3 = (props) => {
   );
 };
 
-useGLTF.preload("/models/cat.glb");
+useGLTF.preload("/models/cat3.glb");
 
 export default Cat3;

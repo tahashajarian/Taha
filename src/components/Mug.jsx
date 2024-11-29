@@ -124,6 +124,10 @@ const Mug = (props) => {
         geometry={nodes.Mug.geometry}
         material={nodes.Mug.material}
       />
+      <mesh rotation={[-Math.PI/2, 0, 0]} position={[0, 0.05, 0]}>
+        <circleGeometry args={[0.079, 16]} />
+        <meshStandardMaterial color="#6F4F37" />
+      </mesh>
       <points
         ref={particlesRef}
         geometry={particleGeometry}
