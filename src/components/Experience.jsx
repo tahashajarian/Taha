@@ -1,13 +1,12 @@
 import React, { Suspense } from "react";
 import { OrbitControls } from "@react-three/drei";
-import LoaderComponent from "./LoaderComponent";
-import CameraControl from "./CameraControl";
-import Walls from "./Walls";
-import TableSetup from "./TableSetup";
-import TahaContainer from "./TahaContainer";
+import CameraControl from "./Camera/CameraControl";
+import TableSetup from "./Desk/TableSetup";
+import TahaContainer from "./Taha/TahaContainer";
 import StuffOnWall from "./StuffOnWall/SuffOnWall";
-import Lights from "./Lights";
-import FlightPoints from "./FlightPoints";
+import Lights from "./Lights/Lights";
+import FlightPoints from "./Lights/FlightPoints";
+import Walls from './Room/Walls'
 
 
 const Experience = () => {

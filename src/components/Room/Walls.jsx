@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { TextureLoader, RepeatWrapping } from "three";
-import { wallHeight, wallSize } from "../constances/constances";
-import Library from "./Library";
-import { useAppStatusContext } from "../contexts/AppStatusContext";
+import { wallHeight, wallSize } from "../../constances/constances";
+import Library from "../Stuff/Library";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
 const Walls = () => {
   return (

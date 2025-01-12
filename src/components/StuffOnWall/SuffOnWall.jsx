@@ -3,9 +3,9 @@ import { wallHeight, wallSize } from "../../constances/constances";
 import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
 import GodsHand from "./GodsHand";
-import Flower from "../Flower";
+import Flower from "../Stuff/Flower";
 import TheWallWallPaper from "./TheWallWallPaper";
-import Sofa from "../Sofa";
+import Sofa from "../Stuff/Sofa";
 import PaintFrame from "./PaintFrame";
 
 const SuffOnWall = () => {

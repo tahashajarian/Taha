@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Experience from "./components/Experience";
-import Interface from "./components/Interface";
+import Interface from "./components/UI/Interface";
 import { Loader } from "@react-three/drei";
 import { useCameraControl } from "./contexts/CameraControlContext";
 import { cameraLookAtConst } from "./constances/constances";

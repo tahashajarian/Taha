@@ -1,7 +1,7 @@
 import React from "react";
 import Lamp from "./Lamp";
 import Luster from "./Luster";
-import { wallHeight } from "../constances/constances";
+import { wallHeight } from "../../constances/constances";
 
 const Lights = () => {
   return (

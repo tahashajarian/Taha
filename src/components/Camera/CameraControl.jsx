@@ -1,6 +1,6 @@
 import { CameraControls } from "@react-three/drei";
 import React, { useEffect, useRef } from "react";
-import { useCameraControl } from "../contexts/CameraControlContext";
+import { useCameraControl } from "../../contexts/CameraControlContext";
 
 const CameraControl = () => {
   const cameraControlsRef = useRef();

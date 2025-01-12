@@ -1,18 +1,18 @@
 import React, { lazy, Suspense } from "react";
-import { tablePosition, tableRotation } from "../constances/constances";
-import { useAppStatusContext } from "../contexts/AppStatusContext";
+import { tablePosition, tableRotation } from "../../constances/constances";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
-import Textes from "./textes/Textes";
-import Chair from "./Chair";
-import Desk from "./Desk";
-import Keyboard from "./Keyboard";
-import Mouse from "./Mouse";
-import Monitor2 from "./Monitor2";
-import Mug from "./Mug";
-import Papers from "./Papers";
-import Clock from "./Clock";
+import Textes from "../textes/Textes";
+import Chair from "../Stuff/Chair";
+import Desk from "../Stuff/Desk";
+import Keyboard from "../Stuff/Keyboard";
+import Mouse from "../Stuff/Mouse";
+import Monitor2 from "../Stuff/Monitor2";
+import Mug from "../Stuff/Mug";
+import Papers from "../Stuff/Papers";
+import Clock from "../Stuff/Clock";
 
-const Cat3 = lazy(() => import("./Cat3"));
+const Cat3 = lazy(() => import("../Stuff/Cat3"));
 
 const TableSetup = () => {
   const { isApploaded } = useAppStatusContext();

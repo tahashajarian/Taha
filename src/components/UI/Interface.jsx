@@ -3,14 +3,14 @@ import {
   cameraIdle,
   cameraLookAtConst,
   cameraLookAtDefault,
-} from "../constances/constances";
-import { useCameraControl } from "../contexts/CameraControlContext";
-import { useCharacterAnimations } from "../contexts/CharacterAnimations";
-import { useAppStatusContext } from "../contexts/AppStatusContext";
-import EmailModal from "./UI/EmailModal";
-import WelcomeMessage from "./UI/WelcomeMessage";
-import PaintingModal from "./UI/PaintingModal";
-import ArrowControls from "./UI/ArrowControls";
+} from "../../constances/constances";
+import { useCameraControl } from "../../contexts/CameraControlContext";
+import { useCharacterAnimations } from "../../contexts/CharacterAnimations";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import EmailModal from "./EmailModal";
+import WelcomeMessage from "./WelcomeMessage";
+import PaintingModal from "./PaintingModal";
+import ArrowControls from "./ArrowControls";
 
 const Interface = () => {
   const { animation, setAnimation, setPosition, setRotation } =

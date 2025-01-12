@@ -1,6 +1,6 @@
 import React from "react";
 import * as THREE from "three";
-import { randomColor } from "../constances/constances";
+import { randomColor } from "../../constances/constances";
 
 const Papers = () => {
   const paperCount = 10;

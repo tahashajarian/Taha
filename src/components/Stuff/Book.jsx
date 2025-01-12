@@ -1,5 +1,5 @@
 import React from "react";
-import { randomColor } from "../constances/constances";
+import { randomColor } from './../../constances/constances';
 
 const Book = ({ position, rotation = [0, 0, 0] }) => {
   return (

@@ -1,8 +1,8 @@
 import React from "react";
-import { wallHeight, wallSize } from "../constances/constances";
+import { wallHeight, wallSize } from "../../constances/constances";
 import FloatingPoint from "./FloatingLight";
 import RectAreaLightComponent from "./RectArealLightComponent";
-import { useAppStatusContext } from "../contexts/AppStatusContext";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
 const FlightPoints = () => {
   const { isMobileDevice } = useAppStatusContext();
