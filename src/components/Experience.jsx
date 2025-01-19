@@ -7,6 +7,7 @@ import StuffOnWall from "./StuffOnWall/SuffOnWall";
 import Lights from "./Lights/Lights";
 import FlightPoints from "./Lights/FlightPoints";
 import Walls from './Room/Walls'
+import FireCube from "./Lights/Fireplace/Fire";
 
 
 const Experience = () => {
@@ -19,7 +20,7 @@ const Experience = () => {
       <Walls />
       <StuffOnWall />
       <FlightPoints />
-
+      <FireCube />
     </>
   );
 };

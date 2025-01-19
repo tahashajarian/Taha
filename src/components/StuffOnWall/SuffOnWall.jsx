@@ -27,7 +27,7 @@ const SuffOnWall = () => {
           </group>
           <group
             rotation={[0, 0, 0]}
-            position={[-wallSize / 2 + 0.75, 0.98, wallSize / 2 - 1]}
+            position={[-wallSize / 2 + 4, 0.98, -wallSize / 2 + 0.75]}
           >
             <Flower />
           </group>

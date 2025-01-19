@@ -1272,6 +1272,11 @@ glsl-noise@^0.0.0:
   resolved "https://registry.npmjs.org/glsl-noise/-/glsl-noise-0.0.0.tgz"
   integrity sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==
 
+gsap@^3.12.7:
+  version "3.12.7"
+  resolved "https://registry.npmjs.org/gsap/-/gsap-3.12.7.tgz"
+  integrity sha512-V4GsyVamhmKefvcAKaoy0h6si0xX7ogwBoBSs2CTJwt7luW0oZzC0LhdkyuKV8PJAXr7Yaj8pMjCKD4GJ+eEMg==
+
 has-flag@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/has-flag/-/has-flag-3.0.0.tgz"
@@ -2148,7 +2153,14 @@ vite-plugin-compression2@^1.1.2:
   dependencies:
     "@rollup/pluginutils" "^5.1.0"
 
-vite@^3.0.0, vite@^3.2.3:
+vite-plugin-glsl@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.npmjs.org/vite-plugin-glsl/-/vite-plugin-glsl-1.3.1.tgz"
+  integrity sha512-iClII8Idb9X0m6nS0YI2cWWXbBuT5EKKw5kXSAuRu4RJsNe4oypxKXE7jx0XMoyqij2s8WL0ZLfou801mpkREg==
+  dependencies:
+    "@rollup/pluginutils" "^5.1.0"
+
+vite@^3.0.0, "vite@^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0", vite@^3.2.3:
   version "3.2.4"
   resolved "https://registry.npmjs.org/vite/-/vite-3.2.4.tgz"
   integrity sha512-Z2X6SRAffOUYTa+sLy3NQ7nlHFU100xwanq1WDwqaiFiCe+25zdxP1TfCS5ojPV2oDDcXudHIoPnI1Z/66B7Yw==

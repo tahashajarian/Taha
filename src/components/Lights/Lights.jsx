@@ -9,7 +9,7 @@ const Lights = () => {
       <ambientLight intensity={1} />
 
       <directionalLight
-        position={[-5, wallHeight, 2]}
+        position={[5, wallHeight, 2]}
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
         intensity={3}
