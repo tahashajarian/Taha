@@ -13,12 +13,47 @@ import Fireplace from "../../Stuff/Fireplace.jsx";
 
 export default function FireCube() {
   return (
-    <group position={[-wallSize/2 + 0.7, 0, wallSize/2 - 2]}>
-
+    <group position={[-wallSize / 2 + 0.7, 0, wallSize / 2 - 2]}>
       <Fireplace />
-      <group position={[0, 1, 0]}>
+      <group position={[0.2, 0.2, 0]}>
+        {/* First cylinder */}
+        <mesh position={[-0, 0, -0.1]} rotation={[Math.PI / 3, 0, 0]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.5, 3]} />
+          <meshStandardMaterial
+            color={"red"}
+            emissive={"red"}
+            emissiveIntensity={1.5}
+          />
+        </mesh>
+        <mesh position={[0, 0, 0.1]} rotation={[-Math.PI / 3, 0, Math.PI / 3]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.5, 3]} />
+          <meshStandardMaterial
+            color={"red"}
+            emissive={"red"}
+            emissiveIntensity={1.5}
+          />
+        </mesh>
 
-      <Fire scale={4} color={new THREE.Color(0x000000)} />;
+        <mesh position={[0.2, 0, 0]} rotation={[-0, 0, Math.PI / 3]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.5, 3]} />
+          <meshStandardMaterial
+            color={"red"}
+            emissive={"red"}
+            emissiveIntensity={0}
+          />
+        </mesh>
+        <pointLight
+          distance={1}
+          decay={1}
+          power={10}
+          position={[0, 0, 0]}
+          color={"#ffaaaa"}
+          intensity={6}
+        />
+      </group>
+
+      <group position={[0, 1, 0]}>
+        <Fire scale={4} color={new THREE.Color(0x000000)} />;
       </group>
     </group>
   );
@@ -36,7 +71,6 @@ declare global {
   }
 }
 extend({ FireMaterial });
-
 
 function Fire({ color, ...props }) {
   const ref = useRef<THREE.Mesh & { material: FireMaterial }>(null);
@@ -77,7 +111,6 @@ function Fire({ color, ...props }) {
         // depthWrite={false}
         // depthTest={false}
         side={THREE.DoubleSide}
-
       />
     </mesh>
   );
