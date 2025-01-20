@@ -22,3 +22,36 @@ export const bookColors = [
 
 export const randomColor = () =>
     bookColors[Math.floor(Math.random() * bookColors.length)];
+
+
+const segments = 1;
+
+export const wallData = [
+  {
+    pos: [0, wallHeight, 0],
+    rot: [0.5 * Math.PI, 0, 0],
+    args: [wallSize, wallSize, segments, segments],
+  },
+  {
+    pos: [0, wallHeight / 2, wallSize / 2],
+    rot: [Math.PI, 0, 0],
+    args: [wallSize, wallHeight, segments, segments],
+    windowPosition: [0, 0], // Center of the window
+    windowSize: [1.75, 3], // Window size
+  },
+  {
+    pos: [0, wallHeight / 2, -wallSize / 2],
+    rot: [0, 0, 0],
+    args: [wallSize, wallHeight, segments, segments],
+  },
+  {
+    pos: [-wallSize / 2, wallHeight / 2, 0],
+    rot: [0, Math.PI / 2, 0],
+    args: [wallSize, wallHeight, segments, segments],
+  },
+  {
+    pos: [wallSize / 2, wallHeight / 2, 0],
+    rot: [0, -Math.PI / 2, 0],
+    args: [wallSize, wallHeight, segments, segments],
+  },
+];

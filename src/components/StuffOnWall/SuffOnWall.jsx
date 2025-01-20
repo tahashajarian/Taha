@@ -7,6 +7,7 @@ import Flower from "../Stuff/Flower";
 import TheWallWallPaper from "./TheWallWallPaper";
 import Sofa from "../Stuff/Sofa";
 import PaintFrame from "./PaintFrame";
+import Window from "./Window";
 
 const SuffOnWall = () => {
   const { isApploaded } = useAppStatusContext();
@@ -36,6 +37,13 @@ const SuffOnWall = () => {
             position={[-wallSize / 2 + 0.1, 2, 0]}
           >
             <GodsHand />
+          </group>
+          <group
+            rotation={[0, Math.PI / 2, 0]}
+            position={[0, 2, wallSize/2 +0.08]}
+            scale={4}
+          >
+            <Window />
           </group>
           <Sofa />
         </>

@@ -1,21 +1,63 @@
-import { Grid } from "@react-three/drei";
-import React from "react";
-// import { Grid } from "@react-three/drei";
+import React, { useState, useEffect, useRef } from "react";
+import { wallSize } from "../../constances/constances";
+import { TextureLoader, RepeatWrapping } from "three";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
-const Ground = () => {
-  const gridConfig = {
-    cellSize: 0.125,
-    cellThickness: 0.5,
-    cellColor: "#6f6f6f",
-    sectionSize: 0.5,
-    sectionThickness: 1,
-    sectionColor: "#9d4b4b",
-    fadeDistance: 30,
-    fadeStrength: 1,
-    followCamera: false,
-    infiniteGrid: true,
-  };
-  return <Grid position={[0, -0.01, 0]} args={[10.5, 10.5]} {...gridConfig} />;
+const TexturedFloor = () => {
+  const [textures, setTextures] = useState(null);
+  const meshRef = useRef();
+  const { isApploaded } = useAppStatusContext();
+
+  useEffect(() => {
+    const loader = new TextureLoader();
+    const loadTextures = async () => {
+      try {
+        const map = await loader.loadAsync(
+          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg"
+        );
+
+        [map].forEach((texture) => {
+          texture.wrapS = texture.wrapT = RepeatWrapping;
+          texture.repeat.set(8, 8);
+        });
+
+        setTextures({ map });
+      } catch (error) {
+        console.error("Error loading textures:", error);
+      }
+    };
+    if (isApploaded) {
+      loadTextures();
+    }
+  }, [isApploaded]);
+
+  useEffect(() => {
+    if (textures && meshRef.current) {
+      meshRef.current.material.needsUpdate = true;
+    }
+  }, [textures]);
+
+  return (
+    <mesh
+      ref={meshRef}
+      receiveShadow
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, 0, 0]}
+    >
+      <planeGeometry args={[wallSize, wallSize]} />
+      {textures ? (
+        <meshStandardMaterial
+          map={textures.map}
+          aoMap={textures.aoMap}
+          metalnessMap={textures.metalnessMap}
+          normalMap={textures.normalMap}
+          roughnessMap={textures.roughnessMap}
+          color={0xffffff}
+        />
+      ) : (
+        <meshStandardMaterial color="gray" />
+      )}
+    </mesh>
+  );
 };
-
-export default Ground;
+export default TexturedFloor;
