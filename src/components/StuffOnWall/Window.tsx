@@ -1,5 +1,6 @@
 import { useGLTF } from "@react-three/drei";
 import React, { useRef } from "react";
+import * as THREE from "three";
 
 type Props = {};
 
@@ -9,10 +10,10 @@ const Window = (props: Props) => {
     <group {...props} dispose={null}>
       <mesh
         geometry={
-          nodes.BodyCourtyard_Template002_Window_referencesmdmesh_0.geometry
+          (nodes.BodyCourtyard_Template002_Window_referencesmdmesh_0 as THREE.Mesh).geometry
         }
         material={
-          nodes.BodyCourtyard_Template002_Window_referencesmdmesh_0.material
+          (nodes.BodyCourtyard_Template002_Window_referencesmdmesh_0 as THREE.Mesh).material
         }
         scale={0.01}
       />

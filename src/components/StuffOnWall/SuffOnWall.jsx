@@ -8,6 +8,7 @@ import TheWallWallPaper from "./TheWallWallPaper";
 import Sofa from "../Stuff/Sofa";
 import PaintFrame from "./PaintFrame";
 import Window from "./Window";
+import Curtain from "../Curtain/Curtain";
 
 const SuffOnWall = () => {
   const { isApploaded } = useAppStatusContext();
@@ -44,6 +45,16 @@ const SuffOnWall = () => {
             scale={4}
           >
             <Window />
+          </group>
+          <group
+            position={[0.9, 1.9, wallSize/2 - 0.2]}
+          >
+            <Curtain />
+          </group>
+          <group
+            position={[-0.9, 1.9, wallSize/2 - 0.2]}
+          >
+            <Curtain />
           </group>
           <Sofa />
         </>
