@@ -8,8 +8,8 @@ const Outside = () => {
   const texture = useLoader(TextureLoader, "/textures/city2.jpg");
 
   return (
-    <mesh ref={ref} rotation={[0, Math.PI, 0]} position={[0, wallHeight / 2, wallSize / 2 + 8]}>
-      <planeGeometry args={[20, 10]} />
+    <mesh ref={ref} rotation={[0, Math.PI, 0]} position={[0, wallHeight / 2 -0.5, wallSize / 2 + 8]}>
+      <planeGeometry args={[25, 12]} />
       <meshStandardMaterial
         map={texture}
         // emissive={0xffffff} // Adds glow effect

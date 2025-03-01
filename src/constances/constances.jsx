@@ -37,7 +37,7 @@ export const wallData = [
     rot: [Math.PI, 0, 0],
     args: [wallSize, wallHeight, segments, segments],
     windowPosition: [0, 0], // Center of the window
-    windowSize: [1.75, 3], // Window size
+    windowSize: [3.5, 3], // Window size
   },
   {
     pos: [0, wallHeight / 2, -wallSize / 2],

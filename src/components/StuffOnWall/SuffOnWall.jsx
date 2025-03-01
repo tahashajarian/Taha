@@ -42,20 +42,19 @@ const SuffOnWall = () => {
           <group
             rotation={[0, Math.PI / 2, 0]}
             position={[0, 2, wallSize/2 +0.08]}
-            scale={4}
           >
             <Window />
           </group>
-          <group
+          {/* <group
             position={[0.9, 1.9, wallSize/2 - 0.2]}
           >
             <Curtain />
-          </group>
-          <group
+          </group> */}
+          {/* <group
             position={[-0.9, 1.9, wallSize/2 - 0.2]}
           >
             <Curtain />
-          </group>
+          </group> */}
           <Sofa />
         </>
       )}
