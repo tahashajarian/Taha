@@ -18,7 +18,7 @@ const Window = (props: Props) => {
       {meshes.map((mesh, index) => (
         <mesh key={index} rotation={mesh.rotation} position={mesh.position as [number, number, number]}>
           <planeGeometry args={mesh.args as [number, number]} />
-          <meshBasicMaterial color="silver" />
+          <meshBasicMaterial color="black" />
         </mesh>
       ))}
       

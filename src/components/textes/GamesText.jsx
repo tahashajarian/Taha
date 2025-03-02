@@ -150,8 +150,8 @@ const GamesText = () => {
       ;
       <Text
         font={fontURL}
-        position={[3, -2.5, 0]}
-        fontSize={0.3}
+        position={[3, -2.8, 0]}
+        fontSize={0.2}
         color="silver"
         textAlign="center"
         onClick={() => {
@@ -159,15 +159,15 @@ const GamesText = () => {
         }}
       >
         Send an Email
-        <mesh position={[1.5, 0.12, 0]} ref={envelopeRef}>
-          <planeGeometry args={[0.7, 0.7]} />
+        <mesh position={[1, 0.1, 0]} ref={envelopeRef}>
+          <planeGeometry args={[0.4, 0.4]} />
           <meshBasicMaterial map={envelope} transparent />
         </mesh>
       </Text>
       <Text
         font={fontURL}
-        position={[2.72, -1.7, 0]}
-        fontSize={0.3}
+        position={[2.82, -2.3, 0]}
+        fontSize={0.2}
         color="silver"
         textAlign="center"
         onClick={() => {
@@ -175,8 +175,8 @@ const GamesText = () => {
         }}
       >
         My Github
-        <mesh position={[1.05, 0.06, 0]} ref={githubRef}>
-          <planeGeometry args={[0.4, 0.4]} />
+        <mesh position={[0.7, 0.06, 0]} ref={githubRef}>
+          <planeGeometry args={[0.3, 0.3]} />
           <meshBasicMaterial map={github} transparent />
         </mesh>
       </Text>

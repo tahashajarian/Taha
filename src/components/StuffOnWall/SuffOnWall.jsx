@@ -45,11 +45,11 @@ const SuffOnWall = () => {
           >
             <Window />
           </group>
-          {/* <group
-            position={[0.9, 1.9, wallSize/2 - 0.2]}
+          <group
+            position={[-1.8, 1.9, wallSize/2 - 0.2]}
           >
             <Curtain />
-          </group> */}
+          </group>
           {/* <group
             position={[-0.9, 1.9, wallSize/2 - 0.2]}
           >
