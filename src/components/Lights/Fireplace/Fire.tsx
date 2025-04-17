@@ -53,7 +53,7 @@ export default function FireCube() {
       </group>
 
       <group position={[0, 1, 0]}>
-        <Fire scale={4} color={new THREE.Color(0x000000)} />;
+        <Fire scale={4} color={new THREE.Color(0x000000)} />
       </group>
     </group>
   );

@@ -1,48 +1,48 @@
-import React, { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
-import Bird from "./Bird";
-import { wallSize } from "../../constances/constances";
+import React, { useRef, useMemo } from "react"
+import { useFrame } from "@react-three/fiber"
+import Bird from "./Bird"
+import { wallSize } from "../../constances/constances"
 
-const Birds = ({ count = 5, radius = 1.5, speed = 2.5 }) => {
-  const groupRef = useRef();
-  const zOffsetRef = useRef(Math.random() * 2 + 1);
+const Birds = ({ baseRadius = 1.5, speed = 2.5 }) => {
+  const groupRef = useRef()
+  const zOffsetRef = useRef(Math.random() * 2 + 1)
 
-  const prevX = useRef(4);
+  const birdCount = useMemo(() => Math.floor(Math.random() * 19) + 2, [])
+  const radius = useMemo(() => baseRadius + birdCount * 0.1, [baseRadius, birdCount])
+  const ySpread = useMemo(() => birdCount * 0.2, [birdCount])
+
+  const birdPositions = useMemo(() => {
+    return Array.from({ length: birdCount }, (_, i) => {
+      const angle = (i / birdCount) * Math.PI * 2
+      const x = Math.cos(angle) * radius
+      const y = (Math.random() - 0.5) * ySpread
+      const z = Math.sin(angle) * radius
+      return [x, y, z]
+    })
+  }, [birdCount, radius, ySpread])
+
   useFrame((state) => {
+    const time = state.clock.getElapsedTime()
+    const newX = 6 - ((time * speed) % 12)
     if (groupRef.current) {
-      const time = state.clock.getElapsedTime();
-      const newX = 6 - ((time * speed) % 12); // Reversed direction
-      if (newX > 5.9) {
-        zOffsetRef.current = Math.random() * 10; // Randomize Z offset on reset
-        prevX.current = newX; // Randomize Z offset on reset
-      }
-      groupRef.current.position.x = newX;
-      groupRef.current.position.z = Math.max(
-        wallSize / 2 + zOffsetRef.current,
-        wallSize / 2 + 3
-      );
+      if (newX > 5.9) zOffsetRef.current = Math.random() * 10
+      groupRef.current.position.set(
+        newX,
+        2,
+        Math.max(wallSize / 2 + zOffsetRef.current, wallSize / 2 + 4)
+      )
     }
-  });
+  })
 
   return (
-    <group ref={groupRef} position={[0, 2, wallSize / 2 + 3]}>
-      {Array.from({ length: count }, (_, i) => {
-        const angle = (i / count) * Math.PI * 2;
-        return (
-          <group
-            key={i}
-            position={[
-              Math.cos(angle) * radius,
-              (Math.random() - 0.5) * radius * 2,
-              Math.sin(angle) * radius,
-            ]}
-          >
-            <Bird />
-          </group>
-        );
-      })}
+    <group ref={groupRef}>
+      {birdPositions.map(([x, y, z], i) => (
+        <group key={i} position={[x, y, z]}>
+          <Bird />
+        </group>
+      ))}
     </group>
-  );
-};
+  )
+}
 
-export default Birds;
+export default Birds

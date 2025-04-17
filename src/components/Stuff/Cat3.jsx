@@ -39,6 +39,7 @@ export const Cat3 = (props) => {
         // url={"/audio/Ludwing Van Beethoven - 5th Symphony 1st Movement.mp3"}
         url={"/audio/cat.mp3"}
         isPlaying={true}
+        volume={8.0}
       />
     </group>
   );

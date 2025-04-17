@@ -50,9 +50,7 @@ const createWallGeometry = () => {
     // Add a hole if windowPosition and windowSize are defined
     if (windowPosition && windowSize) {
       const [windowX, windowY] = windowPosition;
-      const [windowWidth, windowHeight] = windowSize;
-      console.log({ windowHeight, windowPosition });
-  
+      const [windowWidth, windowHeight] = windowSize;  
       const hole = new Shape();
       hole.moveTo(windowX - windowWidth / 2, windowY - windowHeight / 2);
       hole.lineTo(windowX + windowWidth / 2, windowY - windowHeight / 2);

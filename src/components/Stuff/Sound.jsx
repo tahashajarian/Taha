@@ -2,7 +2,7 @@ import { useLoader, useThree } from "@react-three/fiber";
 import React, { useEffect, useRef, useState } from "react";
 import { AudioListener, AudioLoader } from "three";
 
-const Sound = ({ url }) => {
+const Sound = ({ url, volume = 1.0 }) => {  // Added volume prop with default value 1.0
   const sound = useRef(null);
   const { camera } = useThree();
   const [listener] = useState(() => new AudioListener());
@@ -14,6 +14,7 @@ const Sound = ({ url }) => {
       sound.current.setBuffer(buffer);
       sound.current.setRefDistance(0.1);
       sound.current.setLoop(true);
+      sound.current.setVolume(volume);  // Set the volume here
     }
 
     camera.add(listener);
@@ -24,7 +25,7 @@ const Sound = ({ url }) => {
         sound.current.stop();
       }
     };
-  }, [camera, buffer, listener]);
+  }, [camera, buffer, listener, volume]);  // Added volume to dependencies
 
   useEffect(() => {
     const handleUserInteraction = async () => {
