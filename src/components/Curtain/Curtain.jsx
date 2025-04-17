@@ -1,8 +1,10 @@
-import React, { useMemo, useRef } from "react";
-import * as THREE from "three";
+import React, { useMemo, useRef, useState } from "react"
+import * as THREE from "three"
+import { useSpring, a } from "@react-spring/three"
 
 const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
-  const curtainRef = useRef();
+  const [open, setOpen] = useState(false)
+  const curtainRef = useRef()
 
   const shaderMaterial = useMemo(
     () =>
@@ -20,11 +22,10 @@ const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
             vUv = uv;
             vec3 pos = position;
 
-            // Only vertical wave effect
             float verticalWave = cos(pos.x * 80.0) * 0.1;
             vWave = verticalWave;
 
-            pos.z += vWave; // Apply only vertical wave deformation
+            pos.z += vWave;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
           }
         `,
@@ -36,7 +37,6 @@ const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
           varying float vWave;
 
           void main() {
-            // Gradient color influenced by vertical wave motion
             vec3 gradient = mix(uPrimaryColor, uSecondaryColor, vUv.y + vWave * 10.0);
             gl_FragColor = vec4(gradient, uOpacity);
           }
@@ -44,14 +44,26 @@ const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
         transparent: true,
       }),
     [primaryColor, secondaryColor]
-  );
+  )
+
+  const { scale, position } = useSpring({
+    scale: open ? [5, 1, 1] : [1, 1, 1], // 0.8 * 5 = 4
+    position: open ? [1.75, 0, 0] : [0, 0, 0],
+    config: { tension: 170, friction: 26 },
+  })
 
   return (
-    <mesh ref={curtainRef} rotation={[0, -Math.PI, 0]}>
+    <a.mesh
+      ref={curtainRef}
+      rotation={[0, -Math.PI, 0]}
+      scale={scale}
+      position={position}
+      onClick={() => setOpen(prev => !prev)}
+    >
       <planeGeometry args={[0.8, 3.4, 32, 64]} />
       <primitive attach="material" object={shaderMaterial} />
-    </mesh>
-  );
-};
+    </a.mesh>
+  )
+}
 
-export default Curtain;
+export default Curtain

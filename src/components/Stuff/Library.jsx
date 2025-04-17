@@ -15,18 +15,24 @@ const Library = ({ position }) => (
     >
       The place that I want to forever be inspired by
     </Text>
-    {[...Array(3)].map((_, indexUp) => {
-      const yPos = -indexUp * 0.5;
+
+    {[...Array(3)].map((_, row) => {
+      const yPos = -row * 0.5
       return (
-        <group key={indexUp}>
+        <group key={row}>
           <WallLibrary position={[0, yPos, 0]} />
-          {[...Array(18)].map((_, index) => (
-            <Book key={index} position={[0, yPos + 0.15, index * 0.08 - 0.7]} />
+          {[...Array(18)].map((_, col) => (
+            <Book
+              key={row * 18 + col}
+              id={row * 18 + col}
+              position={[0, yPos + 0.15, col * 0.08 - 0.7]}
+            />
           ))}
         </group>
-      );
+      )
     })}
   </group>
-);
+)
+
 
 export default Library;
