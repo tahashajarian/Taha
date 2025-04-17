@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from "react"
-import { Canvas } from "@react-three/fiber"
-import Experience from "./components/Experience"
-import Interface from "./components/UI/Interface"
-import { Loader } from "@react-three/drei"
-import { useCameraControl } from "./contexts/CameraControlContext"
-import { cameraLookAtConst } from "./constances/constances"
-import { useAppStatusContext } from "./contexts/AppStatusContext"
-import ErrorBoundary from "./components/ErrorBoundary"
-import HandlePerformance from "./performance/HandlePerformance"
+import React, { useEffect, useRef, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import Experience from "./components/Experience";
+import Interface from "./components/UI/Interface";
+import { Loader } from "@react-three/drei";
+import { useCameraControl } from "./contexts/CameraControlContext";
+import { cameraLookAtConst } from "./constances/constances";
+import { useAppStatusContext } from "./contexts/AppStatusContext";
+import ErrorBoundary from "./components/ErrorBoundary";
+import HandlePerformance from "./performance/HandlePerformance";
 
 function App() {
-  const { setCameraLookAt } = useCameraControl()
-  const { setIsAppLoaded } = useAppStatusContext()
-  const [loaded, setLoaded] = useState(false)
-  const [percent, setPercent] = useState(0)
+  const { setCameraLookAt } = useCameraControl();
+  const { setIsAppLoaded } = useAppStatusContext();
+  const [loaded, setLoaded] = useState(false);
+  const [percent, setPercent] = useState(0);
 
   useEffect(() => {
     if (percent === 100 && !loaded) {
-      setCameraLookAt(cameraLookAtConst)
-      setIsAppLoaded(true)
-      setLoaded(true)
+      setCameraLookAt(cameraLookAtConst);
+      setIsAppLoaded(true);
+      setLoaded(true);
     }
-  }, [percent, loaded, setCameraLookAt, setIsAppLoaded])
+  }, [percent, loaded, setCameraLookAt, setIsAppLoaded]);
 
+  const lastPercent = useRef(0);
   return (
     <ErrorBoundary>
       <div className="w-full h-svh">
@@ -31,10 +32,16 @@ function App() {
           shadows
           style={{ background: "rgb(42 50 60)" }}
           frameloop={loaded ? "demand" : "always"}
-          gl={{ antialias: true }}
           dpr={[1, 2]}
           onCreated={({ gl }) => {
-            gl.physicallyCorrectLights = true
+            gl.physicallyCorrectLights = true;
+          }}
+          onPointerMissed={() => (document.body.style.cursor = "default")}
+          gl={{
+            antialias: true,
+            powerPreference: "high-performance",
+            stencil: false,
+            // depth: false,
           }}
         >
           <Experience />
@@ -44,9 +51,12 @@ function App() {
         {!loaded && (
           <Loader
             dataInterpolation={(p) => {
-              const rounded = Math.ceil(p)
-              setPercent(rounded)
-              return `${rounded}%`
+              const rounded = Math.ceil(p);
+              if (rounded !== lastPercent.current) {
+                setPercent(rounded);
+                lastPercent.current = rounded;
+              }
+              return `${rounded}%`;
             }}
           />
         )}
@@ -54,7 +64,7 @@ function App() {
         <Interface />
       </div>
     </ErrorBoundary>
-  )
+  );
 }
 
-export default App
+export default App;
