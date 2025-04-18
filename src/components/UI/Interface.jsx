@@ -75,6 +75,7 @@ const Interface = () => {
           />
         </>
       )}
+      <span className="fixed top-0 right-0 z-50 text-black text-xs">13</span>
     </div>
   );
 };

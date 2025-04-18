@@ -1,70 +1,50 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useThree } from "@react-three/fiber";
-
+import { WebGLRenderer, Texture } from "three";
+// Overriding R3F's Render Loop: Manually setting gl.setAnimationLoop interferes with R3F's optimized rendering, causing duplicate renders
 export default function WebGLPerformanceManager({
   lowPerformance,
 }: {
   lowPerformance: boolean;
 }) {
-  const { gl, clock, scene, camera } = useThree();
+  const { gl } = useThree();
+  const originalSettings = useRef({
+    pixelRatio: gl.getPixelRatio(),
+    anisotropy: Texture.DEFAULT_ANISOTROPY,
+  });
 
-  const handleFocus = () => {
-    console.log("performance => App regained focus, ensuring smooth FPS");
-    // Restore WebGL internal state
-    gl.state.reset();
-    // Optionally restart the animation loop (if needed)
-    gl.setAnimationLoop(() => {});
-  };
-  const handleVisibilityChange = () => {
-    const webglContext = gl.getContext();
-    if (document.hidden) {
-      console.log("performance => Pausing rendering (tab hidden)");
-      // Pause the render loop when the tab is hidden
-      gl.setAnimationLoop(null);
-    } else {
-      console.log("performance => Resuming rendering (tab active)");
-      // Restore internal state and restart clock for smooth animations
-      gl.state.reset();
-      clock.start();
-      // Resume the render loop, rendering the scene with the camera
-      gl.setAnimationLoop(() => {
-        gl.render(scene, camera);
-      });
-    }
-
-    // Check if the WebGL context is lost and restore it if so
-    if (webglContext?.isContextLost && webglContext.isContextLost()) {
-      console.warn("performance => WebGL context lost! Attempting restore...");
-      if (gl.forceContextRestore) {
-        gl.forceContextRestore();
-      }
-    }
-  };
-
+  // Handle performance adjustments
   useEffect(() => {
+    const canvas = gl.domElement;
+
     if (lowPerformance) {
-      console.log(
-        "performance => WebGLPerformanceManager: Low performance detected, reducing quality..."
-      );
-      handleFocus();
-      handleVisibilityChange();
+      // Save original settings
+      originalSettings.current = {
+        pixelRatio: gl.getPixelRatio(),
+        anisotropy: Texture.DEFAULT_ANISOTROPY,
+      };
+
+      // Apply performance optimizations
+      gl.setPixelRatio(1);
+      Texture.DEFAULT_ANISOTROPY = 1;
+      canvas.style.imageRendering = "crisp-edges";
+      canvas.setAttribute('data-performance-mode', 'low');
+    } else {
+      // Restore original settings
+      gl.setPixelRatio(originalSettings.current.pixelRatio);
+      Texture.DEFAULT_ANISOTROPY = originalSettings.current.anisotropy;
+      canvas.style.imageRendering = "auto";
+      canvas.removeAttribute('data-performance-mode');
     }
-  }, [lowPerformance]);
-  useEffect(() => {
-    handleFocus();
-  }, []);
 
-  useEffect(() => {
-    // Get the WebGLRenderingContext once when the effect runs
-
-    window.addEventListener("focus", handleFocus);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
+    // Cleanup on unmount
     return () => {
-      window.removeEventListener("focus", handleFocus);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      gl.setPixelRatio(originalSettings.current.pixelRatio);
+      Texture.DEFAULT_ANISOTROPY = originalSettings.current.anisotropy;
+      canvas.style.imageRendering = "auto";
+      canvas.removeAttribute('data-performance-mode');
     };
-  }, [gl, clock, scene, camera]);
+  }, [lowPerformance, gl]);
 
   return null;
 }

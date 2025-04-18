@@ -8,6 +8,7 @@ import { cameraLookAtConst } from "./constances/constances";
 import { useAppStatusContext } from "./contexts/AppStatusContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import HandlePerformance from "./performance/HandlePerformance";
+import { sRGBEncoding, NoToneMapping } from 'three'
 
 function App() {
   const { setCameraLookAt } = useCameraControl();
@@ -42,6 +43,8 @@ function App() {
             powerPreference: "high-performance",
             stencil: false,
             // depth: false,
+            outputEncoding: sRGBEncoding, // ← Ensures proper color space
+            toneMapping: NoToneMapping    // ← Disables tone mapping
           }}
         >
           <Experience />

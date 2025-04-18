@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* canvas[data-performance-mode='low'] {
+    image-rendering: crisp-edges;
+    filter: contrast(0.98) blur(0.25px);
+  } */
