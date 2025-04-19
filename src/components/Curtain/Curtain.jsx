@@ -3,7 +3,7 @@ import * as THREE from "three"
 import { useSpring, a } from "@react-spring/three"
 
 const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const curtainRef = useRef()
 
   const shaderMaterial = useMemo(

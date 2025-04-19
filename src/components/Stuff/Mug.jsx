@@ -140,3 +140,4 @@ const Mug = (props) => {
 useGLTF.preload("/models/mug.glb");
 
 export default Mug;
+

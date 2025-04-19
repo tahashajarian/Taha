@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber"; // Import the hook
 import Sound from "./Sound";
+import SnoreParticles from "./SnoringParticles";
 
 export const Cat3 = (props) => {
   const { nodes, materials } = useGLTF("/models/cat3.glb");
+  
+  // Create a state for the breathing animation
+  const [breathing, setBreathing] = useState(0);
+  
+  // // Animation for breathing
+  // useFrame(() => {
+  //   setBreathing(Math.sin(Date.now() * 0.002) * 0.02); // Breathing effect (rising and falling)
+  // });
 
   return (
     <group {...props} dispose={null} scale={0.9}>
@@ -28,13 +38,12 @@ export const Cat3 = (props) => {
         </mesh>
       </group>
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.Mesh_0006.geometry}
         material={materials["Material_0.006"]}
-        position={[-0.011, 0, -0.017]}
+        position={[-0.011, breathing, -0.017]} // Apply breathing animation to the chest position
         rotation={[-Math.PI, 1.562, -Math.PI]}
       />
+      <SnoreParticles />
       <Sound
         // url={"/audio/Ludwing Van Beethoven - 5th Symphony 1st Movement.mp3"}
         url={"/audio/cat.mp3"}

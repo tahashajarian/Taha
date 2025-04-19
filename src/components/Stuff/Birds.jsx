@@ -7,7 +7,7 @@ const Birds = ({ baseRadius = 1.5, speed = 2.5 }) => {
   const groupRef = useRef()
   const zOffsetRef = useRef(Math.random() * 2 + 1)
 
-  const birdCount = useMemo(() => Math.floor(Math.random() * 19) + 2, [])
+  const birdCount = Math.floor(Math.random() * 19) + 1
   const radius = useMemo(() => baseRadius + birdCount * 0.1, [baseRadius, birdCount])
   const ySpread = useMemo(() => birdCount * 0.2, [birdCount])
 
