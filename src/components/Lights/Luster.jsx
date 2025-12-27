@@ -30,12 +30,6 @@ const Luster = (props) => {
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
         intensity={lampIsOn ? 2 : 0}
-        castShadow
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
       />
       <group rotation={[-Math.PI, 0, 0]} scale={0.025}>
         <mesh geometry={nodes.Mesh.geometry} material={materials.Body} />

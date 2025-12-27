@@ -7,6 +7,7 @@ export const AppStatusContextProvider = (props) => {
   const [isApploaded, setIsAppLoaded] = useState(false);
   const [paintModalIsPoen, setPaintModalIsOpen] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [curtainOpen, setCurtainOpen] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,6 +32,8 @@ export const AppStatusContextProvider = (props) => {
         paintModalIsPoen,
         setPaintModalIsOpen,
         isMobileDevice,
+        curtainOpen,
+        setCurtainOpen,
       }}
     >
       {props.children}

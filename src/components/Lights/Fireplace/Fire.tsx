@@ -7,8 +7,8 @@ import {
   useLoader,
   ReactThreeFiber,
 } from "@react-three/fiber";
-import { FireMaterial } from "./FireShaderMaterial";
-import { wallSize } from "../../../constances/constances";
+import { FireMaterial } from "./FireShaderMaterial.js";
+import { wallSize } from "../../../constances/constances.jsx";
 import Fireplace from "../../Stuff/Fireplace.jsx";
 
 export default function FireCube() {
@@ -52,7 +52,7 @@ export default function FireCube() {
         />
       </group>
 
-      <group position={[0, 1, 0]}>
+      <group position={[0, 0.8, 0]} scale={0.8}>
         <Fire scale={4} color={new THREE.Color(0x000000)} />
       </group>
     </group>

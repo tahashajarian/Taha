@@ -2,9 +2,11 @@ import React, { useRef } from "react";
 import Lamp from "./Lamp";
 import Luster from "./Luster";
 import { wallHeight } from "../../constances/constances";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
 const Lights = () => {
   const dirLightRef = useRef(null);
+  const { curtainOpen } = useAppStatusContext();
 
   return (
     <>
@@ -17,7 +19,7 @@ const Lights = () => {
       <directionalLight
         ref={dirLightRef}
         position={[0, 5, 8]}
-        intensity={3}
+        intensity={!curtainOpen ? 3 : 1}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}

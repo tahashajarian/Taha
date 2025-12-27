@@ -1,10 +1,11 @@
-import React, { useMemo, useRef, useState } from "react"
-import * as THREE from "three"
-import { useSpring, a } from "@react-spring/three"
+import React, { useMemo, useRef, useState } from "react";
+import * as THREE from "three";
+import { useSpring, a } from "@react-spring/three";
+import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
 const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
-  const [open, setOpen] = useState(true)
-  const curtainRef = useRef()
+  const curtainRef = useRef();
+  const { curtainOpen, setCurtainOpen } = useAppStatusContext();
 
   const shaderMaterial = useMemo(
     () =>
@@ -44,13 +45,13 @@ const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
         transparent: true,
       }),
     [primaryColor, secondaryColor]
-  )
+  );
 
   const { scale, position } = useSpring({
-    scale: open ? [5, 1, 1] : [1, 1, 1], // 0.8 * 5 = 4
-    position: open ? [1.75, 0, 0] : [0, 0, 0],
+    scale: curtainOpen ? [5, 1, 1] : [0.4, 1, 1], // 0.8 * 5 = 4
+    position: curtainOpen ? [1.75, 0, 0] : [-0.1, 0, 0],
     config: { tension: 170, friction: 26 },
-  })
+  });
 
   return (
     <a.mesh
@@ -58,12 +59,12 @@ const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
       rotation={[0, -Math.PI, 0]}
       scale={scale}
       position={position}
-      onClick={() => setOpen(prev => !prev)}
+      onClick={() => setCurtainOpen((prev) => !prev)}
     >
       <planeGeometry args={[0.8, 3.4, 32, 64]} />
       <primitive attach="material" object={shaderMaterial} />
     </a.mesh>
-  )
-}
+  );
+};
 
-export default Curtain
+export default Curtain;
