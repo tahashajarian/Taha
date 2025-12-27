@@ -17,9 +17,15 @@ const Outside = () => {
         position={[0, wallHeight / 2 - 0.5, wallSize / 2 + 8]}
       >
         <planeGeometry args={[25, 12]} />
-        <meshStandardMaterial map={texture} />
+        <meshStandardMaterial
+          map={texture}
+          color={"white"}
+          emissive={"white"}
+          emissiveIntensity={0.1}
+          // toneMapped={false}
+        />
       </mesh>
-      <Birds/>
+      <Birds />
     </group>
   );
 };

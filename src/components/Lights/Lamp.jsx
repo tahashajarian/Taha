@@ -30,11 +30,20 @@ const Lamp = (props) => {
       </group>
       <pointLight
         distance={4}
-        decay={1}
+        decay={0.5}
         power={10}
         position={[0, 4, 0]}
         color={"#ffaaaa"}
-        intensity={lampIsOn ? 6 : 0}
+        intensity={lampIsOn ? 8 : 0}
+        castShadow
+        receiveShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-far={50}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
       />
     </group>
   );

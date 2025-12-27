@@ -16,6 +16,7 @@ const Luster = (props) => {
     metalness: 0.9, // high metalness for reflective look
     emissive: 0xffaaaa, // light yellow emissive color
     emissiveIntensity: lampIsOn ? 4 : 0, // intensity of the emissive color
+    clipShadows: false,
   });
 
   const handleOnClick = () => {
@@ -30,15 +31,15 @@ const Luster = (props) => {
         shadow-mapSize-height={1024}
         intensity={lampIsOn ? 2 : 0}
         castShadow
+        shadow-camera-far={50}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
       />
-      <group  rotation={[-Math.PI, 0, 0]} scale={0.025}>
+      <group rotation={[-Math.PI, 0, 0]} scale={0.025}>
+        <mesh geometry={nodes.Mesh.geometry} material={materials.Body} />
         <mesh
-          
-          geometry={nodes.Mesh.geometry}
-          material={materials.Body}
-        />
-        <mesh
-          
           geometry={nodes.Mesh_1.geometry}
           material={shinyEmissiveMaterial}
         />
