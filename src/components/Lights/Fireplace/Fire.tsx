@@ -46,7 +46,7 @@ export default function FireCube() {
           distance={1}
           decay={1}
           power={10}
-          position={[0, 0, 0]}
+          position={[0, 0.5, 0]}
           color={"#ffaaaa"}
           intensity={6}
         />

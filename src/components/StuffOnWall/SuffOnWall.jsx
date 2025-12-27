@@ -24,7 +24,12 @@ const SuffOnWall = () => {
             <PaintFrame />
           </group>
 
-          <group rotation={[0, 0, 0]} position={[0, 1.8, wallSize / -2 + 0.01]} receiveShadow>
+          <group
+            rotation={[0, 0, 0]}
+            position={[0, 1.8, wallSize / -2 + 0.01]}
+            receiveShadow
+            // castShadow
+          >
             <TheWallWallPaper />
           </group>
           <group
@@ -41,13 +46,11 @@ const SuffOnWall = () => {
           </group>
           <group
             rotation={[0, Math.PI / 2, 0]}
-            position={[0, 2, wallSize/2 +0.08]}
+            position={[0, 2, wallSize / 2 + 0.08]}
           >
             <Window />
           </group>
-          <group
-            position={[-1.8, 1.9, wallSize/2 - 0.2]}
-          >
+          <group position={[-1.8, 1.9, wallSize / 2 - 0.2]}>
             <Curtain />
           </group>
           {/* <group

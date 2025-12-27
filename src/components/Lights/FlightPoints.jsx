@@ -34,6 +34,30 @@ const FlightPoints = () => {
             amplitude={0.5}
             frequency={0.7}
           />
+          <FloatingPoint
+            color="red"
+            position={[wallSize / 2 - 0.5, 1, -4]}
+            amplitude={0.5}
+            frequency={0.5}
+          />
+          <FloatingPoint
+            color="green"
+            position={[wallSize / 2 - 0.5, 1, -3]}
+            amplitude={0.5}
+            frequency={0.75}
+          />
+          <FloatingPoint
+            color="blue"
+            position={[wallSize / 2 - 0.5, 2, 0]}
+            amplitude={0.5}
+            frequency={0.4}
+          />
+          <FloatingPoint
+            color="yellow"
+            position={[wallSize / 2 - 0.5, 2, -1]}
+            amplitude={0.5}
+            frequency={0.7}
+          />
         </>
       )}
       <RectAreaLightComponent

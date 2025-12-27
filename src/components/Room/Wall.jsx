@@ -35,37 +35,43 @@ const Wall = ({ position, rotation, args, windowPosition, windowSize }) => {
   }, [textures]);
 
   // Create the geometry with or without a window
-// Create the geometry with or without a window
-const createWallGeometry = () => {
+  // Create the geometry with or without a window
+  const createWallGeometry = () => {
     const [wallWidth, wallHeight] = args;
     const shape = new Shape();
-  
+
     // Define the wall's outer boundary
     shape.moveTo(-wallWidth / 2, -wallHeight / 2);
     shape.lineTo(wallWidth / 2, -wallHeight / 2);
     shape.lineTo(wallWidth / 2, wallHeight / 2);
     shape.lineTo(-wallWidth / 2, wallHeight / 2);
     shape.lineTo(-wallWidth / 2, -wallHeight / 2);
-  
+
     // Add a hole if windowPosition and windowSize are defined
     if (windowPosition && windowSize) {
       const [windowX, windowY] = windowPosition;
-      const [windowWidth, windowHeight] = windowSize;  
+      const [windowWidth, windowHeight] = windowSize;
       const hole = new Shape();
       hole.moveTo(windowX - windowWidth / 2, windowY - windowHeight / 2);
       hole.lineTo(windowX + windowWidth / 2, windowY - windowHeight / 2);
       hole.lineTo(windowX + windowWidth / 2, windowY + windowHeight / 2);
       hole.lineTo(windowX - windowWidth / 2, windowY + windowHeight / 2);
       hole.lineTo(windowX - windowWidth / 2, windowY - windowHeight / 2);
-  
+
       shape.holes.push(hole);
     }
-  
+
     return new ShapeGeometry(shape);
   };
-  
+
   return (
-    <mesh ref={meshRef} rotation={rotation} position={position}>
+    <mesh
+      ref={meshRef}
+      rotation={rotation}
+      position={position}
+      castShadow
+      receiveShadow
+    >
       <primitive object={createWallGeometry()} />
       {textures ? (
         <meshStandardMaterial

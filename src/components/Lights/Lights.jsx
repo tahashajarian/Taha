@@ -18,8 +18,8 @@ const Lights = () => {
 
       <directionalLight
         ref={dirLightRef}
-        position={[0, 5, 8]}
-        intensity={!curtainOpen ? 3 : 1}
+        position={[0, 3, 8]}
+        intensity={!curtainOpen ? 5 : 1}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
