@@ -1,8 +1,21 @@
+import React from "react";
+
 const Taha = ({ charRef, nodes, materials }) => {
   return (
-    <group receiveShadow castShadow ref={charRef} dispose={null} frustumCulled={false}>
+    <group
+      receiveShadow
+      castShadow
+      ref={charRef}
+      dispose={null}
+      frustumCulled={false}
+    >
       <group receiveShadow castShadow name="Scene" frustumCulled={false}>
-        <group receiveShadow castShadow name="Armature001" frustumCulled={false}>
+        <group
+          receiveShadow
+          castShadow
+          name="Armature001"
+          frustumCulled={false}
+        >
           <skinnedMesh
             name="EyeLeft"
             geometry={nodes.EyeLeft.geometry}
@@ -108,4 +121,4 @@ const Taha = ({ charRef, nodes, materials }) => {
   );
 };
 
-export default Taha;
+export default React.memo(Taha);

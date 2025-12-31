@@ -59,7 +59,7 @@ const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
       rotation={[0, -Math.PI, 0]}
       scale={scale}
       position={position}
-      onClick={() => setCurtainOpen((prev) => !prev)}
+      onClick={() => setCurtainOpen(!curtainOpen)}
     >
       <planeGeometry args={[0.8, 3.4, 32, 64]} />
       <primitive attach="material" object={shaderMaterial} />

@@ -11,6 +11,8 @@ import LoadingOverlay from "./components/Loader/LoadingOverlay";
 import { useLoadingManager } from "./components/Loader/useLoadingManager";
 import { useCameraControlStore } from "./stores/useCameraControlStore";
 import { useAppStatusStore } from "./stores/useAppStatusStore";
+import { useArrowControls } from "./hooks/useArrowControls";
+import { usePaintingInit } from "./hooks/usePaintingInit";
 
 // Create a custom loading manager to track all assets
 const loadingManager = new LoadingManager();
@@ -26,6 +28,9 @@ function App() {
     handleProgressUpdate,
     handleLoadComplete,
   } = useLoadingManager();
+
+  useArrowControls();
+  usePaintingInit();
 
   // Configure the loading manager
   useEffect(() => {

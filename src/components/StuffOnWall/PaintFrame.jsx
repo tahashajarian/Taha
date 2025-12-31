@@ -3,7 +3,6 @@ import { TextureLoader, ShaderMaterial, Color } from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { usePaintingStore } from "../../stores/usePaintingStore";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
-import { usePaintingInit } from "../../hooks/usePaintingInit";
 
 const Frame = ({ width, height, thickness, color, position, isLoading }) => {
   const frameWidth = width + thickness * 2;
@@ -57,7 +56,6 @@ const ShaderFrame = () => {
   const pictureHeight = 2.25; // Adjust the height to be smaller
   const frameThickness = 0.0001;
   const { setPaintModalIsOpen } = useAppStatusStore();
-  usePaintingInit();
 
   return (
     <>

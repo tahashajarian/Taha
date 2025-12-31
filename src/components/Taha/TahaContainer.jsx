@@ -60,6 +60,10 @@ const TahaContainer = (props) => {
       current?.fadeOut(0.2);
       nextActionToPlay?.reset().fadeIn(0.2).play();
       currentAction.current = animation;
+      if (currentAction.current === "typing") {
+        setPosition([0, 0, 0]);
+        setRotation([0, 0, 0]);
+      }
     }
   }, [animation, actions]);
 
