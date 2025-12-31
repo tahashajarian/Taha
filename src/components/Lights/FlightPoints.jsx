@@ -2,10 +2,10 @@ import React from "react";
 import { wallHeight, wallSize } from "../../constances/constances";
 import FloatingPoint from "./FloatingLight";
 import RectAreaLightComponent from "./RectArealLightComponent";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const FlightPoints = () => {
-  const { isMobileDevice } = useAppStatusContext();
+  const { isMobileDevice } = useAppStatusStore();
   return (
     <>
       {!isMobileDevice && (

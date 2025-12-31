@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
-import { usePaintingContext } from "../../contexts/PaintingContext";
 import useCanvasEvents from "../../hooks/useCanvasEvents";
 import ColorAndBrushSelector from "./ColorAndBrushSelector";
+import { usePaintingStore } from "../../stores/usePaintingStore";
 
 const PaintingCanvas = ({ width, height, onSave }) => {
   const containerRef = useRef(null);
-  const { paintingImage, canvasRef } = usePaintingContext();
+  const { paintingImage, canvasRef } = usePaintingStore();
   const [isPainting, setIsPainting] = useState(false);
   const [currentColor, setCurrentColor] = useState("black");
   const [brushSize, setBrushSize] = useState(5);
@@ -52,7 +52,10 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     height: `${brushSize}px`,
     borderRadius: "50%",
     backgroundColor: currentColor,
-    border: currentColor === "white" || currentColor === "#ffffff" ? "1px solid black" : "1px solid white",
+    border:
+      currentColor === "white" || currentColor === "#ffffff"
+        ? "1px solid black"
+        : "1px solid white",
     pointerEvents: "none",
     zIndex: 1000,
     transform: "translate(-50%, -50%)",

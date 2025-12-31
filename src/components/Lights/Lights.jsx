@@ -2,11 +2,11 @@ import React, { useRef } from "react";
 import Lamp from "./Lamp";
 import Luster from "./Luster";
 import { wallHeight } from "../../constances/constances";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const Lights = () => {
   const dirLightRef = useRef(null);
-  const { curtainOpen } = useAppStatusContext();
+  const { curtainOpen } = useAppStatusStore();
 
   return (
     <>

@@ -4,18 +4,18 @@ import {
   cameraLookAtConst,
   cameraLookAtDefault,
 } from "../../constances/constances";
-import { useCameraControl } from "../../contexts/CameraControlContext";
-import { useCharacterAnimations } from "../../contexts/CharacterAnimations";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
 import EmailModal from "./EmailModal";
 import WelcomeMessage from "./WelcomeMessage";
 import PaintingModal from "./PaintingModal";
 import ArrowControls from "./ArrowControls";
+import { useCameraControlStore } from "../../stores/useCameraControlStore";
+import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const Interface = () => {
   const { animation, setAnimation, setPosition, setRotation } =
-    useCharacterAnimations();
-  const { setCameraLookAt } = useCameraControl();
+    useCharacterAnimationsStore();
+  const { setCameraLookAt } = useCameraControlStore();
 
   const {
     modalIsOpen,
@@ -23,7 +23,7 @@ const Interface = () => {
     isApploaded,
     paintModalIsPoen,
     setPaintModalIsOpen,
-  } = useAppStatusContext();
+  } = useAppStatusStore();
   const [showMessage, setShowMessage] = useState(true);
 
   useEffect(() => {

@@ -2,8 +2,8 @@ import { Text } from "@react-three/drei";
 import React, { useRef } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
 import { wallHeight, wallSize } from "../../constances/constances";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const GamesText = () => {
   // Texture loading optimized with default values
@@ -17,7 +17,7 @@ const GamesText = () => {
     "/textures/earth.png",
     "/textures/snake.png",
     "/textures/slot.png",
-    "/textures/heart.png"
+    "/textures/heart.png",
   ]);
 
   const [
@@ -30,7 +30,7 @@ const GamesText = () => {
     earth,
     snake,
     slot,
-    platformer
+    platformer,
   ] = textures;
 
   // Refs organized in a more compact way
@@ -44,14 +44,14 @@ const GamesText = () => {
     earth: useRef(),
     snake: useRef(),
     slot: useRef(),
-    platformer: useRef()
+    platformer: useRef(),
   };
 
   // Configuration constants
   const Y_OFFSET = -0.4;
   const FONT_URL = "/fonts/Roboto-Regular.ttf";
   const MATERIAL_PROPS = { transparent: true };
-  
+
   const items = [
     {
       label: "Platformer",
@@ -60,21 +60,21 @@ const GamesText = () => {
       texture: platformer,
       margin: -0.05,
       iconSize: 0.2,
-      space: 0.75
+      space: 0.75,
     },
     {
       label: "Slot Machine",
       link: "https://taha-shajarian.ir/projects/slot-machin",
       iconRef: refs.slot,
       texture: slot,
-      margin: 0.1
+      margin: 0.1,
     },
     {
       label: "Simple Snake",
       link: "https://taha-shajarian.ir/projects/simple-snake",
       iconRef: refs.snake,
       texture: snake,
-      margin: 0.1
+      margin: 0.1,
     },
     {
       label: "Earh",
@@ -82,14 +82,14 @@ const GamesText = () => {
       iconRef: refs.earth,
       texture: earth,
       margin: -0.3,
-      space: 0.5
+      space: 0.5,
     },
     {
       label: "Black Jack",
       link: "https://taha-shajarian.ir/projects/blackjack",
       iconRef: refs.blackJack,
       texture: jeton,
-      space: 0.8
+      space: 0.8,
     },
     {
       label: "War Land",
@@ -98,18 +98,18 @@ const GamesText = () => {
       texture: shotgun,
       iconSize: 0.4,
       margin: -0.09,
-      space: 0.7
+      space: 0.7,
     },
     {
       label: "Flappy Bird",
       link: "https://taha-shajarian.ir/projects/flappybird",
       iconRef: refs.flappyBird,
       texture: flappyBirdTexture,
-      iconSize: 0.4
-    }
+      iconSize: 0.4,
+    },
   ];
 
-  const { setModalIsOpen } = useAppStatusContext();
+  const { setModalIsOpen } = useAppStatusStore();
   const navigateTo = (address) => window.open(address, "_blank");
 
   return (
@@ -145,7 +145,9 @@ const GamesText = () => {
               {item.label}
             </Text>
             <mesh position={[item.space ?? 0.85, 0.033, 0]} ref={item.iconRef}>
-              <planeGeometry args={[item.iconSize ?? 0.25, item.iconSize ?? 0.25]} />
+              <planeGeometry
+                args={[item.iconSize ?? 0.25, item.iconSize ?? 0.25]}
+              />
               <meshBasicMaterial map={item.texture} {...MATERIAL_PROPS} />
             </mesh>
           </group>

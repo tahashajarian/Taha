@@ -1,10 +1,10 @@
 import { CameraControls } from "@react-three/drei";
 import React, { useEffect, useRef } from "react";
-import { useCameraControl } from "../../contexts/CameraControlContext";
+import { useCameraControlStore } from "../../stores/useCameraControlStore";
 
 const CameraControl = () => {
   const cameraControlsRef = useRef();
-  const { cameraLookAt } = useCameraControl();
+  const { cameraLookAt } = useCameraControlStore();
 
   // const {Camera}
 

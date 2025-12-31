@@ -2,29 +2,29 @@ import React, { useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import Experience from "./components/Experience";
 import Interface from "./components/UI/Interface";
-import { useCameraControl } from "./contexts/CameraControlContext";
 import { cameraLookAtConst } from "./constances/constances";
-import { useAppStatusContext } from "./contexts/AppStatusContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import HandlePerformance from "./performance/HandlePerformance";
-import { sRGBEncoding, NoToneMapping, LoadingManager, Color } from 'three'
+import { sRGBEncoding, NoToneMapping, LoadingManager, Color } from "three";
 import ProgressTracker from "./components/Loader/ProgressTracker";
 import LoadingOverlay from "./components/Loader/LoadingOverlay";
 import { useLoadingManager } from "./components/Loader/useLoadingManager";
+import { useCameraControlStore } from "./stores/useCameraControlStore";
+import { useAppStatusStore } from "./stores/useAppStatusStore";
 
 // Create a custom loading manager to track all assets
 const loadingManager = new LoadingManager();
 
 function App() {
-  const { setCameraLookAt } = useCameraControl();
-  const { setIsAppLoaded } = useAppStatusContext();
+  const { setCameraLookAt } = useCameraControlStore();
+  const { setIsAppLoaded } = useAppStatusStore();
   const {
     loaded,
     percent,
     showLoader,
     showContent,
     handleProgressUpdate,
-    handleLoadComplete
+    handleLoadComplete,
   } = useLoadingManager();
 
   // Configure the loading manager
@@ -50,7 +50,7 @@ function App() {
     };
 
     loadingManager.onError = (url) => {
-      console.error('Error loading', url);
+      console.error("Error loading", url);
     };
   }, [handleProgressUpdate]);
 
@@ -65,9 +65,11 @@ function App() {
     <ErrorBoundary>
       <div className="w-full h-svh relative">
         {/* Main content - hidden until loading is complete */}
-        <div 
-          className={`w-full h-full ${showContent ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-700`}
-          style={{ visibility: showContent ? 'visible' : 'hidden' }}
+        <div
+          className={`w-full h-full ${
+            showContent ? "opacity-100" : "opacity-0 pointer-events-none"
+          } transition-opacity duration-700`}
+          style={{ visibility: showContent ? "visible" : "hidden" }}
         >
           <Canvas
             camera={{ position: [0, 3, 8], fov: 50 }}
@@ -87,13 +89,13 @@ function App() {
               powerPreference: "high-performance",
               stencil: false,
               outputEncoding: sRGBEncoding,
-              toneMapping: NoToneMapping
+              toneMapping: NoToneMapping,
             }}
           >
             <Experience loadingManager={loadingManager} />
             <HandlePerformance />
             <ProgressTracker
-              onProgressUpdate={handleProgressUpdate} 
+              onProgressUpdate={handleProgressUpdate}
               onLoadComplete={handleLoadComplete}
             />
           </Canvas>

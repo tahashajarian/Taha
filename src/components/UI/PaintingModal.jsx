@@ -1,10 +1,10 @@
 import React from "react";
 import Modal from "../UI/Modal";
 import PaintingCanvas from "./PaintingCanvas";
-import { usePaintingContext } from "../../contexts/PaintingContext";
+import { usePaintingStore } from "../../stores/usePaintingStore";
 
 const PaintingModal = ({ modalIsOpen, closeModal }) => {
-  const { setPaintingImage } = usePaintingContext();
+  const { setPaintingImage } = usePaintingStore();
 
   const onSave = (imageData) => {
     // closeModal();

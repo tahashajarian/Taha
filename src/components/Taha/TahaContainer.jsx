@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useCharacterAnimations } from "../../contexts/CharacterAnimations";
 import * as THREE from "three";
 import Taha from "./Taha";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
-import { useArrows } from "../../contexts/ArrowsProvider";
+import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
+import { useArrowsStore } from "../../stores/useArrowStore";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import { useArrowControls } from "../../hooks/useArrowControls";
 
 const roomMinX = -5.5;
 const roomMaxX = 5.5;
@@ -25,10 +26,11 @@ const TahaContainer = (props) => {
     setPosition,
     rotation,
     setRotation,
-  } = useCharacterAnimations();
-  const { backward, forward, left, right } = useArrows();
+  } = useCharacterAnimationsStore();
+  const { backward, forward, left, right } = useArrowsStore();
   const { camera } = useThree();
-  const { modalIsOpen } = useAppStatusContext();
+  const { modalIsOpen } = useAppStatusStore();
+  useArrowControls();
 
   const speed = 2.2; // Adjust speed as needed
 

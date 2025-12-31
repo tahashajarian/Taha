@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { tablePosition, tableRotation } from "../../constances/constances";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 import Textes from "../textes/Textes";
 import Chair from "../Stuff/Chair";
@@ -15,7 +15,7 @@ import Clock from "../Stuff/Clock";
 const Cat3 = lazy(() => import("../Stuff/Cat3"));
 
 const TableSetup = () => {
-  const { isApploaded } = useAppStatusContext();
+  const { isApploaded } = useAppStatusStore();
 
   return (
     <group position={tablePosition} rotation={tableRotation}>

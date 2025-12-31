@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { Html, useProgress } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
-import { useCameraControl } from "../contexts/CameraControlContext";
 import { useAppStatusContext } from "../contexts/AppStatusContext";
 import { cameraLookAtConst } from "../constances/constances";
+import { useCameraControlStore } from "../stores/useCameraControlStore";
 
 export default function CustomLoader() {
   const { progress } = useProgress();
   const invalidate = useThree((state) => state.invalidate);
-  const { setCameraLookAt } = useCameraControl();
+  const { setCameraLookAt } = useCameraControlStore();
   const { setIsAppLoaded } = useAppStatusContext();
 
   useEffect(() => {

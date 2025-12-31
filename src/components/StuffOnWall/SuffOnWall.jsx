@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
 import { wallHeight, wallSize } from "../../constances/constances";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
 
 import GodsHand from "./GodsHand";
 import Flower from "../Stuff/Flower";
@@ -9,9 +8,10 @@ import Sofa from "../Stuff/Sofa";
 import PaintFrame from "./PaintFrame";
 import Window from "./Window";
 import Curtain from "../Curtain/Curtain";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const SuffOnWall = () => {
-  const { isApploaded } = useAppStatusContext();
+  const { isApploaded } = useAppStatusStore();
 
   return (
     <group>

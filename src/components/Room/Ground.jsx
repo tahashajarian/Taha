@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { wallSize } from "../../constances/constances";
 import { TextureLoader, RepeatWrapping } from "three";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const TexturedFloor = () => {
   const [textures, setTextures] = useState(null);
   const meshRef = useRef();
-  const { isApploaded } = useAppStatusContext();
+  const { isApploaded } = useAppStatusStore();
 
   useEffect(() => {
     const loader = new TextureLoader();

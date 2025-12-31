@@ -1,11 +1,11 @@
 import React, { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useSpring, a } from "@react-spring/three";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const Curtain = ({ primaryColor = "gray", secondaryColor = "silver" }) => {
   const curtainRef = useRef();
-  const { curtainOpen, setCurtainOpen } = useAppStatusContext();
+  const { curtainOpen, setCurtainOpen } = useAppStatusStore();
 
   const shaderMaterial = useMemo(
     () =>

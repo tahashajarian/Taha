@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from "react";
-import { useAppStatusContext } from "../../contexts/AppStatusContext";
-import { usePaintingContext } from "../../contexts/PaintingContext";
 import { TextureLoader, ShaderMaterial, Color } from "three";
 import { useFrame, useLoader } from "@react-three/fiber";
+import { usePaintingStore } from "../../stores/usePaintingStore";
+import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import { usePaintingInit } from "../../hooks/usePaintingInit";
 
 const Frame = ({ width, height, thickness, color, position, isLoading }) => {
   const frameWidth = width + thickness * 2;
@@ -50,12 +51,13 @@ const RefreshIcon = ({ onClick }) => {
 };
 
 const ShaderFrame = () => {
-  const { paintingImage, canvasRef } = usePaintingContext();
+  const { paintingImage, canvasRef, fetchPainting, loading } =
+    usePaintingStore();
   const pictureWidth = 3; // Adjust the width to be smaller
   const pictureHeight = 2.25; // Adjust the height to be smaller
   const frameThickness = 0.0001;
-  const { setPaintModalIsOpen } = useAppStatusContext();
-  const { fetchPainting, loading } = usePaintingContext();
+  const { setPaintModalIsOpen } = useAppStatusStore();
+  usePaintingInit();
 
   return (
     <>
