@@ -1,20 +1,18 @@
-import { CameraControls } from "@react-three/drei";
-import React, { useEffect, useRef } from "react";
-import { useCameraControlStore } from "../../stores/useCameraControlStore";
+import { CameraControls } from "@react-three/drei"
+import React, { useEffect, useRef } from "react"
+import { useCameraControlStore } from "../../stores/useCameraControlStore"
 
 const CameraControl = () => {
-  const cameraControlsRef = useRef();
-  const { cameraLookAt } = useCameraControlStore();
-
-  // const {Camera}
+  const cameraControlsRef = useRef()
+  const { cameraLookAt } = useCameraControlStore()
 
   useEffect(() => {
     if (cameraLookAt) {
       setTimeout(() => {
-        cameraControlsRef.current?.setLookAt(...cameraLookAt, true);
-      }, 500);
+        cameraControlsRef.current?.setLookAt(...cameraLookAt, true)
+      }, 500)
     }
-  }, [cameraControlsRef, cameraLookAt]);
+  }, [cameraLookAt])
 
   return (
     <CameraControls
@@ -22,9 +20,10 @@ const CameraControl = () => {
       minDistance={1.2}
       maxDistance={5.5}
       verticalDragToForward={false}
-      maxPolarAngle={Math.PI / 2} // Limit rotation to not show below horizon
+      maxPolarAngle={Math.PI / 2}
+      enablePan={false}           
     />
-  );
-};
+  )
+}
 
-export default CameraControl;
+export default CameraControl
