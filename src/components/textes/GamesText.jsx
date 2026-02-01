@@ -71,7 +71,7 @@ const GamesText = () => {
     },
     {
       label: "Simple Snake",
-      link: "https://taha-shajarian.ir/projects/simple-snake",
+      link: "",
       iconRef: refs.snake,
       texture: snake,
       margin: 0.1,
@@ -110,7 +110,9 @@ const GamesText = () => {
   ];
 
   const { setModalIsOpen } = useAppStatusStore();
-  const navigateTo = (address) => window.open(address, "_blank");
+  const navigateTo = (address) => {
+    if (address) window.open(address, "_blank");
+  };
 
   return (
     <group

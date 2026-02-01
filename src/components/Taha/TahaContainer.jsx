@@ -1,23 +1,26 @@
-import React, { useEffect, useRef, useCallback } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
-import * as THREE from "three";
-import Taha from "./Taha";
-import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
-import { useArrowsStore } from "../../stores/useArrowStore";
-import { useAppStatusStore } from "../../stores/useAppStatusStore";
-import { useArrowControls } from "../../hooks/useArrowControls";
+import React, { useRef, useEffect, useCallback } from "react"
+import { useGLTF, useAnimations } from "@react-three/drei"
+import { useFrame, useThree } from "@react-three/fiber"
+import * as THREE from "three"
+import Taha from "./Taha"
+import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore"
+import { useArrowsStore } from "../../stores/useArrowStore"
+import { useAppStatusStore } from "../../stores/useAppStatusStore"
+import { useArrowControls } from "../../hooks/useArrowControls"
 
-const roomMinX = -5.5;
-const roomMaxX = 5.5;
-const roomMinZ = -5.5;
-const roomMaxZ = 5.5;
+const roomMinX = -5.5
+const roomMaxX = 5.5
+const roomMinZ = -5.5
+const roomMaxZ = 5.5
 
 const TahaContainer = (props) => {
-  const group = useRef();
-  const currentAction = useRef("");
-  const { nodes, materials, animations } = useGLTF("/models/Taha.glb");
-  const { actions, names } = useAnimations(animations, group);
+  const group = useRef(null)
+  const currentActionRef = useRef(null)
+  const currentActionName = useRef("")
+
+  const { nodes, materials, animations } = useGLTF("/models/Taha.glb")
+  const { actions, names } = useAnimations(animations, group)
+
   const {
     setAnimations,
     animation,
@@ -25,110 +28,129 @@ const TahaContainer = (props) => {
     position,
     setPosition,
     rotation,
-    setRotation,
-  } = useCharacterAnimationsStore();
-  const { backward, forward, left, right } = useArrowsStore();
-  const { camera } = useThree();
-  const { modalIsOpen } = useAppStatusStore();
-  useArrowControls();
+    setRotation
+  } = useCharacterAnimationsStore()
 
-  const speed = 2.2; // Adjust speed as needed
+  const { backward, forward, left, right } = useArrowsStore()
+  const { camera } = useThree()
+  const { modalIsOpen } = useAppStatusStore()
 
+  const resetArrows = useArrowsStore.getState().resetArrows
+
+  useArrowControls()
+
+  const speed = 2.2
+
+  // store animation names
   useEffect(() => {
-    if (setAnimation) {
-      setAnimations(names);
-    }
-  }, [names, setAnimations]);
+    if (setAnimations) setAnimations(names)
+  }, [names, setAnimations])
 
+  // update animation based on input
   const updateAnimation = useCallback(() => {
-    if (modalIsOpen) return;
+    if (modalIsOpen) return
+
     if (right || left || forward || backward) {
-      setAnimation("walk");
+      setAnimation("walk")
+    } else if (animation !== "typing") {
+      setAnimation("idle") // idle when no keys pressed
+    }
+  }, [right, left, forward, backward, setAnimation, animation, modalIsOpen])
+
+  useEffect(() => {
+    updateAnimation()
+  }, [updateAnimation])
+
+  // handle action fade in/out & always play
+  useEffect(() => {
+    if (!actions) return
+    const nextAction = actions[animation]
+    if (!nextAction) return
+
+    // typing resets position & rotation
+    if (animation === "typing") {
+      resetArrows?.()
+      const zeroPos = [0, 0, 0]
+      const zeroRot = [0, 0, 0]
+      setPosition?.(zeroPos)
+      setRotation?.(zeroRot)
+      group.current?.position.set(...zeroPos)
+      group.current?.rotation.set(...zeroRot)
+    }
+
+    const prevAction = currentActionRef.current
+    if (prevAction !== nextAction) {
+      prevAction?.fadeOut(0.2)
+      nextAction.reset().fadeIn(0.2).play()
+      currentActionRef.current = nextAction
+      currentActionName.current = animation
     } else {
-      setAnimation("idle");
+      // keep playing current action
+      nextAction.play()
     }
-  }, [right, left, forward, backward, setAnimation]);
+  }, [animation, actions, resetArrows, setPosition, setRotation])
 
+  // force typing on mount
   useEffect(() => {
-    updateAnimation();
-  }, [updateAnimation]);
+    setAnimation("typing")
+  }, [setAnimation])
 
-  useEffect(() => {
-    if (currentAction.current !== actions[animation]) {
-      const nextActionToPlay = actions[animation];
-      const current = actions[currentAction.current];
-      current?.fadeOut(0.2);
-      nextActionToPlay?.reset().fadeIn(0.2).play();
-      currentAction.current = animation;
-      if (currentAction.current === "typing") {
-        setPosition([0, 0, 0]);
-        setRotation([0, 0, 0]);
-      }
-    }
-  }, [animation, actions]);
-
-  useEffect(() => {
-    setAnimation("typing");
-  }, [setAnimation]);
-
+  // character movement
   useFrame((state, delta) => {
-    if (modalIsOpen) return;
-    const direction = [0, 0, 0];
+    if (modalIsOpen) return
 
-    if (forward) direction[2] += speed * delta;
-    if (backward) direction[2] -= speed * delta;
-    if (left) direction[0] += speed * delta;
-    if (right) direction[0] -= speed * delta;
+    const direction = [0, 0, 0]
+    if (forward) direction[2] += speed * delta
+    if (backward) direction[2] -= speed * delta
+    if (left) direction[0] += speed * delta
+    if (right) direction[0] -= speed * delta
 
-    // Transform the direction based on the camera's orientation
-    const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
-    const cameraRight = new THREE.Vector3();
-    const cameraUp = new THREE.Vector3();
-    cameraRight.crossVectors(camera.up, cameraDirection).normalize();
-    cameraUp.crossVectors(cameraDirection, cameraRight).normalize();
+    const cameraDirection = camera.getWorldDirection(new THREE.Vector3())
+    const cameraRight = new THREE.Vector3()
+    cameraRight.crossVectors(camera.up, cameraDirection).normalize()
 
     const transformedDirection = new THREE.Vector3()
       .addScaledVector(cameraDirection, direction[2])
-      .addScaledVector(cameraRight, direction[0]);
+      .addScaledVector(cameraRight, direction[0])
 
     const newPosition = [
       position[0] + transformedDirection.x,
       position[1],
-      position[2] + transformedDirection.z,
-    ];
+      position[2] + transformedDirection.z
+    ]
 
+    // keep within bounds
     if (
       newPosition[0] < roomMinX ||
       newPosition[0] > roomMaxX ||
       newPosition[2] < roomMinZ ||
       newPosition[2] > roomMaxZ
-    ) {
-      return; // Prevent movement if it exceeds boundaries
-    }
+    ) return
 
-    setPosition(newPosition);
-    group.current.position.set(...newPosition);
+    setPosition(newPosition)
+    group.current.position.set(...newPosition)
 
+    // rotate character towards movement
     if (forward || backward || left || right) {
-      const angle = Math.atan2(transformedDirection.x, transformedDirection.z);
-      setRotation([0, angle, 0]);
+      const angle = Math.atan2(transformedDirection.x, transformedDirection.z)
+      setRotation([0, angle, 0])
     }
-  });
+  })
 
+  // apply rotation & camera look
   useEffect(() => {
-    group.current.rotation.set(...rotation);
+    group.current?.rotation.set(...rotation)
     camera.lookAt(
       new THREE.Vector3(
         group.current.position.x,
         group.current.position.y + 0.7,
         group.current.position.z
       )
-    );
-  }, [position, rotation, camera]);
+    )
+  }, [position, rotation, camera])
 
-  return <Taha charRef={group} materials={materials} nodes={nodes} />;
-};
+  return <Taha charRef={group} materials={materials} nodes={nodes} {...props} />
+}
 
-useGLTF.preload("/models/Taha.glb");
-
-export default TahaContainer;
+useGLTF.preload("/models/Taha.glb")
+export default TahaContainer
