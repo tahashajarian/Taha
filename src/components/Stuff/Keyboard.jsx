@@ -1,19 +1,26 @@
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 
 const Keyboard = (props) => {
   const { nodes, materials } = useGLTF("/models/keyboard.glb");
+  const quality = useGraphicsSettings((s) => s.quality);
+
+  // Fix material response (VERY IMPORTANT)
+  materials.klawisze.metalness = 0.6;
+  materials.klawisze.roughness = quality === "high" ? 0.25 : 0.4;
+  materials.klawisze.envMapIntensity = quality === "high" ? 1.2 : 0.6;
+
   return (
     <group {...props} dispose={null}>
-      <RGBLight />
+      <RGBLight quality={quality} />
       <mesh
-        
-        castShadow
-        receiveShadow
+        castShadow={quality === "high"}
+        receiveShadow={quality !== "low"}
         geometry={nodes.Cube.geometry}
         material={materials.klawisze}
-        scale={1}
         rotation={[0, Math.PI / 2, 0]}
       />
     </group>
@@ -21,56 +28,54 @@ const Keyboard = (props) => {
 };
 
 useGLTF.preload("/models/keyboard.glb");
-
 export default Keyboard;
 
-const RGBLight = () => {
-  const lightRefR = useRef();
-  const lightRefG = useRef();
-  const lightRefB = useRef();
+const RGBLight = ({ quality }) => {
+  const lightRefR = useRef(null);
+  const lightRefG = useRef(null);
+  const lightRefB = useRef(null);
 
-  useFrame((state, delta) => {
-    const time = state.clock.getElapsedTime();
-    const r = (Math.sin(time * 2) + 1) / 2; // oscillate between 0 and 1
-    const g = (Math.sin(time * 2 + Math.PI / 2) + 1) / 2; // 90 degrees phase shift
-    const b = (Math.sin(time * 2 + Math.PI) + 1) / 2; // 180 degrees phase shift
+  const intensity = quality === "high" ? 55 : quality === "medium" ? 30 : 15;
 
-    if (lightRefR.current) lightRefR.current.color.setRGB(r, 0, 0);
-    if (lightRefG.current) lightRefG.current.color.setRGB(0, g, 0);
-    if (lightRefB.current) lightRefB.current.color.setRGB(0, 0, b);
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime;
+    const r = (Math.sin(t * 2) + 1) / 2;
+    const g = (Math.sin(t * 2 + Math.PI / 2) + 1) / 2;
+    const b = (Math.sin(t * 2 + Math.PI) + 1) / 2;
+
+    lightRefR.current?.color.setRGB(r, 0, 0);
+    lightRefG.current?.color.setRGB(0, g, 0);
+    lightRefB.current?.color.setRGB(0, 0, b);
   });
 
   return (
     <group>
       <rectAreaLight
-        position={[0.0, 0.03, 0.04]}
+        ref={lightRefR}
+        position={[0, 0.03, 0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
         height={0.02}
-        intensity={50}
+        intensity={intensity}
         color="red"
-        ref={lightRefR}
-        power={0.5}
       />
       <rectAreaLight
-        position={[0.0, 0.03, 0.0]}
+        ref={lightRefB}
+        position={[0, 0.03, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
         height={0.04}
-        intensity={50}
+        intensity={intensity}
         color="blue"
-        ref={lightRefB}
-        power={0.5}
       />
       <rectAreaLight
-        position={[0.0, 0.03, -0.04]}
+        ref={lightRefG}
+        position={[0, 0.03, -0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
         height={0.02}
-        intensity={50}
+        intensity={intensity}
         color="green"
-        ref={lightRefG}
-        power={0.5}
       />
     </group>
   );

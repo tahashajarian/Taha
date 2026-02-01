@@ -2,13 +2,15 @@ import React, { useRef } from "react";
 import { wallHeight, wallSize } from "../../constances/constances";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import Bird from "../Stuff/Bird";
 import Birds from "../Stuff/Birds";
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 
 const Outside = () => {
   const ref = useRef();
   const texture = useLoader(TextureLoader, "/textures/city2.jpg");
+  const { quality } = useGraphicsSettings();
 
+  const isLowQuality = quality === "low" || quality === "ultra-low";
   return (
     <group>
       <mesh
@@ -25,7 +27,7 @@ const Outside = () => {
           // toneMapped={false}
         />
       </mesh>
-      <Birds />
+      {!isLowQuality && <Birds />}
     </group>
   );
 };

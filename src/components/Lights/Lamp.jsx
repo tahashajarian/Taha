@@ -1,21 +1,32 @@
-import React, { useRef, useState } from "react";
-import { useGLTF } from "@react-three/drei";
-import { MeshStandardMaterial } from "three";
+import React, { useState, useMemo } from "react"
+import { useGLTF } from "@react-three/drei"
+import { MeshStandardMaterial } from "three"
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 
 const Lamp = (props) => {
-  const { nodes, materials } = useGLTF("/models/lamp.glb");
-  const [lampIsOn, setLampIsOn] = useState(true);
-  const shinyEmissiveMaterial = new MeshStandardMaterial({
-    color: 0xffaaaa, // white base color
-    roughness: 0.1, // low roughness for shininess
-    metalness: 0.9, // high metalness for reflective look
-    emissive: 0xffaaaa, // light yellow emissive color
-    emissiveIntensity: lampIsOn ? 1 : 0, // intensity of the emissive color
-  });
+  const { nodes, materials } = useGLTF("/models/lamp.glb")
+  const [lampIsOn, setLampIsOn] = useState(true)
+  const { quality } = useGraphicsSettings()
 
-  const handleOnClick = () => {
-    setLampIsOn(!lampIsOn);
-  };
+  const isLowQuality = quality === "low" || quality === "ultra-low"
+
+  const shinyEmissiveMaterial = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color: 0xffaaaa,
+        roughness: 0.1,
+        metalness: 0.9,
+        emissive: 0xffaaaa,
+        emissiveIntensity: 1,
+      }),
+    []
+  )
+
+  // update emissive without recreating material
+  shinyEmissiveMaterial.emissiveIntensity = lampIsOn ? 1 : 0
+
+  const handleOnClick = () => setLampIsOn((v) => !v)
+
   return (
     <group {...props} dispose={null} scale={0.3} onClick={handleOnClick}>
       <group position={[0.5, 3.4, 0.66]} scale={[0.875, 1.5, 0.875]}>
@@ -28,56 +39,21 @@ const Lamp = (props) => {
           material={materials["Matte Black"]}
         />
       </group>
+
       <pointLight
+        position={[0, 4, 0]}
+        color="#ffaaaa"
         distance={4}
         decay={0.5}
         power={10}
-        position={[0, 4, 0]}
-        color={"#ffaaaa"}
         intensity={lampIsOn ? 8 : 0}
-        castShadow
-        receiveShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
+        castShadow={!isLowQuality}
+        shadow-mapSize-width={!isLowQuality ? 1024 : 0}
+        shadow-mapSize-height={!isLowQuality ? 1024 : 0}
       />
     </group>
-  );
-};
+  )
+}
 
-useGLTF.preload("/models/lamp.glb");
-export default Lamp;
-
-// import React, { useRef } from "react";
-// import { useGLTF } from "@react-three/drei";
-
-// const Lamp = () => {
-//   const group = useRef();
-//   const { nodes } = useGLTF("/models/lamp.glb");
-
-//   // Create a shiny and emissive material
-
-//   return (
-//     <group ref={group} dispose={null}>
-//       <mesh
-//         geometry={nodes.lamp.geometry}
-//         material={shinyEmissiveMaterial}
-//
-//
-//       />
-//       <pointLight
-//         position={[0, 0.5, 0]}
-//         intensity={1}
-//         distance={5}
-//         decay={2}
-//         color={0xffffaa}
-//       />
-//     </group>
-//   );
-// };
-
-// export default Lamp;
+useGLTF.preload("/models/lamp.glb")
+export default Lamp

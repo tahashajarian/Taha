@@ -3,12 +3,15 @@ import Lamp from "./Lamp";
 import Luster from "./Luster";
 import { wallHeight } from "../../constances/constances";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 import FlightPoints from "./FlightPoints";
-
 
 const Lights = () => {
   const dirLightRef = useRef(null);
   const { curtainOpen } = useAppStatusStore();
+  const { quality } = useGraphicsSettings();
+
+  const isLowQuality = quality === "low" || quality === "ultra-low";
 
   return (
     <>
@@ -22,9 +25,9 @@ const Lights = () => {
         ref={dirLightRef}
         position={[0, 3, 8]}
         intensity={!curtainOpen ? 5 : 1}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        castShadow={!isLowQuality}
+        shadow-mapSize-width={!isLowQuality ? 1024 : 0}
+        shadow-mapSize-height={!isLowQuality ? 1024 : 0}
         shadow-camera-far={50}
         shadow-camera-left={-10}
         shadow-camera-right={10}
@@ -35,10 +38,13 @@ const Lights = () => {
       <group position={[-5.5, 0, -5.5]}>
         <Lamp />
       </group>
-      <group position={[5.5, 0, 5.5]}>
-        <Lamp />
-      </group>
-      <FlightPoints />
+      {!isLowQuality && (
+        <group position={[5.5, 0, 5.5]}>
+          <Lamp />
+        </group>
+      )}
+
+      {!isLowQuality && <FlightPoints />}
     </>
   );
 };
