@@ -1,8 +1,6 @@
 import React from "react";
 import { useArrowsStore } from "../../stores/useArrowStore";
 
-const isMobileDevice = () =>
-  /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
 
 const ArrowButton = ({ direction, symbol }) => {
   const setArrow = useArrowsStore((s) => s.setArrow);
@@ -22,7 +20,6 @@ const ArrowButton = ({ direction, symbol }) => {
 };
 
 const ArrowControls = () => {
-  if (isMobileDevice()) return null;
 
   return (
     <div className="absolute bottom-10 left-10 flex flex-col items-center space-y-2 select-none">

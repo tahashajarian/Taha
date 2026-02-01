@@ -8,8 +8,8 @@ const getDPR = () =>
 export const PRESETS = {
   high: () => getDPR(),
   medium: () => 1,
-  low: () => 0.75,
-  'ultra-low': () => 0.4,
+  low: () => 0.8,
+  'ultra-low': () => 0.75,
 }
 
 // Enhanced device capability detection
