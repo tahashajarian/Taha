@@ -17,22 +17,21 @@ const Library = ({ position }) => (
     </Text>
 
     {[...Array(3)].map((_, row) => {
-      const yPos = -row * 0.5
+      const yPos = -row * 0.5;
       return (
         <group key={row}>
           <WallLibrary position={[0, yPos, 0]} />
           {[...Array(18)].map((_, col) => (
             <Book
               key={row * 18 + col}
-              id={row * 18 + col}
+              id={String(row * 18 + col)}
               position={[0, yPos + 0.15, col * 0.08 - 0.7]}
             />
           ))}
         </group>
-      )
+      );
     })}
   </group>
-)
-
+);
 
 export default Library;

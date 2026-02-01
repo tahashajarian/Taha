@@ -6,10 +6,25 @@ const Asali = (props) => {
   const { nodes, materials } = useGLTF("/models/asali.glb");
   return (
     <group castShadow receiveShadow {...props} dispose={null}>
-      <Book position={[0, 0.73, 0]} rotation={[Math.PI / 2, 0, 0]} />
-      <Book position={[0, 0.78, 0]} rotation={[Math.PI / 2, 0, 0]} />
-      <Book position={[0, 0.83, 0]} rotation={[Math.PI / 2, 0, 0]} />
+      <group scale={1.5} position={[1.0, 1.08, 0]}>
+        <Book
+          clickAble={false}
+          position={[0, 0.05, 0]}
+          rotation={[Math.PI / 2, 0, 0]}
+        />
+        <Book
+          clickAble={false}
+          position={[0, 0.1, 0]}
+          rotation={[Math.PI / 2, 0, 0]}
+        />
+        <Book
+          clickAble={false}
+          position={[0, 0.15, 0]}
+          rotation={[Math.PI / 2, 0, 0]}
+        />
+      </group>
       <mesh
+        scale={1.6}
         castShadow
         receiveShadow
         geometry={nodes.table001.geometry}
