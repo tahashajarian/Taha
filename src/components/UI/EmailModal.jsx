@@ -23,8 +23,8 @@ const EmailModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     emailjs
-      .sendForm("service_qm2tc6i", "template_45tci4q", e.target, {
-        publicKey: "Umwirb0wlvVT7L6s4",
+      .sendForm("service_vdscpwh", "template_kvey1du", e.target, {
+        publicKey: "IO7J0l4e4BwzDdPbn",
       })
       .then(
         () => {
