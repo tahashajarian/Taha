@@ -26,7 +26,7 @@ export function Chess(props) {
   ]
 
   return (
-    <group {...props} dispose={null} scale={1.5} position={[-0.3, 1.18, 0]} rotation={[0, Math.PI , 0]}>
+    <group {...props} dispose={null} scale={1.5} position={[-0.3, 1.12, 0]} rotation={[0, Math.PI , 0]}>
       {whitePieces.map(name => (
         <mesh key={name} geometry={nodes[name].geometry} material={materials.WHITE} castShadow receiveShadow />
       ))}
