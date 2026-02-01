@@ -3,6 +3,8 @@ import Lamp from "./Lamp";
 import Luster from "./Luster";
 import { wallHeight } from "../../constances/constances";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import FlightPoints from "./FlightPoints";
+
 
 const Lights = () => {
   const dirLightRef = useRef(null);
@@ -36,6 +38,7 @@ const Lights = () => {
       <group position={[5.5, 0, 5.5]}>
         <Lamp />
       </group>
+      <FlightPoints />
     </>
   );
 };

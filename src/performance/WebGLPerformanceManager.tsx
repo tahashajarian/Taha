@@ -1,50 +1,54 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
-import { WebGLRenderer, Texture } from "three";
-// Overriding R3F's Render Loop: Manually setting gl.setAnimationLoop interferes with R3F's optimized rendering, causing duplicate renders
-export default function WebGLPerformanceManager({
-  lowPerformance,
-}: {
-  lowPerformance: boolean;
-}) {
+import { Texture, LinearFilter, LinearMipmapLinearFilter } from "three";
+import { useShallow } from "zustand/react/shallow";
+import { useGraphicsSettings } from "../stores/useGraphicsSettings";
+
+export default function WebGLPerformanceManager() {
   const { gl } = useThree();
-  const originalSettings = useRef({
-    pixelRatio: gl.getPixelRatio(),
-    anisotropy: Texture.DEFAULT_ANISOTROPY,
-  });
+  const { pixelRatio, quality } = useGraphicsSettings(
+    useShallow((s) => ({ quality: s.quality, pixelRatio: s.pixelRatio })),
+  );
 
-  // Handle performance adjustments
+  const devLog = (...args: any[]) => {
+    if (process.env.NODE_ENV !== "production")
+      console.log("[WebGLPerf]", ...args);
+  };
+
+  // DPR handling
   useEffect(() => {
+    if (!gl) return;
+
     const canvas = gl.domElement;
+    gl.setPixelRatio(pixelRatio);
+    gl.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    canvas.style.imageRendering = pixelRatio < 1 ? "crisp-edges" : "auto";
+  }, [gl, pixelRatio]);
 
-    if (lowPerformance) {
-      // Save original settings
-      originalSettings.current = {
-        pixelRatio: gl.getPixelRatio(),
-        anisotropy: Texture.DEFAULT_ANISOTROPY,
-      };
-
-      // Apply performance optimizations
-      gl.setPixelRatio(1);
-      Texture.DEFAULT_ANISOTROPY = 1;
-      canvas.style.imageRendering = "crisp-edges";
-      canvas.setAttribute('data-performance-mode', 'low');
-    } else {
-      // Restore original settings
-      gl.setPixelRatio(originalSettings.current.pixelRatio);
-      Texture.DEFAULT_ANISOTROPY = originalSettings.current.anisotropy;
-      canvas.style.imageRendering = "auto";
-      canvas.removeAttribute('data-performance-mode');
+  // Texture quality handling
+  useEffect(() => {
+    if (!gl) return;
+    devLog("quality => ", quality);
+    const textures: Set<Texture> | undefined = (gl as any)._textures;
+    if (!textures) {
+      return;
     }
 
-    // Cleanup on unmount
-    return () => {
-      gl.setPixelRatio(originalSettings.current.pixelRatio);
-      Texture.DEFAULT_ANISOTROPY = originalSettings.current.anisotropy;
-      canvas.style.imageRendering = "auto";
-      canvas.removeAttribute('data-performance-mode');
-    };
-  }, [lowPerformance, gl]);
+    devLog("Applying texture quality ->", quality);
+
+    textures.forEach((tex) => {
+      if (!tex) return;
+
+      const wantMipmaps = quality === "high" || quality === "medium";
+      const wantFilter = wantMipmaps ? LinearMipmapLinearFilter : LinearFilter;
+
+      if (tex.generateMipmaps !== wantMipmaps || tex.minFilter !== wantFilter) {
+        tex.generateMipmaps = wantMipmaps;
+        tex.minFilter = wantFilter;
+        tex.needsUpdate = true;
+      }
+    });
+  }, [gl, quality]);
 
   return null;
 }

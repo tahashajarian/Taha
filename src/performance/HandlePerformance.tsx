@@ -1,42 +1,48 @@
-import React, { useState } from 'react'
-import { AdaptiveDpr, PerformanceMonitor } from '@react-three/drei'
-import WebGLPerformanceManager from './WebGLPerformanceManager'
-import CleanUpHandler from './CleanupHandler'
+import React from "react";
+import { PerformanceMonitor } from "@react-three/drei";
+import WebGLPerformanceManager from "./WebGLPerformanceManager";
+import { useRecalculateDPR } from "../hooks/useRecalculateDPR";
+import { useGraphicsSettings } from "../stores/useGraphicsSettings";
+
 
 const HandlePerformance: React.FC = () => {
-  const [lowPerformance, setLowPerformance] = useState(false)
+  useRecalculateDPR();
 
   return (
     <>
       <PerformanceMonitor
-        ms={1000 / 45} // Target ~45 FPS (i.e. ~22ms per frame)
-        threshold={0.3} // A narrow buffer zone before toggling state
-        flipflops={3} // Require 3 consecutive changes before switching state
-        onDecline={(api) => {
-          console.log(`performance => FPS declined: ${api.fps.toFixed(1)}`)
-          if (!lowPerformance) {
-            setLowPerformance(true)
+        ms={250}
+        threshold={0.75}
+        onDecline={({ fps }) => {
+          const { quality, setQuality } = useGraphicsSettings.getState();
+
+          // DOWNGRADE (one step)
+          if (fps < 20 && quality !== "ultra-low") {
+            setQuality("ultra-low");
+          } else if (fps < 30 && quality === "medium") {
+            setQuality("low");
+          } else if (fps < 45 && quality === "high") {
+            setQuality("medium");
           }
         }}
-        onIncline={(api) => {
-          console.log(`performance => FPS improved: ${api.fps.toFixed(1)}`)
-          if (lowPerformance) {
-            setLowPerformance(false)
+        onIncline={({ fps }) => {
+          const { quality, setQuality } = useGraphicsSettings.getState();
+
+          // UPGRADE (one step)
+          if (fps >= 45 && quality !== "high") {
+            setQuality("high");
+          } else if (fps >= 30 && quality === "ultra-low") {
+            setQuality("low");
+          } else if (fps >= 45 && quality === "low") {
+            setQuality("medium");
           }
         }}
-      >
-        {/* AdaptiveDpr can automatically adjust the device pixel ratio.
-            You can further configure it or even conditionally change settings */}
-        <AdaptiveDpr pixelated />
-      </PerformanceMonitor>
+      />
 
-      {/* Handle any necessary cleanup */}
-      <CleanUpHandler />
-
-      {/* Pass the lowPerformance state to adjust quality in your WebGL manager */}
-      <WebGLPerformanceManager lowPerformance={lowPerformance} />
+      <WebGLPerformanceManager />
+      {/* <Stats className="z-999" /> */}
     </>
-  )
-}
+  );
+};
 
-export default HandlePerformance
+export default HandlePerformance;

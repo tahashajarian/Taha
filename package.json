@@ -1,5 +1,5 @@
 {
-  "name": "r3f-animations-tutorial",
+  "name": "threejs-portfolio",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,6 +14,7 @@
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
     "@react-three/rapier": "^2.2.0",
+    "caniuse-lite": "^1.0.30001766",
     "gsap": "^3.12.7",
     "leva": "^0.9.35",
     "react": "^18.3.1",
