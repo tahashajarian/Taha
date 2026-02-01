@@ -8,6 +8,7 @@ import { useCameraControlStore } from "../../stores/useCameraControlStore";
 import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import { useArrowsStore } from "../../stores/useArrowStore";
+import QualityTag from "./QualityTag";
 
 const Interface = () => {
   const animation = useCharacterAnimationsStore((s) => s.animation);
@@ -39,6 +40,7 @@ const Interface = () => {
     <div className="">
       {isApploaded && (
         <>
+         <QualityTag />
           {!(modalIsOpen || showMessage) && (
             <>
               <button
@@ -72,7 +74,6 @@ const Interface = () => {
           />
         </>
       )}
-      <span className="fixed top-0 right-0 z-50 text-black text-xs">13</span>
     </div>
   );
 };
