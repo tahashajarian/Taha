@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import Book from "./Book";
+import { Chess } from "./Chess";
 
 const Asali = (props) => {
   const { nodes, materials } = useGLTF("/models/asali.glb");
@@ -23,6 +24,7 @@ const Asali = (props) => {
           rotation={[Math.PI / 2, 0, 0]}
         />
       </group>
+      <Chess />
       <mesh
         scale={1.6}
         castShadow
