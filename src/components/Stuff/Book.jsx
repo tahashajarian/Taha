@@ -17,12 +17,8 @@ const loadDrops = () => {
 
 const seedDefaultDrops = () => {
   if (typeof window === "undefined") return;
-
   const existing = loadDrops();
-
-  // if already seeded, do nothing
   if (Object.keys(existing).length > 0) return;
-
   saveDrops(DEFAULT_DROPS);
 };
 
@@ -49,10 +45,6 @@ const removeDropFromStorage = (id) => {
   }
 };
 
-// Keep behavior: drop to a randomized spot near the provided position, persist to localStorage,
-// click toggles back to original. Simpler: no "taken spot" checks — same-place overlap is allowed.
-// Add a tiny deterministic Y offset per id + polygonOffset on material to avoid z-fighting.
-
 const deterministicHash = (s) => {
   if (!s) return 0;
   let h = 0;
@@ -68,30 +60,21 @@ const Book = ({
 }) => {
   const [dropped, setDropped] = useState(false);
   const [settled, setSettled] = useState(false);
-  useEffect(() => {
-    seedDefaultDrops();
-  }, []);
-  // keep original size behavior
+  useEffect(() => seedDefaultDrops(), []);
   const height = useMemo(() => 0.3 - Math.random() * 0.05, []);
   const color = useMemo(() => randomColor(), []);
-
-  // tiny deterministic offset per id to reduce z-fighting when many books rest on the same plane
   const idHash = useMemo(() => deterministicHash(String(id)), [id]);
   const tinyYOffset = useMemo(() => (idHash % 7) * 0.0006, [idHash]);
   const polygonOffsetFactor = useMemo(() => (idHash % 5) * 0.5 + 0.1, [idHash]);
 
-  // compute dropTarget: if saved in localStorage use it, otherwise randomize near provided position
   const dropTarget = useMemo(() => {
     const saved = loadDrops()[id];
     if (saved && saved.position && saved.rotation) {
       return { position: saved.position, rotation: saved.rotation };
     }
-
-    // simple randomized target near the original position (keeps the book near its original spot)
-    const x = position[0] + Math.random() * -4; // same pattern as your original code
+    const x = position[0] + Math.random() * -4;
     const z = position[2] + Math.random() * 2;
-    // floor Y is absolute (same as your original code), do NOT offset from position[1]
-    const y = -2.3555 + Math.random() * 0.02; // keep your original-ish floor Y
+    const y = -2.3555 + Math.random() * 0.02;
     const rotZ = (Math.random() - 0.5) * 0.5;
     return {
       position: [x, y + tinyYOffset, z],
@@ -99,102 +82,61 @@ const Book = ({
     };
   }, [id, position, tinyYOffset]);
 
-  // if there's a saved drop for this id, mark it dropped on mount
   useEffect(() => {
     const saved = loadDrops()[id];
     if (saved && saved.position) setDropped(true);
   }, [id]);
 
-  // --- Animation only: keep initial pos = provided position
-  const [{ pos, rot, scale, wobble }, api] = useSpring(() => ({
+  const [{ pos, rot, scale }, api] = useSpring(() => ({
     pos: [position[0], position[1], position[2]],
     rot: rotation,
     scale: [1, 1, 1],
-    wobble: 0,
     config: { mass: 1, tension: 120, friction: 18 },
   }));
 
   useEffect(() => {
     if (dropped) {
-      setSettled(false);
+      const fallDistance = Math.abs(position[1] - dropTarget.position[1]);
+      const fallDuration = Math.min(700, Math.max(220, fallDistance * 150));
 
       api.start({
         to: async (next) => {
-          // start above target to give a falling arc
+          // slow hang at the top
           await next({
-            pos: [
-              dropTarget.position[0],
-              dropTarget.position[1] + 0.6 + Math.random() * 0.4,
-              dropTarget.position[2],
-            ],
-            rot: [
-              dropTarget.rotation[0] + (Math.random() - 0.5) * 0.25,
-              dropTarget.rotation[1],
-              dropTarget.rotation[2] + (Math.random() - 0.5) * 0.25,
-            ],
-            config: { mass: 1, tension: 260, friction: 26 },
+            pos: [position[0], position[1] + 0.4, position[2]],
+            rot: rotation,
+            config: { duration: 220 },
           });
 
-          // impact: small overshoot downwards + squash
-          await next({
-            pos: [
-              dropTarget.position[0],
-              dropTarget.position[1] - 0.04,
-              dropTarget.position[2],
-            ],
-            scale: [1.06, 0.8, 1.06],
-            config: { mass: 1, tension: 420, friction: 40 },
-          });
-
-          // rebound and settle to final
-          await next({
-            pos: [
-              dropTarget.position[0],
-              dropTarget.position[1] + 0.01,
-              dropTarget.position[2],
-            ],
-            scale: [0.98, 1.02, 0.98],
-            config: { mass: 1, tension: 200, friction: 26 },
-          });
-
+          // distance-based fall
           await next({
             pos: dropTarget.position,
             rot: dropTarget.rotation,
-            scale: [1, 1, 1],
-            config: { mass: 1, tension: 140, friction: 18 },
+            config: { duration: fallDuration },
           });
-
-          // small wobble to feel alive
-          await next({ wobble: 0.02, config: { duration: 140 } });
-          await next({ wobble: 0, config: { duration: 380 } });
         },
-        onRest: () => setSettled(true),
-      });
-
-      // persist position
-      setDrop(id, {
-        position: dropTarget.position,
-        rotation: dropTarget.rotation,
+        onRest: () => {
+          setDrop(id, {
+            position: dropTarget.position,
+            rotation: dropTarget.rotation,
+          });
+        },
       });
     } else {
-      // return to original spot
       api.start({
-        pos: [position[0], position[1], position[2]],
+        pos: position,
         rot: rotation,
-        scale: [1, 1, 1],
-        config: { mass: 1, tension: 220, friction: 26 },
+        config: { duration: 180 },
       });
       removeDropFromStorage(id);
-      setSettled(false);
     }
   }, [dropped]);
 
-  // derive rotation with wobble (small extra wiggle)
   const derivedRot = rot.to((r0, r1, r2) => [r0, r1, r2]);
 
   const toggleDrop = () => {
     if (!clickAble) return;
-    setDropped((prev) => !prev);
+    setDropped((p) => !p);
   };
 
   return (
