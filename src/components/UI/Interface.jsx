@@ -13,7 +13,9 @@ import QualityTag from "./QualityTag";
 const Interface = () => {
   const animation = useCharacterAnimationsStore((s) => s.animation);
   const setAnimation = useCharacterAnimationsStore((s) => s.setAnimation);
-  const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
+
+  // include setChessMode so we can turn it off from UI
+  const { setCameraLookAt, chessMode, setChessMode } = useCameraControlStore();
 
   const modalIsOpen = useAppStatusStore((s) => s.modalIsOpen);
   const setModalIsOpen = useAppStatusStore((s) => s.setModalIsOpen);
@@ -36,12 +38,52 @@ const Interface = () => {
     setShowMessage(false);
   };
 
+  // Button click to reset camera and exit chessMode
+  const handleCloseView = (e) => {
+    // prevent any bubble to canvas / controls
+    if (e && e.stopPropagation) e.stopPropagation();
+
+    // reset to default camera (using your existing cameraIdle constant)
+    setCameraLookAt(cameraIdle);
+    setChessMode(false);
+  };
+
   return (
     <div className="">
       {isApploaded && (
         <>
-         <QualityTag />
-          {!(modalIsOpen || showMessage) && (
+          {/* Glassy top-center Close button (shown only in chessMode) */}
+{chessMode && (
+  <button
+    aria-label="Close view"
+    onClick={handleCloseView}
+    onMouseDown={(e) => e.stopPropagation()}
+    onMouseUp={(e) => e.stopPropagation()}
+    className="
+      fixed top-4 left-1/2 -translate-x-1/2 z-50
+      px-5 py-2.5 rounded-full
+      text-sm font-semibold tracking-wide
+      text-white
+      backdrop-blur-xl
+      bg-white/10
+      border border-white/20
+      shadow-[0_8px_30px_rgba(0,0,0,0.25)]
+      hover:bg-white/20
+      hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
+      active:scale-95
+      transition-all duration-200
+    "
+    style={{
+      WebkitBackdropFilter: "blur(18px)",
+      background:
+        "linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05))",
+    }}
+  >
+     Back to Scene
+  </button>
+)}
+          <QualityTag />
+          {!(modalIsOpen || showMessage) && !chessMode && (
             <>
               <button
                 className="absolute bottom-10 right-8 py-2 bg-[#00a6ed] text-white font-semibold rounded-lg shadow-md opacity-80 hover:bg-[#10b6fd] focus:outline-none focus:ring-2 focus:ring-opacity-75 text-2xl px-6"
