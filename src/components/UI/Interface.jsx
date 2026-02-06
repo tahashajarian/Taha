@@ -134,7 +134,7 @@ const Interface = () => {
           transition-all duration-200
         "
         style={{ WebkitBackdropFilter: "blur(18px)" }}
-        onClick={() => setPaintModalIsOpen(true)}
+        // onClick={() => setPaintModalIsOpen(true)}
       >
         See Solution
       </button>
