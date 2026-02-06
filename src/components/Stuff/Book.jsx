@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { a, useSpring } from "@react-spring/three";
 import { randomColor } from "./../../constances/constances";
+import { DEFAULT_DROPS } from "../../constances/defaultDrops";
 
 const STORAGE_KEY = "books:drops";
 
@@ -12,6 +13,17 @@ const loadDrops = () => {
     console.warn("failed to load drops", e);
     return {};
   }
+};
+
+const seedDefaultDrops = () => {
+  if (typeof window === "undefined") return;
+
+  const existing = loadDrops();
+
+  // if already seeded, do nothing
+  if (Object.keys(existing).length > 0) return;
+
+  saveDrops(DEFAULT_DROPS);
 };
 
 const saveDrops = (drops) => {
@@ -48,10 +60,17 @@ const deterministicHash = (s) => {
   return Math.abs(h);
 };
 
-const Book = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], clickAble = true }) => {
+const Book = ({
+  id,
+  position = [0, 0, 0],
+  rotation = [0, 0, 0],
+  clickAble = true,
+}) => {
   const [dropped, setDropped] = useState(false);
   const [settled, setSettled] = useState(false);
-
+  useEffect(() => {
+    seedDefaultDrops();
+  }, []);
   // keep original size behavior
   const height = useMemo(() => 0.3 - Math.random() * 0.05, []);
   const color = useMemo(() => randomColor(), []);
@@ -74,7 +93,10 @@ const Book = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], clickAble = true
     // floor Y is absolute (same as your original code), do NOT offset from position[1]
     const y = -2.3555 + Math.random() * 0.02; // keep your original-ish floor Y
     const rotZ = (Math.random() - 0.5) * 0.5;
-    return { position: [x, y + tinyYOffset, z], rotation: [Math.PI / 2, 0, rotZ * Math.PI] };
+    return {
+      position: [x, y + tinyYOffset, z],
+      rotation: [Math.PI / 2, 0, rotZ * Math.PI],
+    };
   }, [id, position, tinyYOffset]);
 
   // if there's a saved drop for this id, mark it dropped on mount
@@ -100,22 +122,47 @@ const Book = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], clickAble = true
         to: async (next) => {
           // start above target to give a falling arc
           await next({
-            pos: [dropTarget.position[0], dropTarget.position[1] + 0.6 + Math.random() * 0.4, dropTarget.position[2]],
-            rot: [dropTarget.rotation[0] + (Math.random() - 0.5) * 0.25, dropTarget.rotation[1], dropTarget.rotation[2] + (Math.random() - 0.5) * 0.25],
+            pos: [
+              dropTarget.position[0],
+              dropTarget.position[1] + 0.6 + Math.random() * 0.4,
+              dropTarget.position[2],
+            ],
+            rot: [
+              dropTarget.rotation[0] + (Math.random() - 0.5) * 0.25,
+              dropTarget.rotation[1],
+              dropTarget.rotation[2] + (Math.random() - 0.5) * 0.25,
+            ],
             config: { mass: 1, tension: 260, friction: 26 },
           });
 
           // impact: small overshoot downwards + squash
           await next({
-            pos: [dropTarget.position[0], dropTarget.position[1] - 0.04, dropTarget.position[2]],
+            pos: [
+              dropTarget.position[0],
+              dropTarget.position[1] - 0.04,
+              dropTarget.position[2],
+            ],
             scale: [1.06, 0.8, 1.06],
             config: { mass: 1, tension: 420, friction: 40 },
           });
 
           // rebound and settle to final
-          await next({ pos: [dropTarget.position[0], dropTarget.position[1] + 0.01, dropTarget.position[2]], scale: [0.98, 1.02, 0.98], config: { mass: 1, tension: 200, friction: 26 } });
+          await next({
+            pos: [
+              dropTarget.position[0],
+              dropTarget.position[1] + 0.01,
+              dropTarget.position[2],
+            ],
+            scale: [0.98, 1.02, 0.98],
+            config: { mass: 1, tension: 200, friction: 26 },
+          });
 
-          await next({ pos: dropTarget.position, rot: dropTarget.rotation, scale: [1, 1, 1], config: { mass: 1, tension: 140, friction: 18 } });
+          await next({
+            pos: dropTarget.position,
+            rot: dropTarget.rotation,
+            scale: [1, 1, 1],
+            config: { mass: 1, tension: 140, friction: 18 },
+          });
 
           // small wobble to feel alive
           await next({ wobble: 0.02, config: { duration: 140 } });
@@ -131,7 +178,12 @@ const Book = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], clickAble = true
       });
     } else {
       // return to original spot
-      api.start({ pos: [position[0], position[1], position[2]], rot: rotation, scale: [1, 1, 1], config: { mass: 1, tension: 220, friction: 26 } });
+      api.start({
+        pos: [position[0], position[1], position[2]],
+        rot: rotation,
+        scale: [1, 1, 1],
+        config: { mass: 1, tension: 220, friction: 26 },
+      });
       removeDropFromStorage(id);
       setSettled(false);
     }
@@ -146,7 +198,13 @@ const Book = ({ id, position = [0, 0, 0], rotation = [0, 0, 0], clickAble = true
   };
 
   return (
-    <a.mesh position={pos} rotation={derivedRot} onClick={toggleDrop} castShadow scale={scale}>
+    <a.mesh
+      position={pos}
+      rotation={derivedRot}
+      onClick={toggleDrop}
+      castShadow
+      scale={scale}
+    >
       <boxGeometry args={[0.25, height, 0.05]} />
       <meshStandardMaterial
         color={color}
