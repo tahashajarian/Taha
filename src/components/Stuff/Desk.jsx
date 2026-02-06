@@ -7,7 +7,7 @@ import { useGLTF } from "@react-three/drei";
 import { MeshStandardMaterial } from "three";
 
 const Desk = (props) => {
-  const { nodes, materials } = useGLTF("/models/desk.glb");
+  const { nodes, materials } = useGLTF("/models/desk.glb", "/draco/");
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -36,5 +36,5 @@ const Desk = (props) => {
   );
 };
 
-useGLTF.preload("/models/desk.glb");
+useGLTF.preload("/models/desk.glb", "/draco/");
 export default Desk;

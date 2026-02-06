@@ -3,7 +3,7 @@ import { useGLTF } from '@react-three/drei';
 import { Color, ShaderMaterial } from 'three';
 
 const TailwindIcon = (props) => {
-  const { nodes } = useGLTF('/models/Tailwind.glb');
+  const { nodes } = useGLTF('/models/Tailwind.glb', '/draco/');
 
   const gradientMaterial = useRef(null);
 
@@ -50,6 +50,6 @@ const TailwindIcon = (props) => {
   );
 };
 
-useGLTF.preload('/models/Tailwind.glb');
+useGLTF.preload('/models/Tailwind.glb', '/draco/');
 
 export default TailwindIcon;

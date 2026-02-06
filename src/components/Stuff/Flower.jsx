@@ -3,7 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { MeshStandardMaterial } from "three";
 
 const Flower = (props) => {
-  const { nodes, materials } = useGLTF("/models/flower.glb");
+  const { nodes, materials } = useGLTF("/models/flower.glb", "/draco/");
   return (
     <group {...props} dispose={null}>
       <group
@@ -50,6 +50,6 @@ const Flower = (props) => {
   );
 };
 
-useGLTF.preload("/models/flower.glb");
+useGLTF.preload("/models/flower.glb", "/draco/");
 
 export default Flower;

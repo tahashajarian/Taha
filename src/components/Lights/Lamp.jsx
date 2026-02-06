@@ -4,7 +4,7 @@ import { MeshStandardMaterial } from "three"
 import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 
 const Lamp = (props) => {
-  const { nodes, materials } = useGLTF("/models/lamp.glb")
+  const { nodes, materials } = useGLTF("/models/lamp.glb", "/draco/")
   const [lampIsOn, setLampIsOn] = useState(true)
   const { quality } = useGraphicsSettings()
 
@@ -55,5 +55,5 @@ const Lamp = (props) => {
   )
 }
 
-useGLTF.preload("/models/lamp.glb")
+useGLTF.preload("/models/lamp.glb", "/draco/")
 export default Lamp

@@ -7,7 +7,7 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { MeshStandardMaterial } from "three";
 const ReactIcon = (props) => {
-  const { nodes, materials } = useGLTF("/models/react.glb");
+  const { nodes, materials } = useGLTF("/models/react.glb", "/draco/");
   const reactIconRef = useRef();
   useFrame(({ clock }) => {
     reactIconRef.current.rotation.y = clock.getElapsedTime() * -0.02;
@@ -29,6 +29,6 @@ const ReactIcon = (props) => {
   );
 };
 
-useGLTF.preload("/models/react.glb");
+useGLTF.preload("/models/react.glb", "/draco/");
 
 export default ReactIcon;

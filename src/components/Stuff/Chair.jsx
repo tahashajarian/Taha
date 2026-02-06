@@ -8,7 +8,7 @@ import { MeshStandardMaterial } from "three";
 import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
 
 const Chair = (props) => {
-  const { nodes, materials } = useGLTF("/models/chair.glb");
+  const { nodes, materials } = useGLTF("/models/chair.glb", "/draco/");
   const { animation } = useCharacterAnimationsStore();
   useEffect(() => {}, [animation]);
   return (
@@ -36,6 +36,6 @@ const Chair = (props) => {
   );
 };
 
-useGLTF.preload("/models/chair.glb");
+useGLTF.preload("/models/chair.glb", "/draco/");
 
 export default Chair;

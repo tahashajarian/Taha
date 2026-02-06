@@ -4,7 +4,7 @@ import Book from "./Book";
 import { Chess } from "./Chess";
 
 const Asali = (props) => {
-  const { nodes, materials } = useGLTF("/models/asali.glb");
+  const { nodes, materials } = useGLTF("/models/asali.glb", "/draco/");
   return (
     <group castShadow receiveShadow {...props} dispose={null}>
       <group scale={1.5} position={[1.0, 1.08, 0]}>
@@ -36,6 +36,6 @@ const Asali = (props) => {
   );
 };
 
-useGLTF.preload("/models/asali.glb");
+useGLTF.preload("/models/asali.glb", "/draco/");
 
 export default Asali;

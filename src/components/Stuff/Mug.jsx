@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 const Mug = (props) => {
-  const { nodes } = useGLTF("/models/mug.glb");
+  const { nodes } = useGLTF("/models/mug.glb", "/draco/");
   const group = useRef();
   const particlesRef = useRef();
   const particleCount = 50;
@@ -137,7 +137,7 @@ const Mug = (props) => {
   );
 };
 
-useGLTF.preload("/models/mug.glb");
+useGLTF.preload("/models/mug.glb", "/draco/");
 
 export default Mug;
 

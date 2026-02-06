@@ -3,7 +3,7 @@
 
 // export const Cat2 = (props) => {
 //   const group = useRef();
-//   const { nodes, materials, animations } = useGLTF('/models/cat2.glb');
+//   const { nodes, materials, animations } = useGLTF('/models/cat2.glb', '/draco/');
 //   const { actions, names } = useAnimations(animations, group);
 
 //   useEffect(() => {
@@ -38,6 +38,6 @@
 //   );
 // };
 
-// useGLTF.preload("/models/cat.glb");
+// useGLTF.preload("/models/cat.glb", "/draco/");
 
 // export default Cat2;

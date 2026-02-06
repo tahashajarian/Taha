@@ -28,7 +28,7 @@ const TahaContainer = (props) => {
   const currentActionRef = useRef(null);
   const currentActionName = useRef("");
 
-  const { nodes, materials, animations } = useGLTF("/models/Taha.glb");
+  const { nodes, materials, animations } = useGLTF("/models/Taha.glb", "/draco/");
   const { actions, names } = useAnimations(animations, group);
 
   const {
@@ -180,5 +180,5 @@ const TahaContainer = (props) => {
   );
 };
 
-useGLTF.preload("/models/Taha.glb");
+useGLTF.preload("/models/Taha.glb", "/draco/");
 export default TahaContainer;

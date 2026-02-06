@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 
 const Keyboard = (props) => {
-  const { nodes, materials } = useGLTF("/models/keyboard.glb");
+  const { nodes, materials } = useGLTF("/models/keyboard.glb", "/draco/");
   const quality = useGraphicsSettings((s) => s.quality);
 
   if (materials && materials.klawisze && quality !== "high") {
@@ -29,7 +29,7 @@ const Keyboard = (props) => {
   );
 };
 
-useGLTF.preload("/models/keyboard.glb");
+useGLTF.preload("/models/keyboard.glb", "/draco/");
 export default Keyboard;
 
 const RGBLightHigh = () => {

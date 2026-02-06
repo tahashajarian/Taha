@@ -3,7 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { BackSide } from "three";
 
 const JSIcon = (props) => {
-  const { nodes, materials } = useGLTF("/models/jsIcon.glb");
+  const { nodes, materials } = useGLTF("/models/jsIcon.glb", "/draco/");
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -26,6 +26,6 @@ const JSIcon = (props) => {
   );
 };
 
-useGLTF.preload("/models/jsIcon.glb");
+useGLTF.preload("/models/jsIcon.glb", "/draco/");
 
 export default JSIcon;

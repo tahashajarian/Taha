@@ -2,7 +2,7 @@ import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
 export function Chess(props) {
-  const { nodes, materials } = useGLTF('/models/chess.glb')
+  const { nodes, materials } = useGLTF('/models/chess.glb', '/draco/')
 
   // Map of all meshes
   const whitePieces = [
@@ -40,4 +40,4 @@ export function Chess(props) {
   )
 }
 
-useGLTF.preload('/models/chess.glb')
+useGLTF.preload('/models/chess.glb', '/draco/')

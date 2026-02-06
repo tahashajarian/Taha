@@ -6,7 +6,7 @@ import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLigh
 RectAreaLightUniformsLib.init();
 
 const Monitor2 = (props) => {
-  const { nodes, materials } = useGLTF("/models/monitor2.glb");
+  const { nodes, materials } = useGLTF("/models/monitor2.glb", "/draco/");
   const rectRef = useRef(null);
   const screenRef = useRef(null);
 
@@ -67,6 +67,6 @@ const Monitor2 = (props) => {
   );
 };
 
-useGLTF.preload("/models/monitor2.glb");
+useGLTF.preload("/models/monitor2.glb", "/draco/");
 
 export default Monitor2;

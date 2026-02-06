@@ -3,7 +3,7 @@ import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 
 const Clock = (props)  => {
-  const { nodes, materials } = useGLTF('/models/clock.glb')
+  const { nodes, materials } = useGLTF('/models/clock.glb', '/draco/')
   return (
     <group {...props} dispose={null}>
       <group scale={0.005}>
@@ -30,5 +30,5 @@ const Clock = (props)  => {
   )
 }
 
-useGLTF.preload('/models/clock.glb')
+useGLTF.preload('/models/clock.glb', '/draco/')
 export default Clock;

@@ -3,7 +3,7 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 
 const Bird = ({ seed =1}) => {
-  const { nodes, materials } = useGLTF('/models/bird.glb')
+  const { nodes, materials } = useGLTF('/models/bird.glb', '/draco/')
   const groupRef = useRef()
   const offset = useMemo(() => seed, []) // Unique offset per instance
 
@@ -27,4 +27,4 @@ const Bird = ({ seed =1}) => {
 
 export default Bird
 
-useGLTF.preload('/models/bird.glb')
+useGLTF.preload('/models/bird.glb', '/draco/')

@@ -30,7 +30,7 @@ const fragmentShader = `
 `;
 
 const Speaker = (props) => {
-  const { nodes } = useGLTF("/models/speaker.glb");
+  const { nodes } = useGLTF("/models/speaker.glb", "/draco/");
   const circleRef = useRef();
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -97,5 +97,5 @@ const Speaker = (props) => {
   );
 };
 
-useGLTF.preload("/models/speaker.glb");
+useGLTF.preload("/models/speaker.glb", "/draco/");
 export default Speaker;

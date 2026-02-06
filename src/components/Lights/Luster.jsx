@@ -5,7 +5,7 @@ import { wallHeight } from "../../constances/constances"
 import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 
 const Luster = (props) => {
-  const { nodes, materials } = useGLTF("/models/luster.glb")
+  const { nodes, materials } = useGLTF("/models/luster.glb", "/draco/")
   const [lampIsOn, setLampIsOn] = useState(true)
   const { quality } = useGraphicsSettings()
 
@@ -48,5 +48,5 @@ const Luster = (props) => {
   )
 }
 
-useGLTF.preload("/models/luster.glb")
+useGLTF.preload("/models/luster.glb", "/draco/")
 export default Luster

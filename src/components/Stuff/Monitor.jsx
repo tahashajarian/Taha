@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
 const Monitor = (props) => {
-  const { nodes, materials } = useGLTF("/models/monitor.glb");
+  const { nodes, materials } = useGLTF("/models/monitor.glb", "/draco/");
   return (
     <group {...props} dispose={null}>
       <group
@@ -87,6 +87,6 @@ const Monitor = (props) => {
   );
 };
 
-useGLTF.preload("/models/monitor.glb");
+useGLTF.preload("/models/monitor.glb", "/draco/");
 
 export default Monitor;

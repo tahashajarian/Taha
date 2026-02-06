@@ -6,7 +6,7 @@ import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 
 const Mobleman = (props) => {
-  const { nodes, materials } = useGLTF("/models/mobleman.glb");
+  const { nodes, materials } = useGLTF("/models/mobleman.glb", "/draco/");
   return (
     <group {...props} dispose={null} position={[-2, 0, 6]}>
       <group
@@ -396,4 +396,4 @@ const Mobleman = (props) => {
 
 export default Mobleman;
 
-useGLTF.preload("/models/mobleman.glb");
+useGLTF.preload("/models/mobleman.glb", "/draco/");

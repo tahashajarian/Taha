@@ -8,7 +8,7 @@ const Sofa = (props) => {
   const group = useRef();
   const asaliRef = useRef();
 
-  const { nodes, materials } = useGLTF("/models/sofa.glb");
+  const { nodes, materials } = useGLTF("/models/sofa.glb", "/draco/");
   const { setCameraLookAt, setChessMode, chessMode } =
     useCameraControlStore();
 
@@ -82,4 +82,4 @@ const Sofa = (props) => {
 
 export default Sofa;
 
-useGLTF.preload("/models/sofa.glb");
+useGLTF.preload("/models/sofa.glb", "/draco/");

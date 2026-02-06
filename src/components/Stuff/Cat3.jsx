@@ -5,7 +5,7 @@ import Sound from "./Sound";
 import SnoreParticles from "./SnoringParticles";
 
 export const Cat3 = (props) => {
-  const { nodes, materials } = useGLTF("/models/cat3.glb");
+  const { nodes, materials } = useGLTF("/models/cat3.glb", "/draco/");
   
   // Create a state for the breathing animation
   const [breathing, setBreathing] = useState(0);
@@ -54,6 +54,6 @@ export const Cat3 = (props) => {
   );
 };
 
-useGLTF.preload("/models/cat3.glb");
+useGLTF.preload("/models/cat3.glb", "/draco/");
 
 export default Cat3;

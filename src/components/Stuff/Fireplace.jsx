@@ -3,7 +3,7 @@ import React, { useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 
 const Fireplace = (props) => {
-  const { nodes, materials } = useGLTF('/models/fireplace.glb')
+  const { nodes, materials } = useGLTF('/models/fireplace.glb', '/draco/')
   return (
     <group {...props} rotation={[0, Math.PI, 0]} scale={[2, 1, 1]} dispose={null}>
       <group  scale={8.404}>
@@ -19,6 +19,6 @@ const Fireplace = (props) => {
   )
 }
 
-useGLTF.preload('/models/fireplace.glb')
+useGLTF.preload('/models/fireplace.glb', '/draco/')
 
 export default Fireplace
