@@ -3,19 +3,31 @@ import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 const QualityTag = () => {
   const quality = useGraphicsSettings((s) => s.quality)
 
-  const color =
+  const tint =
     quality === "high"
-      ? "bg-green-600"
+      ? "from-green-400/40 to-green-400/10"
       : quality === "medium"
-      ? "bg-yellow-500"
-      : "bg-red-600"
+      ? "from-yellow-400/40 to-yellow-400/10"
+      : "from-red-400/40 to-red-400/10"
 
   return (
     <div
-      className={`absolute top-4 left-4 px-3 py-1 text-xs font-semibold text-white rounded-md shadow-md ${color}`}
-      style={{ pointerEvents: "none" }}
+      className={`
+        absolute top-4 left-4
+        px-3 py-1.5
+        text-xs font-semibold tracking-wide text-white
+        rounded-full
+        backdrop-blur-lg
+        bg-gradient-to-b ${tint}
+        border border-white/25
+        shadow-[0_6px_20px_rgba(0,0,0,0.25)]
+      `}
+      style={{
+        pointerEvents: "none",
+        WebkitBackdropFilter: "blur(14px)",
+      }}
     >
-      QUALITY: {quality.toUpperCase()}
+      QUALITY · {quality.toUpperCase()}
     </div>
   )
 }

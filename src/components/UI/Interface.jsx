@@ -52,46 +52,31 @@ const Interface = () => {
     <div className="">
       {isApploaded && (
         <>
-          {/* Glassy top-center Close button (shown only in chessMode) */}
-{chessMode && (
-  <button
-    aria-label="Close view"
-    onClick={handleCloseView}
-    onMouseDown={(e) => e.stopPropagation()}
-    onMouseUp={(e) => e.stopPropagation()}
-    className="
-      fixed top-4 left-1/2 -translate-x-1/2 z-50
-      px-5 py-2.5 rounded-full
-      text-sm font-semibold tracking-wide
-      text-white
-      backdrop-blur-xl
-      bg-white/10
-      border border-white/20
-      shadow-[0_8px_30px_rgba(0,0,0,0.25)]
-      hover:bg-white/20
-      hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
-      active:scale-95
-      transition-all duration-200
-    "
-    style={{
-      WebkitBackdropFilter: "blur(18px)",
-      background:
-        "linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05))",
-    }}
-  >
-     Back to Scene
-  </button>
-)}
           <QualityTag />
           {!(modalIsOpen || showMessage) && !chessMode && (
             <>
               <button
-                className="absolute bottom-10 right-8 py-2 bg-[#00a6ed] text-white font-semibold rounded-lg shadow-md opacity-80 hover:bg-[#10b6fd] focus:outline-none focus:ring-2 focus:ring-opacity-75 text-2xl px-6"
+                className="
+                  absolute bottom-10 right-8
+                  px-6 py-3 rounded-2xl
+                  text-lg font-semibold tracking-wide text-white
+                  backdrop-blur-xl
+                  bg-white/10
+                  border border-white/20
+                  shadow-[0_8px_30px_rgba(0,0,0,0.25)]
+                  hover:bg-white/20
+                  hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
+                  active:scale-95
+                  transition-all duration-200
+                "
+                style={{
+                  WebkitBackdropFilter: "blur(18px)",
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06))",
+                }}
                 onClick={() => {
                   if (animation === "idle") {
-                    // clear any arrow input first so the movement logic doesn't immediately override teleport
                     resetArrows();
-                    // set camera & animation
                     setCameraLookAt(cameraLookAtConst);
                     setAnimation("typing");
                   } else {
@@ -100,7 +85,7 @@ const Interface = () => {
                   }
                 }}
               >
-                {animation === "typing" ? "idle" : "working"}
+                {animation === "typing" ? "Idle" : "Work"}
               </button>
               <ArrowControls />
             </>
@@ -116,6 +101,64 @@ const Interface = () => {
           />
         </>
       )}
+{chessMode && (
+  <div
+    className="
+      fixed bottom-10 left-1/2 -translate-x-1/2 z-50
+      flex flex-col items-center gap-4
+      px-6 py-4 rounded-2xl
+      text-white
+      backdrop-blur-xl
+      bg-black/50
+      border border-white/20
+      shadow-[0_8px_30px_rgba(0,0,0,0.25)]
+      text-center
+    "
+    style={{ WebkitBackdropFilter: "blur(18px)" }}
+  >
+    <span className="text-lg font-semibold">
+      White to move — Mate in 2
+    </span>
+    <div className="flex gap-4 mt-2">
+      <button
+        className="
+          px-5 py-2.5 rounded-full
+          text-sm font-semibold tracking-wide text-white
+          backdrop-blur-xl
+          bg-white/10
+          border border-green-400/40
+          shadow-[0_8px_30px_rgba(0,0,0,0.25)]
+          hover:bg-white/20
+          hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
+          active:scale-95
+          transition-all duration-200
+        "
+        style={{ WebkitBackdropFilter: "blur(18px)" }}
+        onClick={() => setPaintModalIsOpen(true)}
+      >
+        See Solution
+      </button>
+      <button
+        className="
+          px-5 py-2.5 rounded-full
+          text-sm font-semibold tracking-wide text-white
+          backdrop-blur-xl
+          bg-white/10
+          border border-red-400/40
+          shadow-[0_8px_30px_rgba(0,0,0,0.25)]
+          hover:bg-white/20
+          hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
+          active:scale-95
+          transition-all duration-200
+        "
+        style={{ WebkitBackdropFilter: "blur(18px)" }}
+        onClick={handleCloseView}
+      >
+        Back to Scene
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 };
