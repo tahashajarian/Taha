@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import Book from "./Book";
-import { Chess } from "./Chess";
+import { Chess } from "./chess/Chess";
 
 const Asali = (props) => {
   const { nodes, materials } = useGLTF("/models/asali.glb", "/draco/");

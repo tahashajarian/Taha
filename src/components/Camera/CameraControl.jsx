@@ -19,7 +19,6 @@ const CameraControl = () => {
       ref={cameraControlsRef}
       minDistance={1.2}
       maxDistance={chessMode ? 2 : 5.5}
-      verticalDragToForward={false}
       maxPolarAngle={Math.PI / 2}
       enablePan={false}
     />

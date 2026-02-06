@@ -5,7 +5,7 @@ import Interface from "./components/UI/Interface";
 import { cameraLookAtConst } from "./constances/constances";
 import ErrorBoundary from "./components/ErrorBoundary";
 import HandlePerformance from "./performance/HandlePerformance";
-import { sRGBEncoding, NoToneMapping, LoadingManager, Color } from "three";
+import { NoToneMapping, LoadingManager, Color } from "three";
 import ProgressTracker from "./components/Loader/ProgressTracker";
 import LoadingOverlay from "./components/Loader/LoadingOverlay";
 import { useLoadingManager } from "./components/Loader/useLoadingManager";
@@ -93,7 +93,6 @@ function App() {
               antialias: true,
               powerPreference: "high-performance",
               stencil: false,
-              outputEncoding: sRGBEncoding,
               toneMapping: NoToneMapping,
             }}
           >
