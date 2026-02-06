@@ -22,6 +22,9 @@ const Interface = () => {
   const isApploaded = useAppStatusStore((s) => s.isApploaded);
   const paintModalIsPoen = useAppStatusStore((s) => s.paintModalIsPoen);
   const setPaintModalIsOpen = useAppStatusStore((s) => s.setPaintModalIsOpen);
+  const setChessPlay = useAppStatusStore((s) => s.setChessPlay);
+  const chessPlayEnd = useAppStatusStore((s) => s.chessPlayEnd);
+  const setResetChess = useAppStatusStore((s) => s.setResetChess);
 
   // grab resetArrows *without subscribing* to avoid rerenders
   const resetArrows = useArrowsStore.getState().resetArrows;
@@ -101,9 +104,9 @@ const Interface = () => {
           />
         </>
       )}
-{chessMode && (
-  <div
-    className="
+      {chessMode && (
+        <div
+          className="
       fixed bottom-10 left-1/2 -translate-x-1/2 z-50
       flex flex-col items-center gap-4
       px-6 py-4 rounded-2xl
@@ -114,14 +117,14 @@ const Interface = () => {
       shadow-[0_8px_30px_rgba(0,0,0,0.25)]
       text-center
     "
-    style={{ WebkitBackdropFilter: "blur(18px)" }}
-  >
-    <span className="text-lg font-semibold">
-      White to move — Mate in 2
-    </span>
-    <div className="flex gap-4 mt-2">
-      <button
-        className="
+          style={{ WebkitBackdropFilter: "blur(18px)" }}
+        >
+          <span className="text-lg font-semibold">
+            White to move — Mate in 2
+          </span>
+          <div className="flex gap-4 mt-2">
+            <button
+              className="
           px-5 py-2.5 rounded-full
           text-sm font-semibold tracking-wide text-white
           backdrop-blur-xl
@@ -134,13 +137,15 @@ const Interface = () => {
           transition-all duration-200
           whitespace-nowrap
         "
-        style={{ WebkitBackdropFilter: "blur(18px)" }}
-        // onClick={() => setPaintModalIsOpen(true)}
-      >
-        See Solution
-      </button>
-      <button
-        className="
+              style={{ WebkitBackdropFilter: "blur(18px)" }}
+              onClick={() =>
+                chessPlayEnd ? setResetChess() : setChessPlay(true)
+              }
+            >
+              {chessPlayEnd ? "Reset" : "See Solution"}
+            </button>
+            <button
+              className="
           px-5 py-2.5 rounded-full
           text-sm font-semibold tracking-wide text-white
           backdrop-blur-xl
@@ -153,14 +158,14 @@ const Interface = () => {
           transition-all duration-200
           whitespace-nowrap
         "
-        style={{ WebkitBackdropFilter: "blur(18px)" }}
-        onClick={handleCloseView}
-      >
-        Back to Scene
-      </button>
-    </div>
-  </div>
-)}
+              style={{ WebkitBackdropFilter: "blur(18px)" }}
+              onClick={handleCloseView}
+            >
+              Back to Scene
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

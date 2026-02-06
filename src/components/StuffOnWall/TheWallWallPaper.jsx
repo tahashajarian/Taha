@@ -40,7 +40,7 @@ Wall`}{" "}
       <Text
         font={fontURL}
         rotation={[0, 0, 0]}
-        position={[-4.5, 1.3, 0.1]}
+        position={[-4, 1.3, 0.1]}
         fontSize={0.2}
         color="red"
         textAlign="left"
