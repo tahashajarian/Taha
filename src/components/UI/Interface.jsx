@@ -132,6 +132,7 @@ const Interface = () => {
           hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
           active:scale-95
           transition-all duration-200
+          whitespace-nowrap
         "
         style={{ WebkitBackdropFilter: "blur(18px)" }}
         // onClick={() => setPaintModalIsOpen(true)}
@@ -150,6 +151,7 @@ const Interface = () => {
           hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]
           active:scale-95
           transition-all duration-200
+          whitespace-nowrap
         "
         style={{ WebkitBackdropFilter: "blur(18px)" }}
         onClick={handleCloseView}
