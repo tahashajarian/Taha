@@ -1,12 +1,11 @@
 import { Billboard } from "@react-three/drei";
-import { useFrame, useLoader } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
-import * as THREE from "three";
 
 export default function MoveFeedback({
   position = [0, 0, 0],
-  texturePath,
-  duration = 1.5, // seconds
+  texture,        // ✅ texture is now passed as a prop
+  duration = 1.5,
   rise = 0.4,
   onFinish,
 }) {
@@ -14,17 +13,14 @@ export default function MoveFeedback({
   const startTime = useRef(null);
   const [alive, setAlive] = useState(true);
 
-  // Load texture from path
-  const texture = useLoader(THREE.TextureLoader, texturePath);
-
-  // Make sure a fresh startTime is used whenever component mounts
+  // Reset alive state when texture changes
   useEffect(() => {
     startTime.current = null;
     setAlive(true);
-  }, [texturePath]);
+  }, [texture]);
 
   useFrame(({ clock }) => {
-    if (!alive) return;
+    if (!alive || !meshRef.current) return;
 
     if (startTime.current === null) startTime.current = clock.elapsedTime;
 
@@ -36,13 +32,15 @@ export default function MoveFeedback({
       return;
     }
 
-    // fade in -> fade out
+    // Fade in -> fade out
     const opacity = t < 0.25 ? t / 0.25 : 1 - (t - 0.25) / 0.75;
     if (meshRef.current.material) meshRef.current.material.opacity = opacity;
 
-    // **update Billboard Y by moving parent group**
-    meshRef.current.parent.position.y =
-      position[1] + 0.1 + (rise * Math.max(0, t - 0.25)) / 0.75;
+    // Update parent Y position (rise effect)
+    if (meshRef.current.parent) {
+      meshRef.current.parent.position.y =
+        position[1] + 0.1 + (rise * Math.max(0, t - 0.25)) / 0.75;
+    }
   });
 
   if (!alive) return null;
@@ -52,7 +50,7 @@ export default function MoveFeedback({
       <mesh ref={meshRef}>
         <planeGeometry args={[0.06, 0.06]} />
         <meshBasicMaterial
-          map={texture}
+          map={texture}       // ✅ use the preloaded texture
           transparent
           opacity={0}
           depthWrite={false}
