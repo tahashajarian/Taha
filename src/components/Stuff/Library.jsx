@@ -25,7 +25,7 @@ const Library = ({ position }) => (
             <Book
               key={row * 18 + col}
               id={String(row * 18 + col)}
-              position={[0, yPos + 0.15, col * 0.08 - 0.7]}
+              position={[0, yPos + 0.17, col * 0.08 - 0.7]}
             />
           ))}
         </group>

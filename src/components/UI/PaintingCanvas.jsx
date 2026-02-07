@@ -66,7 +66,7 @@ const PaintingCanvas = ({ width, height, onSave }) => {
   return (
     <div
       ref={containerRef}
-      className="w-full relative mb-12"
+      className="w-full relative"
       style={{ aspectRatio: `${width} / ${height}` }}
     >
       <canvas

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-const Modal = ({ isOpen, onClose, children, className = '' }) => {
+const Modal = ({ isOpen, onClose, children, className = "" }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
@@ -11,12 +11,12 @@ const Modal = ({ isOpen, onClose, children, className = '' }) => {
         onClick={onClose}
       ></div>
       <div
-        className={`bg-white p-6 rounded-lg shadow-lg z-10 w-full max-w-md mx-auto relative ${className}`}
+        className={` p-6  z-10 w-full max-w-md mx-auto relative ${className}`}
       >
         {children}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

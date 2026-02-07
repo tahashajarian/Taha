@@ -1,61 +1,97 @@
-import React, { useRef, useEffect } from "react";
-import { TextureLoader, ShaderMaterial, Color } from "three";
-import { useFrame, useLoader } from "@react-three/fiber";
-import { usePaintingStore } from "../../stores/usePaintingStore";
-import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import React, { useRef, useMemo, useState, useEffect } from "react"
+import { TextureLoader, Color } from "three"
+import { useFrame } from "@react-three/fiber"
+import { usePaintingStore } from "../../stores/usePaintingStore"
+import { useAppStatusStore } from "../../stores/useAppStatusStore"
 
-const Frame = ({ width, height, thickness, color, position, isLoading }) => {
-  const frameWidth = width + thickness * 2;
-  const frameHeight = height + thickness * 2;
-  const materialRef = useRef();
+// ---------------- Frame ----------------
+const Frame = React.memo(({ width, height, thickness, color, position, isLoading }) => {
+  const frameWidth = useMemo(() => width + thickness * 1, [width, thickness])
+  const frameHeight = useMemo(() => height + thickness * 1, [height, thickness])
+  const materialRef = useRef()
+  const tempColor = useRef(new Color(color))
 
-  useFrame((state, delta) => {
+  useFrame((state) => {
+    if (!materialRef.current) return
     if (isLoading) {
-      const t = (Math.sin(state.clock.elapsedTime * 5) + 1) / 2; // Normalize to range [0, 1]
-      const color = new Color(t * 0, t * 1, t * 0); // Interpolate between black and green
-      materialRef.current.color.set(color);
+      const t = (Math.sin(state.clock.elapsedTime * 5) + 1) / 2
+      tempColor.current.setRGB(0.1 * t, 0.1 * t, 0.1 * t) // black -> green
+      materialRef.current.color.copy(tempColor.current)
     } else {
-      materialRef.current.color.set(color);
+      materialRef.current.color.set(color)
     }
-  });
+  })
 
   return (
     <mesh position={[0, 0, position]}>
       <boxGeometry args={[frameWidth, frameHeight, thickness]} />
       <meshBasicMaterial color={color} ref={materialRef} transparent />
     </mesh>
-  );
-};
+  )
+})
 
-const Picture = ({ width, height, map }) => {
-  const texture = new TextureLoader().load(map);
+// ---------------- Picture ----------------
+const Picture = React.memo(({ width, height, map }) => {
+  const geometryArgs = useMemo(() => [width, height], [width, height])
+  const [texture, setTexture] = useState(null)
+
+  useEffect(() => {
+    if (!map) return
+    const loader = new TextureLoader()
+    loader.load(
+      map,
+      (loaded) => setTexture(loaded),
+      undefined,
+      (err) => console.error("Texture load failed:", err)
+    )
+  }, [map])
+
+  if (!texture) return null // don’t render until texture is loaded
+
   return (
     <mesh position={[0, 0, 0.13]}>
-      <planeGeometry args={[width, height]} />
-      <meshBasicMaterial map={texture} transparent={true} color={"white"} />
+      <planeGeometry args={geometryArgs} />
+      <meshBasicMaterial map={texture} transparent color="white" />
     </mesh>
-  );
-};
+  )
+})
 
-const RefreshIcon = ({ onClick }) => {
-  const ref = useRef();
-  const texture = useLoader(TextureLoader, "/textures/refresh.png");
+// ---------------- RefreshIcon ----------------
+const RefreshIcon = React.memo(({ onClick }) => {
+  const ref = useRef()
+  const [texture, setTexture] = useState(null)
+
+  useEffect(() => {
+    new TextureLoader().load("/textures/refresh.png", setTexture)
+  }, [])
+
+  if (!texture) return null
 
   return (
-    <mesh position={[-1.85, 1.05, 0.1]} ref={ref} onClick={onClick}>
+    <mesh
+      position={[-1.85, 1.05, 0.1]}
+      ref={ref}
+      onClick={onClick}
+    >
       <planeGeometry args={[0.3, 0.3]} />
-      <meshBasicMaterial map={texture} transparent />
-    </mesh>
-  );
-};
+      <meshStandardMaterial
+        map={texture}
+        color="#111111"    
+        transparent
 
+      />
+    </mesh>
+  )
+})
+
+// ---------------- ShaderFrame ----------------
 const ShaderFrame = () => {
-  const { paintingImage, canvasRef, fetchPainting, loading } =
-    usePaintingStore();
-  const pictureWidth = 3; // Adjust the width to be smaller
-  const pictureHeight = 2.25; // Adjust the height to be smaller
-  const frameThickness = 0.0001;
-  const { setPaintModalIsOpen } = useAppStatusStore();
+  const { paintingImage, fetchPainting, loading } = usePaintingStore()
+  const { setPaintModalIsOpen } = useAppStatusStore()
+
+  const pictureWidth = 3
+  const pictureHeight = 2.25
+  const frameThickness = 0.0001
 
   return (
     <>
@@ -75,18 +111,13 @@ const ShaderFrame = () => {
           width={pictureWidth}
           height={pictureHeight}
           thickness={frameThickness}
-          color={"white"}
+          color="black"
           position={0.12}
         />
-        <Picture
-          width={pictureWidth}
-          height={pictureHeight}
-          map={paintingImage}
-          canvasRef={canvasRef}
-        />
+        <Picture width={pictureWidth} height={pictureHeight} map={paintingImage} />
       </group>
     </>
-  );
-};
+  )
+}
 
-export default ShaderFrame;
+export default React.memo(ShaderFrame)

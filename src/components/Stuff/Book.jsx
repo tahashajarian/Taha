@@ -61,7 +61,7 @@ const Book = ({
   const [dropped, setDropped] = useState(false);
   const [settled, setSettled] = useState(false);
   useEffect(() => seedDefaultDrops(), []);
-  const height = useMemo(() => 0.3 - Math.random() * 0.05, []);
+  const height = useMemo(() => 0.4 - Math.random() * 0.06, []);
   const color = useMemo(() => randomColor(), []);
   const idHash = useMemo(() => deterministicHash(String(id)), [id]);
   const tinyYOffset = useMemo(() => (idHash % 7) * 0.0006, [idHash]);
