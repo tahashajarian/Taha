@@ -23,7 +23,7 @@ const Walls = ({ onCollidersReady }) => {
   }, []); // run once on mount
 
   // thickness of wall colliders (increase if you still see clipping)
-  const thickness = 0.25;
+  const thickness = 2;
 
   return (
     <>
