@@ -26,7 +26,6 @@ const Interface = () => {
   const chessPlayEnd = useAppStatusStore((s) => s.chessPlayEnd);
   const setResetChess = useAppStatusStore((s) => s.setResetChess);
 
-
   // grab resetArrows *without subscribing* to avoid rerenders
   const resetArrows = useArrowsStore.getState().resetArrows;
 

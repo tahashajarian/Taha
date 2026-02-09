@@ -2,35 +2,33 @@ import React, { useMemo } from "react";
 import * as THREE from "three";
 import { randomColor } from "../../constances/constances";
 
-const Papers = () => {
-  const paperCount = 10;
+const PAPER_COUNT = 10;
 
-  // Generate positions, rotations, and colors only once
+const Papers = () => {
+  // Shared geometry
+  const geometry = useMemo(() => new THREE.PlaneGeometry(0.2, 0.3), []);
+
+  // Generate static paper data once
   const papers = useMemo(
     () =>
-      Array.from({ length: paperCount }, (_, index) => {
-        const rotation = new THREE.Euler(
-          0,
-          0,
-          (Math.random() * 2 * Math.PI) / 12,
-        );
-        const position = new THREE.Vector3(0, 0, index * 0.0001);
-        const color = randomColor();
-        return { rotation, position, color };
-      }),
-    [paperCount],
+      Array.from({ length: PAPER_COUNT }, (_, i) => ({
+        rotation: [0, 0, (Math.random() * Math.PI) / 6],
+        position: [0, 0, i * 0.0001],
+        color: randomColor(),
+      })),
+    [],
   );
 
   return (
     <group>
       <Pen />
-      {papers.map((p, index) => (
+      {papers.map((p, i) => (
         <mesh
-          key={index}
-          rotation={[p.rotation.x, p.rotation.y, p.rotation.z]}
-          position={[p.position.x, p.position.y, p.position.z]}
+          key={i}
+          geometry={geometry}
+          rotation={p.rotation}
+          position={p.position}
         >
-          <planeGeometry args={[0.2, 0.3]} />
           <meshBasicMaterial color={p.color} />
         </mesh>
       ))}
@@ -40,9 +38,15 @@ const Papers = () => {
 
 export default Papers;
 
-const Pen = () => (
-  <mesh position={[0, 0, 0.005]}>
-    <cylinderGeometry args={[0.005, 0.005, 0.118]} />
-    <meshBasicMaterial color={"black"} />
-  </mesh>
-);
+const Pen = () => {
+  const geometry = useMemo(
+    () => new THREE.CylinderGeometry(0.005, 0.005, 0.118),
+    [],
+  );
+
+  return (
+    <mesh position={[0, 0, 0.005]} geometry={geometry}>
+      <meshBasicMaterial color="black" />
+    </mesh>
+  );
+};

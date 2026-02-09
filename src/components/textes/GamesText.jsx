@@ -1,193 +1,108 @@
 import { Text } from "@react-three/drei";
-import React, { useRef } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useLoader } from "@react-three/fiber";
+import * as THREE from "three";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../../constances/constances";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
-const GamesText = () => {
-  // Texture loading optimized with default values
-  const textures = useLoader(TextureLoader, [
-    "/textures/flappy-bird.png",
-    "/textures/game.png",
-    "/textures/shotgun.png",
-    "/textures/jeton.png",
-    "/textures/envelope.png",
-    "/textures/github.png",
-    "/textures/earth.png",
-    "/textures/snake.png",
-    "/textures/slot.png",
-    "/textures/heart.png",
-  ]);
+const FONT_URL = "/fonts/Roboto-Regular.ttf";
+const Y_OFFSET = -0.4;
+const DEFAULT_ICON_SIZE = 0.25;
+const DEFAULT_ICON_SPACE = 0.85;
 
-  const [
-    flappyBirdTexture,
-    gameIcon,
-    shotgun,
-    jeton,
-    envelope,
-    github,
-    earth,
-    snake,
-    slot,
-    platformer,
-  ] = textures;
+const TEXTURE_PATHS = [
+  "/textures/flappy-bird.png",
+  "/textures/game.png",
+  "/textures/shotgun.png",
+  "/textures/jeton.png",
+  "/textures/envelope.png",
+  "/textures/github.png",
+  "/textures/earth.png",
+  "/textures/snake.png",
+  "/textures/slot.png",
+  "/textures/platformer.png",
+];
 
-  // Refs organized in a more compact way
-  const refs = {
-    flappyBird: useRef(),
-    gameIcon: useRef(),
-    shotgun: useRef(),
-    blackJack: useRef(),
-    envelope: useRef(),
-    github: useRef(),
-    earth: useRef(),
-    snake: useRef(),
-    slot: useRef(),
-    platformer: useRef(),
-  };
+export default function GamesText() {
+  const textures = useLoader(
+    TextureLoader,
+    TEXTURE_PATHS,
+    (loader) => {
+      loader.manager = new THREE.LoadingManager(); 
+    }
+  );
 
-  // Configuration constants
-  const Y_OFFSET = -0.4;
-  const FONT_URL = "/fonts/Roboto-Regular.ttf";
-  const MATERIAL_PROPS = { transparent: true };
+  const textureMap = useMemo(() => ({
+    flappy: textures[0],
+    game: textures[1],
+    shotgun: textures[2],
+    jeton: textures[3],
+    envelope: textures[4],
+    github: textures[5],
+    earth: textures[6],
+    snake: textures[7],
+    slot: textures[8],
+    platformer: textures[9],
+  }), [textures]);
 
-  const items = [
-    {
-      label: "Platformer",
-      link: "https://taha-shajarian.ir/projects/platformer",
-      iconRef: refs.platformer,
-      texture: platformer,
-      margin: -0.05,
-      iconSize: 0.2,
-      space: 0.75,
-    },
-    {
-      label: "Slot Machine",
-      link: "https://taha-shajarian.ir/projects/slot-machin",
-      iconRef: refs.slot,
-      texture: slot,
-      margin: 0.1,
-    },
-    {
-      label: "Simple Snake",
-      link: "",
-      iconRef: refs.snake,
-      texture: snake,
-      margin: 0.1,
-    },
-    {
-      label: "Earh",
-      link: "https://taha-shajarian.ir/projects/earth",
-      iconRef: refs.earth,
-      texture: earth,
-      margin: -0.3,
-      space: 0.5,
-    },
-    {
-      label: "Black Jack",
-      link: "https://taha-shajarian.ir/projects/blackjack",
-      iconRef: refs.blackJack,
-      texture: jeton,
-      space: 0.8,
-    },
-    {
-      label: "War Land",
-      link: "https://taha-shajarian.ir/projects/warland",
-      iconRef: refs.shotgun,
-      texture: shotgun,
-      iconSize: 0.4,
-      margin: -0.09,
-      space: 0.7,
-    },
-    {
-      label: "Flappy Bird",
-      link: "https://taha-shajarian.ir/projects/flappybird",
-      iconRef: refs.flappyBird,
-      texture: flappyBirdTexture,
-      iconSize: 0.4,
-    },
-  ];
+  const items = useMemo(() => [
+    { label: "Platformer", link: "https://taha-shajarian.ir/projects/platformer", texture: textureMap.platformer, margin: -0.05, iconSize: 0.3, space: 0.75 },
+    { label: "Slot Machine", link: "https://taha-shajarian.ir/projects/slot-machin", texture: textureMap.slot, margin: 0.1 },
+    { label: "Simple Snake", link: "", texture: textureMap.snake, margin: 0.1 },
+    { label: "Earth", link: "https://taha-shajarian.ir/projects/earth", texture: textureMap.earth, margin: -0.3, space: 0.5 },
+    { label: "Black Jack", link: "https://taha-shajarian.ir/projects/blackjack", texture: textureMap.jeton, space: 0.8 },
+    { label: "War Land", link: "https://taha-shajarian.ir/projects/warland", texture: textureMap.shotgun, iconSize: 0.4, margin: -0.09, space: 0.7 },
+    { label: "Flappy Bird", link: "https://taha-shajarian.ir/projects/flappybird", texture: textureMap.flappy, iconSize: 0.4 },
+  ], [textureMap]);
 
-  const { setModalIsOpen } = useAppStatusStore();
-  const navigateTo = (address) => {
-    if (address) window.open(address, "_blank");
-  };
+  const setModalIsOpen = useAppStatusStore((s) => s.setModalIsOpen);
+  const navigateTo = useCallback((url) => url && window.open(url, "_blank"), []);
+  const openModal = useCallback(() => setModalIsOpen(true), [setModalIsOpen]);
 
   return (
-    <group
-      position={[0, wallHeight - 0.6, wallSize / 2 - 0.001]}
-      rotation={[0, Math.PI, 0]}
-    >
-      {/* Left Column - Games List */}
+    <group position={[0, wallHeight - 0.6, wallSize / 2 - 0.001]} rotation={[0, Math.PI, 0]}>
       <group position={[-4, 0, 0]}>
         <group>
-          <Text
-            font={FONT_URL}
-            fontSize={0.4}
-            maxWidth={wallSize}
-            color="silver"
-            textAlign="left"
-          >
+          <Text font={FONT_URL} fontSize={0.4} maxWidth={wallSize} color="silver">
             Game Projects
           </Text>
-          <mesh position={[1.75, 0, 0]} ref={refs.gameIcon}>
+          <mesh position={[1.75, 0, 0]}>
             <planeGeometry args={[0.5, 0.5]} />
-            <meshBasicMaterial map={gameIcon} {...MATERIAL_PROPS} />
+            <meshBasicMaterial map={textureMap.game} transparent />
           </mesh>
         </group>
 
-        {items.map((item, index) => (
-          <group
-            key={item.label}
-            position={[item.margin ?? 0, -3 - index * Y_OFFSET, 0]}
-            onClick={() => navigateTo(item.link)}
-          >
-            <Text font={FONT_URL} fontSize={0.2} color="silver">
-              {item.label}
-            </Text>
-            <mesh position={[item.space ?? 0.85, 0.033, 0]} ref={item.iconRef}>
-              <planeGeometry
-                args={[item.iconSize ?? 0.25, item.iconSize ?? 0.25]}
-              />
-              <meshBasicMaterial map={item.texture} {...MATERIAL_PROPS} />
+        {items.map((item, i) => (
+          <group key={item.label} position={[item.margin ?? 0, -3 - i * Y_OFFSET, 0]} onClick={() => navigateTo(item.link)}>
+            <Text font={FONT_URL} fontSize={0.2} color="silver">{item.label}</Text>
+            <mesh position={[item.space ?? DEFAULT_ICON_SPACE, 0.033, 0]}>
+              <planeGeometry args={[item.iconSize ?? DEFAULT_ICON_SIZE, item.iconSize ?? DEFAULT_ICON_SIZE]} />
+              <meshBasicMaterial map={item.texture} transparent />
             </mesh>
           </group>
         ))}
       </group>
 
-      {/* Right Column - Contact Links */}
       <group position={[3, -2.8, 0]}>
-        <Text
-          font={FONT_URL}
-          fontSize={0.2}
-          color="silver"
-          onClick={() => setModalIsOpen(true)}
-        >
+        <Text font={FONT_URL} fontSize={0.2} color="silver" onClick={openModal}>
           Send an Email
         </Text>
-        <mesh position={[1, 0.1, 0]} ref={refs.envelope}>
+        <mesh position={[1, 0.1, 0]}>
           <planeGeometry args={[0.4, 0.4]} />
-          <meshBasicMaterial map={envelope} {...MATERIAL_PROPS} />
+          <meshBasicMaterial map={textureMap.envelope} transparent />
         </mesh>
       </group>
 
       <group position={[2.82, -2.3, 0]}>
-        <Text
-          font={FONT_URL}
-          fontSize={0.2}
-          color="silver"
-          onClick={() => navigateTo("https://github.com/tahashajarian")}
-        >
+        <Text font={FONT_URL} fontSize={0.2} color="silver" onClick={() => navigateTo("https://github.com/tahashajarian")}>
           My Github
         </Text>
-        <mesh position={[0.7, 0.06, 0]} ref={refs.github}>
+        <mesh position={[0.7, 0.06, 0]}>
           <planeGeometry args={[0.3, 0.3]} />
-          <meshBasicMaterial map={github} {...MATERIAL_PROPS} />
+          <meshBasicMaterial map={textureMap.github} transparent />
         </mesh>
       </group>
     </group>
   );
-};
-
-export default GamesText;
+}

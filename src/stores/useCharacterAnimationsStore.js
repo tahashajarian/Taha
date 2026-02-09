@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { tableRotation } from "../constances/constances";
+import { tableRotation, wallSize } from "../constances/constances";
 
 export const useCharacterAnimationsStore = create((set) => ({
   animation: undefined,
@@ -8,7 +8,7 @@ export const useCharacterAnimationsStore = create((set) => ({
   animations: [],
   setAnimations: (arr) => set({ animations: arr }),
 
-  position: [0, 0, 0],
+  position:[-wallSize/2 + 1.2, 0, -wallSize/2 + 3],
   setPosition: (p) => set({ position: p }),
 
   rotation: tableRotation,

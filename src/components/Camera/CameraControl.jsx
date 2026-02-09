@@ -5,7 +5,7 @@ import { useCameraControlStore } from "../../stores/useCameraControlStore";
 
 const CameraControl = ({ colliderMeshes = [] }) => {
   const cameraControlsRef = useRef();
-  const { cameraLookAt, chessMode } = useCameraControlStore();
+  const { cameraLookAt } = useCameraControlStore();
 
   useEffect(() => {
     if (cameraLookAt && cameraControlsRef.current) {

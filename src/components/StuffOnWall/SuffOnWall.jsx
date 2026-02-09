@@ -9,6 +9,7 @@ import PaintFrame from "./PaintFrame";
 import Window from "./Window";
 import Curtain from "../Curtain/Curtain";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import Textes from "../textes/Textes";
 
 const SuffOnWall = () => {
   const { isApploaded } = useAppStatusStore();
@@ -59,6 +60,7 @@ const SuffOnWall = () => {
             <Curtain />
           </group> */}
           <Sofa />
+          <Textes />
         </>
       )}
     </group>

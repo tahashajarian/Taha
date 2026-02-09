@@ -51,7 +51,6 @@ const TableSetup = () => {
           </Suspense>
         )}
       </group>
-      <Textes />
     </group>
   );
 };

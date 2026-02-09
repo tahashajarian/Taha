@@ -1,22 +1,47 @@
-import React, { useRef } from "react";
-import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
+import React, { useRef, useEffect, memo } from "react"
+import { useGLTF } from "@react-three/drei"
+import { useFrame } from "@react-three/fiber"
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 
+/* ----------------- Keyboard ----------------- */
 const Keyboard = (props) => {
-  const { nodes, materials } = useGLTF("/models/keyboard.glb", "/draco/");
-  const quality = useGraphicsSettings((s) => s.quality);
+  const { nodes, materials } = useGLTF("/models/keyboard.glb", "/draco/")
+  const quality = useGraphicsSettings((s) => s.quality)
 
-  if (materials && materials.klawisze && quality !== "high") {
-    materials.klawisze.metalness = 0.6;
-    materials.klawisze.roughness = quality === "medium" ? 0.4 : 0.5;
-    materials.klawisze.envMapIntensity = quality === "medium" ? 0.8 : 0.4;
-  }
+  // keep original material values so we can restore them when returning to "high"
+  const origRef = useRef(null)
+  useEffect(() => {
+    const m = materials?.klawisze
+    if (!m) return
+
+    if (!origRef.current) {
+      origRef.current = {
+        metalness: m.metalness,
+        roughness: m.roughness,
+        envMapIntensity: m.envMapIntensity,
+      }
+    }
+
+    if (quality === "high") {
+      // restore original values (if we have them)
+      const o = origRef.current
+      m.metalness = o?.metalness ?? m.metalness
+      m.roughness = o?.roughness ?? m.roughness
+      m.envMapIntensity = o?.envMapIntensity ?? m.envMapIntensity
+    } else {
+      // low/medium quality overrides
+      m.metalness = 0.6
+      m.roughness = quality === "medium" ? 0.4 : 0.5
+      m.envMapIntensity = quality === "medium" ? 0.8 : 0.4
+    }
+    // note: we intentionally mutate the gltf material once here,
+    // that's fine because we avoid doing it every render.
+  }, [materials, quality])
 
   return (
     <group {...props} dispose={null}>
-      <RGBLightHigh />
-
+      {/* Only mount RGB lights in high quality */}
+      {quality === "high" && <RGBLightHigh />}
 
       <mesh
         castShadow={quality === "high"}
@@ -26,32 +51,34 @@ const Keyboard = (props) => {
         rotation={[0, Math.PI / 2, 0]}
       />
     </group>
-  );
-};
+  )
+}
 
-useGLTF.preload("/models/keyboard.glb", "/draco/");
-export default Keyboard;
+useGLTF.preload("/models/keyboard.glb", "/draco/")
 
-const RGBLightHigh = () => {
-  const lightRefR = useRef(null);
-  const lightRefG = useRef(null);
-  const lightRefB = useRef(null);
+/* ----------------- RGB Light (high quality only) ----------------- */
+const RGBLightHigh = memo(() => {
+  const rRef = useRef(null)
+  const gRef = useRef(null)
+  const bRef = useRef(null)
 
+  // per-frame update of colors (only runs when component mounted -> quality === "high")
   useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    const r = (Math.sin(time * 2) + 1) / 2;
-    const g = (Math.sin(time * 2 + Math.PI / 2) + 1) / 2;
-    const b = (Math.sin(time * 2 + Math.PI) + 1) / 2;
+    const t = state.clock.getElapsedTime()
+    // compute rgb wave values
+    const r = (Math.sin(t * 2) + 1) * 0.5
+    const g = (Math.sin(t * 2 + Math.PI / 2) + 1) * 0.5
+    const b = (Math.sin(t * 2 + Math.PI) + 1) * 0.5
 
-    lightRefR.current?.color.setRGB(r, 0, 0);
-    lightRefG.current?.color.setRGB(0, g, 0);
-    lightRefB.current?.color.setRGB(0, 0, b);
-  });
+    if (rRef.current) rRef.current.color.setRGB(r, 0, 0)
+    if (gRef.current) gRef.current.color.setRGB(0, g, 0)
+    if (bRef.current) bRef.current.color.setRGB(0, 0, b)
+  })
 
   return (
     <group>
       <rectAreaLight
-        ref={lightRefR}
+        ref={rRef}
         position={[0, 0.03, 0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
@@ -61,7 +88,7 @@ const RGBLightHigh = () => {
         power={0.5}
       />
       <rectAreaLight
-        ref={lightRefB}
+        ref={bRef}
         position={[0, 0.03, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
@@ -71,7 +98,7 @@ const RGBLightHigh = () => {
         power={0.5}
       />
       <rectAreaLight
-        ref={lightRefG}
+        ref={gRef}
         position={[0, 0.03, -0.04]}
         rotation={[-Math.PI / 2, 0, 0]}
         width={0.45}
@@ -81,5 +108,7 @@ const RGBLightHigh = () => {
         power={0.5}
       />
     </group>
-  );
-};
+  )
+})
+
+export default memo(Keyboard)

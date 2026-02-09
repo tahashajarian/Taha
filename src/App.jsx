@@ -80,14 +80,7 @@ function App() {
             camera={{ position: [0, 3, 8], fov: 50 }}
             shadows
             style={{ background: "rgb(42 50 60)" }}
-            frameloop={loaded ? "demand" : "always"}
-            dpr={[1, 2]}
-            onCreated={({ gl, scene }) => {
-              gl.physicallyCorrectLights = true;
-              // Set the custom loading manager
-              gl.setPixelRatio(window.devicePixelRatio);
-              scene.background = new Color(0x2a323c);
-            }}
+            frameloop={"always"}
             onPointerMissed={() => (document.body.style.cursor = "default")}
             gl={{
               antialias: true,

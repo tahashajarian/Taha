@@ -1,8 +1,10 @@
-import React from "react"
+import React, { memo, useCallback } from "react"
 import { useArrowsStore } from "../../stores/useArrowStore"
+import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore"
 
-// Minimal triangle arrows for clean style
-const ArrowIcon = ({ direction }) => {
+/* -------------------- ICON -------------------- */
+
+const ArrowIcon = memo(({ direction }) => {
   const base =
     "w-0 h-0 border-l-[6px] border-r-[6px] border-l-transparent border-r-transparent"
 
@@ -22,23 +24,24 @@ const ArrowIcon = ({ direction }) => {
     default:
       return null
   }
-}
+})
 
-const ArrowButton = ({ direction }) => {
+/* -------------------- BUTTON -------------------- */
+
+const ArrowButton = memo(({ direction }) => {
   const setArrow = useArrowsStore((s) => s.setArrow)
+
+  const press = useCallback(() => {
+    setArrow(direction, true)
+  }, [setArrow, direction])
+
+  const release = useCallback(() => {
+    setArrow(direction, false)
+  }, [setArrow, direction])
 
   return (
     <button
       type="button"
-      style={{
-        touchAction: "manipulation",
-        WebkitBackdropFilter: "blur(16px)",
-        background:
-          "linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.05))",
-        WebkitTouchCallout: "none", // prevent iOS long-press menu
-        WebkitUserSelect: "none",
-        userSelect: "none",
-      }}
       className="
         select-none
         w-[44px] h-[44px]
@@ -54,24 +57,40 @@ const ArrowButton = ({ direction }) => {
         outline-none
         [-webkit-tap-highlight-color:transparent]
       "
-      onMouseDown={() => setArrow(direction, true)}
-      onMouseUp={() => setArrow(direction, false)}
-      onMouseLeave={() => setArrow(direction, false)}
+      style={{
+        touchAction: "manipulation",
+        WebkitBackdropFilter: "blur(16px)",
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.05))",
+        WebkitUserSelect: "none",
+        userSelect: "none",
+      }}
+      onMouseDown={press}
+      onMouseUp={release}
+      onMouseLeave={release}
       onTouchStart={(e) => {
         e.preventDefault()
-        setArrow(direction, true)
+        press()
       }}
       onTouchEnd={(e) => {
         e.preventDefault()
-        setArrow(direction, false)
+        release()
       }}
     >
       <ArrowIcon direction={direction} />
     </button>
   )
-}
+})
+
+/* -------------------- CONTROLS -------------------- */
 
 const ArrowControls = () => {
+  // 🔑 Only re-render when animation changes
+  const animation = useCharacterAnimationsStore((s) => s.animation)
+
+  // 🚫 Hide arrows while typing
+  if (animation === "typing") return null
+
   return (
     <div className="absolute bottom-10 left-10 flex flex-col items-center gap-2 select-none">
       <ArrowButton direction="forward" />
@@ -84,4 +103,4 @@ const ArrowControls = () => {
   )
 }
 
-export default ArrowControls
+export default memo(ArrowControls)

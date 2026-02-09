@@ -1,17 +1,23 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+
 import Taha from "./Taha";
 import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
 import { useArrowsStore } from "../../stores/useArrowStore";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import { useArrowControls } from "../../hooks/useArrowControls";
+import { tableRotation } from "../../constances/constances";
 
+/* -------------------- CONSTANTS -------------------- */
 const roomMinX = -5.5;
 const roomMaxX = 5.5;
 const roomMinZ = -5.5;
 const roomMaxZ = 5.5;
+
+const SPEED = 2.2;
+const ROTATION_DAMPING = 10.0;
 
 const tableMinx = -1.2;
 const tableMaxx = 1.2;
@@ -23,160 +29,227 @@ const chairMaxX = 0.4;
 const chairMinZ = -1.4;
 const chairMaxZ = -0.2;
 
+/* ---------- REUSED OBJECTS (NO ALLOCATIONS) -------- */
+const vInput = new THREE.Vector3();
+const vCamDir = new THREE.Vector3();
+const vCamRight = new THREE.Vector3();
+const vMove = new THREE.Vector3();
+const vOffset = new THREE.Vector3();
+const qTarget = new THREE.Quaternion();
+const eulerTmp = new THREE.Euler();
+/* =================================================== */
+
 const TahaContainer = (props) => {
   const group = useRef(null);
-  const currentActionRef = useRef(null);
-  const currentActionName = useRef("");
+  const activeAction = useRef(null);
+  const typingForcedRef = useRef(false);
+  const typingKeyRef = useRef(null);
 
-  const { nodes, materials, animations } = useGLTF("/models/Taha.glb", "/draco/");
+  const { nodes, materials, animations } = useGLTF(
+    "/models/Taha.glb",
+    "/draco/",
+  );
   const { actions, names } = useAnimations(animations, group);
 
-  const {
-    setAnimations,
-    animation,
-    setAnimation,
-    position,
-    setPosition,
-    rotation,
-    setRotation,
-  } = useCharacterAnimationsStore();
+  const { animation, setAnimation, setAnimations, setPosition, setRotation } =
+    useCharacterAnimationsStore();
 
-  const { backward, forward, left, right } = useArrowsStore();
-  const { camera } = useThree();
-  const { modalIsOpen } = useAppStatusStore();
-
+  // single boolean selector to track movement intent
+  const isMoving = useArrowsStore(
+    (s) => s.forward || s.backward || s.left || s.right,
+  );
   const resetArrows = useArrowsStore.getState().resetArrows;
+
+  const modalIsOpen = useAppStatusStore((s) => s.modalIsOpen);
+  const isApploaded = useAppStatusStore((s) => s.isApploaded);
+  const { camera } = useThree();
 
   useArrowControls();
 
-  const speed = 2.2;
-
-  // store animation names
+  /* ---------- REGISTER ANIMATION NAMES ---------- */
   useEffect(() => {
-    if (setAnimations) setAnimations(names);
+    if (names && names.length) setAnimations?.(names);
   }, [names, setAnimations]);
 
-  // update animation based on input
-  const updateAnimation = useCallback(() => {
-    if (modalIsOpen) return;
-
-    if (right || left || forward || backward) {
-      setAnimation("walk");
-    } else if (animation !== "typing") {
-      setAnimation("idle"); // idle when no keys pressed
-    }
-  }, [right, left, forward, backward, setAnimation, animation, modalIsOpen]);
-
-  useEffect(() => {
-    updateAnimation();
-  }, [updateAnimation]);
-
-  // handle action fade in/out & always play
+  /* ---------- when actions obj appears, cache typing key & stop auto-play ---------- */
   useEffect(() => {
     if (!actions) return;
-    const nextAction = actions[animation];
-    if (!nextAction) return;
 
-    // typing resets position & rotation
-    if (animation === "typing") {
-      resetArrows?.();
-      const zeroPos = [0, 0, 0];
-      const zeroRot = [0, 0, 0];
-      setPosition?.(zeroPos);
-      setRotation?.(zeroRot);
-      group.current?.position.set(...zeroPos);
-      group.current?.rotation.set(...zeroRot);
-    }
+    // cache a case-insensitive match for "typing"
+    const typingKey =
+      Object.keys(actions).find((k) => k.toLowerCase() === "typing") || null;
+    typingKeyRef.current = typingKey;
 
-    const prevAction = currentActionRef.current;
-    if (prevAction !== nextAction) {
-      prevAction?.fadeOut(0.2);
-      nextAction.reset().fadeIn(0.2).play();
-      currentActionRef.current = nextAction;
-      currentActionName.current = animation;
-    } else {
-      // keep playing current action
-      nextAction.play();
-    }
-  }, [animation, actions, resetArrows, setPosition, setRotation]);
+    // stop all actions once when actions object first arrives to avoid drei auto-play mixing
+    Object.values(actions).forEach((a) => {
+      a.stop();
+    });
 
-  // force typing on mount
+    // reset activeAction; we'll control playing explicitly
+    activeAction.current = null;
+  }, [actions]);
+
+  /* ---------- helper: play one action and stop all others ---------- */
+  const playExclusive = (key, fade = 0.2) => {
+    if (!actions) return;
+    const act = actions[key];
+    if (!act) return;
+    // stop everything first to avoid blended mixes
+    Object.values(actions).forEach((a) => a.stop());
+    act.reset().fadeIn(fade).play();
+    activeAction.current = act;
+  };
+
+  /* ---------- FORCE typing on first ready state (safe & deterministic) ---------- */
   useEffect(() => {
+    if (typingForcedRef.current) return;
+    if (!actions || !group.current) return;
+    if (!isApploaded || modalIsOpen) return;
+    // only force if there's no movement now
+    if (
+      useArrowsStore.getState().forward ||
+      useArrowsStore.getState().backward ||
+      useArrowsStore.getState().left ||
+      useArrowsStore.getState().right
+    )
+      return;
+
+    const typingKey = typingKeyRef.current;
+    if (!typingKey) return;
+
+    typingForcedRef.current = true;
     setAnimation("typing");
-  }, [setAnimation]);
+    resetArrows?.();
 
-  // character movement
-  useFrame((state, delta) => {
+    // stop everything and start typing exclusively
+    playExclusive(typingKey, 0.2);
+
+    const pos = [0, 0, 0];
+    group.current.position.set(...pos);
+    group.current.rotation.set(...tableRotation);
+    setPosition?.(pos);
+    setRotation?.(tableRotation);
+
+    vOffset.set(0, 2.0, -3.5);
+    vOffset.applyQuaternion(group.current.quaternion);
+    camera.position.copy(group.current.position).add(vOffset);
+  }, [
+    actions,
+    isApploaded,
+    modalIsOpen,
+    resetArrows,
+    setAnimation,
+    setPosition,
+    setRotation,
+    camera,
+  ]);
+
+  /* ---------- INPUT → ANIMATION STATE (guard typing) ---------- */
+  useEffect(() => {
     if (modalIsOpen) return;
+    if (animation === "typing") return; // lock typing
 
-    const direction = [0, 0, 0];
-    if (forward) direction[2] += speed * delta;
-    if (backward) direction[2] -= speed * delta;
-    if (left) direction[0] += speed * delta;
-    if (right) direction[0] -= speed * delta;
+    if (isMoving) setAnimation("walk");
+    else setAnimation("idle");
+  }, [isMoving, animation, modalIsOpen, setAnimation]);
 
-    const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
-    const cameraRight = new THREE.Vector3();
-    cameraRight.crossVectors(camera.up, cameraDirection).normalize();
+  /* ---------- ANIMATION SWITCHING (fade to next) ---------- */
+  useEffect(() => {
+    if (!actions || !group.current) return;
+    const next = actions[animation];
+    if (!next) return;
 
-    const transformedDirection = new THREE.Vector3()
-      .addScaledVector(cameraDirection, direction[2])
-      .addScaledVector(cameraRight, direction[0]);
+    // if next is already active, nothing to do
+    if (activeAction.current === next) return;
 
-    const newPosition = [
-      position[0] + transformedDirection.x,
-      position[1],
-      position[2] + transformedDirection.z,
-    ];
-    let canMove = true;
-    // keep within bounds
-    if (
-      newPosition[0] < roomMinX ||
-      newPosition[0] > roomMaxX ||
-      newPosition[2] < roomMinZ ||
-      newPosition[2] > roomMaxZ
-    )
-      canMove = false;
-    if (
-      newPosition[0] > tableMinx &&
-      newPosition[0] < tableMaxx &&
-      newPosition[2] > tableMinz &&
-      newPosition[2] < tableMaxz
-    )
-      canMove = false;
-    if (
-      newPosition[0] > chairMinX &&
-      newPosition[0] < chairMaxX &&
-      newPosition[2] > chairMinZ &&
-      newPosition[2] < chairMaxZ
-    )
-      canMove = false;
-    if (canMove) {
-      setPosition(newPosition);
-      group.current.position.set(...newPosition);
+    if (animation === "typing") {
+      // on explicit typing switch, ensure position/camera are consistent
+      resetArrows?.();
+      const pos = [0, 0, 0];
+      group.current.position.set(...pos);
+      group.current.rotation.set(...tableRotation);
+      setPosition?.(pos);
+      setRotation?.(tableRotation);
+
+      vOffset.set(0, 2.0, -3.5);
+      vOffset.applyQuaternion(group.current.quaternion);
+      camera.position.copy(group.current.position).add(vOffset);
     }
 
-    // rotate character towards movement
-    if (forward || backward || left || right) {
-      const angle = Math.atan2(transformedDirection.x, transformedDirection.z);
-      setRotation([0, angle, 0]);
+    // normal crossfade to next
+    activeAction.current?.fadeOut(0.2);
+    next.reset().fadeIn(0.2).play();
+    activeAction.current = next;
+  }, [animation, actions, resetArrows, setPosition, setRotation, camera]);
+
+  /* ---------------- MOVEMENT (camera follow intentionally removed) ---------------- */
+  useFrame((_, delta) => {
+    if (!group.current || modalIsOpen) return;
+    if (animation === "typing") return; // lock movement while typing
+
+    // read arrows state once per frame (avoids re-subscribing)
+    const { forward, backward, left, right } = useArrowsStore.getState();
+    vInput.set(
+      (left ? 1 : 0) + (right ? -1 : 0),
+      0,
+      (forward ? 1 : 0) + (backward ? -1 : 0),
+    );
+    if (vInput.lengthSq() === 0) return;
+
+    camera.getWorldDirection(vCamDir);
+    vCamDir.y = 0;
+    vCamDir.normalize();
+
+    vCamRight.crossVectors(camera.up, vCamDir).normalize();
+
+    vMove
+      .set(0, 0, 0)
+      .addScaledVector(vCamDir, vInput.z)
+      .addScaledVector(vCamRight, vInput.x)
+      .normalize()
+      .multiplyScalar(SPEED * delta);
+
+    const nextX = group.current.position.x + vMove.x;
+    const nextZ = group.current.position.z + vMove.z;
+    const isInDesk =
+      nextX > tableMinx &&
+      nextX < tableMaxx &&
+      nextZ > tableMinz &&
+      nextZ < tableMaxz;
+
+    const isInChair =
+      nextX > chairMinX &&
+      nextX < chairMaxX &&
+      nextZ > chairMinZ &&
+      nextZ < chairMaxZ;
+
+    if (
+      nextX >= roomMinX &&
+      nextX <= roomMaxX &&
+      nextZ >= roomMinZ &&
+      nextZ <= roomMaxZ &&
+      !isInChair &&
+      !isInDesk
+    ) {
+      group.current.position.set(nextX, 0, nextZ);
+
+      // smooth rotation toward movement direction
+      const angle = Math.atan2(vMove.x, vMove.z);
+      qTarget.setFromAxisAngle(THREE.Object3D.DEFAULT_UP, angle);
+
+      const t = 1 - Math.exp(-ROTATION_DAMPING * delta);
+      group.current.quaternion.slerp(qTarget, t);
+
+      setPosition?.([nextX, 0, nextZ]);
+
+      eulerTmp.setFromQuaternion(group.current.quaternion, "YXZ");
+      setRotation?.([0, eulerTmp.y, 0]);
     }
   });
 
-  // apply rotation & camera look
-  useEffect(() => {
-    group.current?.rotation.set(...rotation);
-    camera.lookAt(
-      new THREE.Vector3(
-        group.current.position.x,
-        group.current.position.y + 0.7,
-        group.current.position.z,
-      ),
-    );
-  }, [position, rotation, camera]);
-
+  /* ------------------- RENDER ------------------- */
   return (
-    <Taha charRef={group} materials={materials} nodes={nodes} {...props} />
+    <Taha charRef={group} nodes={nodes} materials={materials} {...props} />
   );
 };
 

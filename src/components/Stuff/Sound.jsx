@@ -1,33 +1,39 @@
 import { useThree } from "@react-three/fiber"
-import React, { useEffect, useRef, useMemo, useState } from "react"
-import { AudioListener, AudioLoader, Audio } from "three"
+import React, { useEffect, useRef, useMemo } from "react"
+import { AudioListener, AudioLoader, PositionalAudio } from "three"
 
 const Sound = ({ url, volume = 1.0 }) => {
   const { camera } = useThree()
   const sound = useRef()
   const listener = useMemo(() => new AudioListener(), [])
-  const [buffer, setBuffer] = useState(null)
   const isInitialized = useRef(false)
 
-  // Load audio asynchronously
+  // Load audio once
   useEffect(() => {
     if (!url) return
     const loader = new AudioLoader()
-    loader.load(url, (loadedBuffer) => setBuffer(loadedBuffer))
-  }, [url])
+    let isCancelled = false
+    loader.load(url, (buffer) => {
+      if (!isCancelled && sound.current) {
+        sound.current.setBuffer(buffer)
+        sound.current.setRefDistance(0.1)
+        sound.current.setLoop(true)
+        sound.current.setVolume(volume)
+      }
+    })
+    return () => {
+      isCancelled = true
+    }
+  }, [url, volume])
 
+  // Attach listener to camera once
   useEffect(() => {
-    if (!buffer || !sound.current) return
-
-    // Setup sound properties
-    sound.current.setBuffer(buffer)
-    sound.current.setRefDistance(0.1)
-    sound.current.setLoop(true)
-    sound.current.setVolume(volume)
-
-    // Attach listener to camera
     camera.add(listener)
+    return () => camera.remove(listener)
+  }, [camera, listener])
 
+  // Play on user interaction (once)
+  useEffect(() => {
     const handleUserInteraction = async () => {
       if (!isInitialized.current && sound.current) {
         const context = sound.current.context
@@ -36,17 +42,18 @@ const Sound = ({ url, volume = 1.0 }) => {
         isInitialized.current = true
       }
     }
-
     document.addEventListener("click", handleUserInteraction)
     document.addEventListener("touchstart", handleUserInteraction)
-
     return () => {
-      camera.remove(listener)
-      if (sound.current?.isPlaying) sound.current.stop()
       document.removeEventListener("click", handleUserInteraction)
       document.removeEventListener("touchstart", handleUserInteraction)
     }
-  }, [buffer, camera, listener, volume])
+  }, [])
+
+  // Volume update if prop changes
+  useEffect(() => {
+    if (sound.current) sound.current.setVolume(volume)
+  }, [volume])
 
   return <positionalAudio ref={sound} args={[listener]} />
 }
