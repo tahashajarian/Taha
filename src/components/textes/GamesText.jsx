@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../../constances/constances";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import PortalShader from "../../shaders/PortalShader";
 
 const FONT_URL = "/fonts/Roboto-Regular.ttf";
 const Y_OFFSET = -0.4;
@@ -25,46 +26,99 @@ const TEXTURE_PATHS = [
 ];
 
 export default function GamesText() {
-  const textures = useLoader(
-    TextureLoader,
-    TEXTURE_PATHS,
-    (loader) => {
-      loader.manager = new THREE.LoadingManager(); 
-    }
+  const textures = useLoader(TextureLoader, TEXTURE_PATHS, (loader) => {
+    loader.manager = new THREE.LoadingManager();
+  });
+
+  const textureMap = useMemo(
+    () => ({
+      flappy: textures[0],
+      game: textures[1],
+      shotgun: textures[2],
+      jeton: textures[3],
+      envelope: textures[4],
+      github: textures[5],
+      earth: textures[6],
+      snake: textures[7],
+      slot: textures[8],
+      platformer: textures[9],
+    }),
+    [textures],
   );
 
-  const textureMap = useMemo(() => ({
-    flappy: textures[0],
-    game: textures[1],
-    shotgun: textures[2],
-    jeton: textures[3],
-    envelope: textures[4],
-    github: textures[5],
-    earth: textures[6],
-    snake: textures[7],
-    slot: textures[8],
-    platformer: textures[9],
-  }), [textures]);
-
-  const items = useMemo(() => [
-    { label: "Platformer", link: "https://taha-shajarian.ir/projects/platformer", texture: textureMap.platformer, margin: -0.05, iconSize: 0.3, space: 0.75 },
-    { label: "Slot Machine", link: "https://taha-shajarian.ir/projects/slot-machin", texture: textureMap.slot, margin: 0.1 },
-    { label: "Simple Snake", link: "", texture: textureMap.snake, margin: 0.1 },
-    { label: "Earth", link: "https://taha-shajarian.ir/projects/earth", texture: textureMap.earth, margin: -0.3, space: 0.5 },
-    { label: "Black Jack", link: "https://taha-shajarian.ir/projects/blackjack", texture: textureMap.jeton, space: 0.8 },
-    { label: "War Land", link: "https://taha-shajarian.ir/projects/warland", texture: textureMap.shotgun, iconSize: 0.4, margin: -0.09, space: 0.7 },
-    { label: "Flappy Bird", link: "https://taha-shajarian.ir/projects/flappybird", texture: textureMap.flappy, iconSize: 0.4 },
-  ], [textureMap]);
+  const items = useMemo(
+    () => [
+      {
+        label: "Platformer",
+        link: "https://taha-shajarian.ir/projects/platformer",
+        texture: textureMap.platformer,
+        margin: -0.05,
+        iconSize: 0.3,
+        space: 0.75,
+      },
+      {
+        label: "Slot Machine",
+        link: "https://taha-shajarian.ir/projects/slot-machin",
+        texture: textureMap.slot,
+        margin: 0.1,
+      },
+      {
+        label: "Simple Snake",
+        link: "",
+        texture: textureMap.snake,
+        margin: 0.1,
+      },
+      {
+        label: "Earth",
+        link: "https://taha-shajarian.ir/projects/earth",
+        texture: textureMap.earth,
+        margin: -0.3,
+        space: 0.5,
+      },
+      {
+        label: "Black Jack",
+        link: "https://taha-shajarian.ir/projects/blackjack",
+        texture: textureMap.jeton,
+        space: 0.8,
+      },
+      {
+        label: "War Land",
+        link: "https://taha-shajarian.ir/projects/warland",
+        texture: textureMap.shotgun,
+        iconSize: 0.4,
+        margin: -0.09,
+        space: 0.7,
+      },
+      {
+        label: "Flappy Bird",
+        link: "https://taha-shajarian.ir/projects/flappybird",
+        texture: textureMap.flappy,
+        iconSize: 0.4,
+      },
+    ],
+    [textureMap],
+  );
 
   const setModalIsOpen = useAppStatusStore((s) => s.setModalIsOpen);
-  const navigateTo = useCallback((url) => url && window.open(url, "_blank"), []);
+  const navigateTo = useCallback(
+    (url) => url && window.open(url, "_blank"),
+    [],
+  );
   const openModal = useCallback(() => setModalIsOpen(true), [setModalIsOpen]);
 
   return (
-    <group position={[0, wallHeight - 0.6, wallSize / 2 - 0.001]} rotation={[0, Math.PI, 0]}>
+    <group
+      position={[0, wallHeight - 0.6, wallSize / 2 - 0.001]}
+      rotation={[0, Math.PI, 0]}
+    >
       <group position={[-4, 0, 0]}>
         <group>
-          <Text font={FONT_URL} fontSize={0.4} maxWidth={wallSize} color="silver">
+          <Text
+            font={FONT_URL}
+            fontSize={0.4}
+            maxWidth={wallSize}
+            color="silver"
+          >
             Game Projects
           </Text>
           <mesh position={[1.75, 0, 0]}>
@@ -74,10 +128,22 @@ export default function GamesText() {
         </group>
 
         {items.map((item, i) => (
-          <group key={item.label} position={[item.margin ?? 0, -3 - i * Y_OFFSET, 0]} onClick={() => navigateTo(item.link)}>
-            <Text font={FONT_URL} fontSize={0.2} color="silver">{item.label}</Text>
+          <group
+            key={item.label}
+            position={[item.margin ?? 0, -3 - i * Y_OFFSET, 0]}
+            onClick={() => navigateTo(item.link)}
+          >
+            <PortalShader />
+            <Text font={FONT_URL} fontSize={0.2} color="silver">
+              {item.label}
+            </Text>
             <mesh position={[item.space ?? DEFAULT_ICON_SPACE, 0.033, 0]}>
-              <planeGeometry args={[item.iconSize ?? DEFAULT_ICON_SIZE, item.iconSize ?? DEFAULT_ICON_SIZE]} />
+              <planeGeometry
+                args={[
+                  item.iconSize ?? DEFAULT_ICON_SIZE,
+                  item.iconSize ?? DEFAULT_ICON_SIZE,
+                ]}
+              />
               <meshBasicMaterial map={item.texture} transparent />
             </mesh>
           </group>
@@ -95,7 +161,12 @@ export default function GamesText() {
       </group>
 
       <group position={[2.82, -2.3, 0]}>
-        <Text font={FONT_URL} fontSize={0.2} color="silver" onClick={() => navigateTo("https://github.com/tahashajarian")}>
+        <Text
+          font={FONT_URL}
+          fontSize={0.2}
+          color="silver"
+          onClick={() => navigateTo("https://github.com/tahashajarian")}
+        >
           My Github
         </Text>
         <mesh position={[0.7, 0.06, 0]}>
