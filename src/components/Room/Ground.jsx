@@ -1,59 +1,41 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useMemo } from "react";
 import { wallSize } from "../../constances/constances";
-import { TextureLoader, RepeatWrapping } from "three";
+import { RepeatWrapping } from "three";
+import { useTexture } from "@react-three/drei";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
+const FLOOR_TEXTURE_URL =
+  "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg";
+
+useTexture.preload(FLOOR_TEXTURE_URL);
+
 const TexturedFloor = () => {
-  const [textures, setTextures] = useState(null);
-  const meshRef = useRef();
-  const { isApploaded } = useAppStatusStore();
+  const isApploaded = useAppStatusStore((s) => s.isApploaded);
+  const mapTexture = useTexture(FLOOR_TEXTURE_URL);
+
+  const map = useMemo(() => {
+    const texture = mapTexture.clone();
+    texture.wrapS = texture.wrapT = RepeatWrapping;
+    texture.repeat.set(8, 8);
+    texture.needsUpdate = true;
+    return texture;
+  }, [mapTexture]);
 
   useEffect(() => {
-    const loader = new TextureLoader();
-    const loadTextures = async () => {
-      try {
-        const map = await loader.loadAsync(
-          "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg"
-        );
-
-        [map].forEach((texture) => {
-          texture.wrapS = texture.wrapT = RepeatWrapping;
-          texture.repeat.set(8, 8);
-        });
-
-        setTextures({ map });
-      } catch (error) {
-        console.error("Error loading textures:", error);
-      }
+    return () => {
+      map.dispose();
     };
-    if (isApploaded) {
-      loadTextures();
-    }
-  }, [isApploaded]);
-
-  useEffect(() => {
-    if (textures && meshRef.current) {
-      meshRef.current.material.needsUpdate = true;
-    }
-  }, [textures]);
+  }, [map]);
 
   return (
     <mesh
-      ref={meshRef}
       receiveShadow
       rotation={[-Math.PI / 2, 0, 0]}
       position={[0, 0, 0]}
     >
       <planeGeometry args={[wallSize, wallSize]} />
-      {textures ? (
-        <meshStandardMaterial
-          map={textures.map}
-          aoMap={textures.aoMap}
-          metalnessMap={textures.metalnessMap}
-          normalMap={textures.normalMap}
-          roughnessMap={textures.roughnessMap}
-          color={0xffffff}
-        />
+      {isApploaded ? (
+        <meshStandardMaterial map={map} color={0xffffff} />
       ) : (
         <meshStandardMaterial color="gray" />
       )}

@@ -15,7 +15,7 @@ import Clock from "../Stuff/Clock";
 const Cat3 = lazy(() => import("../Stuff/Cat3"));
 
 const TableSetup = () => {
-  const { isApploaded } = useAppStatusStore();
+  const isApploaded = useAppStatusStore((s) => s.isApploaded);
 
   return (
     <group position={tablePosition} rotation={tableRotation}>

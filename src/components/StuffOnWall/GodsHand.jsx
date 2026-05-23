@@ -1,34 +1,35 @@
-import React, { useRef, useMemo, useState, useEffect } from "react"
-import { useSpring, animated } from "@react-spring/three"
-import { TextureLoader, Color, DoubleSide } from "three"
+import React, { useRef, useMemo } from "react";
+import { useSpring, animated } from "@react-spring/three";
+import { Color, DoubleSide } from "three";
+import { useTexture } from "@react-three/drei";
 
-const HAND_SPREAD = 1.3
-const HAND_CLOSE = 0.975
+const HAND_SPREAD = 1.3;
+const HAND_CLOSE = 0.975;
 
-const BASE_LINE_WIDTH = 0.8
-const BASE_LINE_HEIGHT = 0.12
+const BASE_LINE_WIDTH = 0.8;
+const BASE_LINE_HEIGHT = 0.12;
+
+const ADAM_HAND_TEXTURE_URL = "/textures/adam-hand.png";
+const GOD_HAND_TEXTURE_URL = "/textures/god-hand.png";
+
+useTexture.preload(ADAM_HAND_TEXTURE_URL);
+useTexture.preload(GOD_HAND_TEXTURE_URL);
 
 const GodsHand = () => {
-  const [adamTex, setAdamTex] = useState(null)
-  const [godTex, setGodTex] = useState(null)
+  const adamTex = useTexture(ADAM_HAND_TEXTURE_URL);
+  const godTex = useTexture(GOD_HAND_TEXTURE_URL);
 
-  const isAnimating = useRef(false)
+  const isAnimating = useRef(false);
 
   const [{ leftX, rightX }, api] = useSpring(() => ({
     leftX: -HAND_SPREAD,
     rightX: HAND_SPREAD,
     config: { tension: 60, friction: 80 },
-  }))
-
-  useEffect(() => {
-    const loader = new TextureLoader()
-    loader.load("/textures/adam-hand.png", setAdamTex)
-    loader.load("/textures/god-hand.png", setGodTex)
-  }, [])
+  }));
 
   const animate = () => {
-    if (isAnimating.current) return
-    isAnimating.current = true
+    if (isAnimating.current) return;
+    isAnimating.current = true;
 
     api.start({
       leftX: -HAND_CLOSE,
@@ -40,14 +41,14 @@ const GodsHand = () => {
           config: { friction: 50 },
           onRest: () => (isAnimating.current = false),
         }),
-    })
-  }
+    });
+  };
 
-  const centerX = leftX.to([leftX, rightX], (l, r) => (l + r) / 2)
+  const centerX = leftX.to([leftX, rightX], (l, r) => (l + r) / 2);
   const scaleX = leftX.to(
     [leftX, rightX],
-    (l, r) => Math.max((r - l) / BASE_LINE_WIDTH, 0.001)
-  )
+    (l, r) => Math.max((r - l) / BASE_LINE_WIDTH, 0.001),
+  );
 
   const lineMaterial = useMemo(
     () => ({
@@ -75,10 +76,8 @@ const GodsHand = () => {
       `,
       transparent: true,
     }),
-    []
-  )
-
-  if (!adamTex || !godTex) return null
+    [],
+  );
 
   return (
     <group>
@@ -103,16 +102,12 @@ const GodsHand = () => {
         />
       </animated.mesh>
 
-      <animated.mesh
-        position-x={leftX}
-        rotation={[0, 0, 0.2]}
-        onClick={animate}
-      >
+      <animated.mesh position-x={leftX} rotation={[0, 0, 0.2]} onClick={animate}>
         <planeGeometry args={[2, 1.5]} />
         <meshBasicMaterial map={adamTex} transparent />
       </animated.mesh>
     </group>
-  )
-}
+  );
+};
 
-export default React.memo(GodsHand)
+export default React.memo(GodsHand);

@@ -6,13 +6,18 @@ export const useArrowsStore = create((set) => ({
   forward: false,
   backward: false,
 
-  setArrow: (direction, state) => set((s) => ({ ...s, [direction]: state })),
+  setArrow: (direction, state) =>
+    set((s) => (s[direction] === state ? s : { [direction]: state })),
 
   resetArrows: () =>
-    set({
-      left: false,
-      right: false,
-      forward: false,
-      backward: false,
-    }),
+    set((s) =>
+      s.left || s.right || s.forward || s.backward
+        ? {
+            left: false,
+            right: false,
+            forward: false,
+            backward: false,
+          }
+        : s,
+    ),
 }));

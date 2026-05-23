@@ -16,8 +16,10 @@ const FEEDBACK_MAP = {
 /* ---------------- hook ---------------- */
 
 export function useChessController({ nodes, moveDuration, kingBRef }) {
-  const { chessPlay, setChessPlayEnd, resetChess, setResetChess } =
-    useAppStatusStore();
+  const chessPlay = useAppStatusStore((s) => s.chessPlay);
+  const setChessPlayEnd = useAppStatusStore((s) => s.setChessPlayEnd);
+  const resetChess = useAppStatusStore((s) => s.resetChess);
+  const setResetChess = useAppStatusStore((s) => s.setResetChess);
 
   const timeoutsRef = useRef([]);
   const kingBInitial = useRef(null);

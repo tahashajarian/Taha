@@ -4,7 +4,7 @@ import PaintingCanvas from "./PaintingCanvas";
 import { usePaintingStore } from "../../stores/usePaintingStore";
 
 const PaintingModal = ({ modalIsOpen, closeModal }) => {
-  const { setPaintingImage } = usePaintingStore();
+  const setPaintingImage = usePaintingStore((s) => s.setPaintingImage);
 
   const onSave = (imageData) => {
     // closeModal();

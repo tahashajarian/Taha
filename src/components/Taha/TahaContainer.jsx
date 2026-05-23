@@ -18,6 +18,7 @@ const roomMaxZ = 5.5;
 
 const SPEED = 2.2;
 const ROTATION_DAMPING = 10.0;
+const PLAYER_RADIUS = 0.22;
 
 const tableMinx = -1.2;
 const tableMaxx = 1.2;
@@ -28,6 +29,27 @@ const chairMinX = -0.4;
 const chairMaxX = 0.4;
 const chairMinZ = -1.4;
 const chairMaxZ = -0.2;
+
+const sofaMinX = 2.25;
+const sofaMaxX = 4.75;
+const sofaMinZ = -5.8;
+const sofaMaxZ = -4.3;
+
+const asaliMinX = 2.8;
+const asaliMaxX = 4.2;
+const asaliMinZ = -4.05;
+const asaliMaxZ = -2.75;
+
+const fireplaceMinX = -6.05;
+const fireplaceMaxX = -4.55;
+const fireplaceMinZ = 3.25;
+const fireplaceMaxZ = 4.75;
+
+const isInBounds = (x, z, minX, maxX, minZ, maxZ, padding = 0) =>
+  x >= minX - padding &&
+  x <= maxX + padding &&
+  z >= minZ - padding &&
+  z <= maxZ + padding;
 
 /* ---------- REUSED OBJECTS (NO ALLOCATIONS) -------- */
 const vInput = new THREE.Vector3();
@@ -51,8 +73,11 @@ const TahaContainer = (props) => {
   );
   const { actions, names } = useAnimations(animations, group);
 
-  const { animation, setAnimation, setAnimations, setPosition, setRotation } =
-    useCharacterAnimationsStore();
+  const animation = useCharacterAnimationsStore((s) => s.animation);
+  const setAnimation = useCharacterAnimationsStore((s) => s.setAnimation);
+  const setAnimations = useCharacterAnimationsStore((s) => s.setAnimations);
+  const setPosition = useCharacterAnimationsStore((s) => s.setPosition);
+  const setRotation = useCharacterAnimationsStore((s) => s.setRotation);
 
   // single boolean selector to track movement intent
   const isMoving = useArrowsStore(
@@ -211,17 +236,53 @@ const TahaContainer = (props) => {
 
     const nextX = group.current.position.x + vMove.x;
     const nextZ = group.current.position.z + vMove.z;
-    const isInDesk =
-      nextX > tableMinx &&
-      nextX < tableMaxx &&
-      nextZ > tableMinz &&
-      nextZ < tableMaxz;
+    const isInDesk = isInBounds(
+      nextX,
+      nextZ,
+      tableMinx,
+      tableMaxx,
+      tableMinz,
+      tableMaxz,
+    );
 
-    const isInChair =
-      nextX > chairMinX &&
-      nextX < chairMaxX &&
-      nextZ > chairMinZ &&
-      nextZ < chairMaxZ;
+    const isInChair = isInBounds(
+      nextX,
+      nextZ,
+      chairMinX,
+      chairMaxX,
+      chairMinZ,
+      chairMaxZ,
+    );
+
+    const isInSofa = isInBounds(
+      nextX,
+      nextZ,
+      sofaMinX,
+      sofaMaxX,
+      sofaMinZ,
+      sofaMaxZ,
+      PLAYER_RADIUS,
+    );
+
+    const isInAsali = isInBounds(
+      nextX,
+      nextZ,
+      asaliMinX,
+      asaliMaxX,
+      asaliMinZ,
+      asaliMaxZ,
+      PLAYER_RADIUS,
+    );
+
+    const isInFireplace = isInBounds(
+      nextX,
+      nextZ,
+      fireplaceMinX,
+      fireplaceMaxX,
+      fireplaceMinZ,
+      fireplaceMaxZ,
+      PLAYER_RADIUS,
+    );
 
     if (
       nextX >= roomMinX &&
@@ -229,7 +290,10 @@ const TahaContainer = (props) => {
       nextZ >= roomMinZ &&
       nextZ <= roomMaxZ &&
       !isInChair &&
-      !isInDesk
+      !isInDesk &&
+      !isInSofa &&
+      !isInAsali &&
+      !isInFireplace
     ) {
       group.current.position.set(nextX, 0, nextZ);
 

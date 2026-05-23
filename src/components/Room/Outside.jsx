@@ -8,7 +8,7 @@ import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 const Outside = () => {
   const ref = useRef();
   const texture = useLoader(TextureLoader, "/textures/city2.jpg");
-  const { quality } = useGraphicsSettings();
+  const quality = useGraphicsSettings((s) => s.quality);
 
   const isLowQuality = quality === "low" || quality === "ultra-low";
   return (

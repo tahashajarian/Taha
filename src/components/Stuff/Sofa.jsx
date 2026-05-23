@@ -9,8 +9,9 @@ const Sofa = (props) => {
   const asaliRef = useRef();
 
   const { nodes, materials } = useGLTF("/models/sofa.glb", "/draco/");
-  const { setCameraLookAt, setChessMode, chessMode } =
-    useCameraControlStore();
+  const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
+  const setChessMode = useCameraControlStore((s) => s.setChessMode);
+  const chessMode = useCameraControlStore((s) => s.chessMode);
 
   const handleDeskClick = (e) => {
     e.stopPropagation();

@@ -8,8 +8,8 @@ import FlightPoints from "./FlightPoints";
 
 const Lights = () => {
   const dirLightRef = useRef(null);
-  const { curtainOpen } = useAppStatusStore();
-  const { quality } = useGraphicsSettings();
+  const curtainOpen = useAppStatusStore((s) => s.curtainOpen);
+  const quality = useGraphicsSettings((s) => s.quality);
 
   const isLowQuality = quality === "low" || quality === "ultra-low";
 

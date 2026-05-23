@@ -5,7 +5,8 @@ import { usePaintingStore } from "../../stores/usePaintingStore";
 
 const PaintingCanvas = ({ width, height, onSave }) => {
   const containerRef = useRef(null);
-  const { paintingImage, canvasRef } = usePaintingStore();
+  const paintingImage = usePaintingStore((s) => s.paintingImage);
+  const canvasRef = usePaintingStore((s) => s.canvasRef);
   const [isPainting, setIsPainting] = useState(false);
   const [currentColor, setCurrentColor] = useState("black");
   const [brushSize, setBrushSize] = useState(5);

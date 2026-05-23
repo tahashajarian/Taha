@@ -6,6 +6,7 @@ export const usePaintingStore = create((set, get) => ({
   canvasRef: { current: null },
 
   setPaintingImage: async (image) => {
+    if (image === get().paintingImage) return;
     set({ paintingImage: image });
     if (!image) return;
     try {
@@ -25,6 +26,7 @@ export const usePaintingStore = create((set, get) => ({
   },
 
   fetchPainting: async () => {
+    if (get().loading) return;
     set({ loading: true });
     try {
       const res = await fetch(

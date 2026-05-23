@@ -15,6 +15,8 @@ export const useLoadingManager = (): UseLoadingManagerReturn => {
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<boolean>(false);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
+  const hideLoaderTimeout = useRef<NodeJS.Timeout | null>(null);
+  const showContentTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Fallback progress indicator for cases where loading manager doesn't report
@@ -41,15 +43,29 @@ export const useLoadingManager = (): UseLoadingManagerReturn => {
       setLoaded(true);
       
       // Hide loader after a short delay to allow smooth transition
-      setTimeout(() => {
+      hideLoaderTimeout.current = setTimeout(() => {
         setShowLoader(false);
         // Show content after loader is hidden
-        setTimeout(() => {
+        showContentTimeout.current = setTimeout(() => {
           setShowContent(true);
         }, 100);
       }, 800);
     }
   }, [percent, loaded]);
+
+  useEffect(() => {
+    return () => {
+      if (progressInterval.current) {
+        clearInterval(progressInterval.current);
+      }
+      if (hideLoaderTimeout.current) {
+        clearTimeout(hideLoaderTimeout.current);
+      }
+      if (showContentTimeout.current) {
+        clearTimeout(showContentTimeout.current);
+      }
+    };
+  }, []);
 
   const handleProgressUpdate = (progress: number): void => {
     // Clear the fallback interval if we're getting real progress updates

@@ -10,7 +10,7 @@ import { useGraphicsSettings } from "../../../stores/useGraphicsSettings"; // ad
 extend({ FireMaterial });
 
 export default function FireCube() {
-  const { quality } = useGraphicsSettings();
+  const quality = useGraphicsSettings((s) => s.quality);
   const isLowQuality = quality === "low" || quality === "ultra-low";
   const isUltraLow = quality === "ultra-low";
   const isMedium = quality === "medium";

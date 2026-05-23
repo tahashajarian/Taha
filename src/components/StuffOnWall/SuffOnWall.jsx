@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { wallHeight, wallSize } from "../../constances/constances";
 
 import GodsHand from "./GodsHand";
@@ -12,7 +12,7 @@ import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import Textes from "../textes/Textes";
 
 const SuffOnWall = () => {
-  const { isApploaded } = useAppStatusStore();
+  const isApploaded = useAppStatusStore((s) => s.isApploaded);
 
   return (
     <group>

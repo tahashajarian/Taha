@@ -5,7 +5,7 @@ import RectAreaLightComponent from "./RectArealLightComponent";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const FlightPoints = () => {
-  const { isMobileDevice } = useAppStatusStore();
+  const isMobileDevice = useAppStatusStore((s) => s.isMobileDevice);
   return (
     <>
       {!isMobileDevice && (

@@ -1,7 +1,6 @@
 import { Text } from "@react-three/drei";
 import React, { useCallback, useMemo } from "react";
 import { useLoader } from "@react-three/fiber";
-import * as THREE from "three";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../../constances/constances";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
@@ -11,6 +10,7 @@ const FONT_URL = "/fonts/Roboto-Regular.ttf";
 const Y_OFFSET = -0.4;
 const DEFAULT_ICON_SIZE = 0.25;
 const DEFAULT_ICON_SPACE = 0.85;
+const PORTAL_COLUMN_X = -0.8;
 
 const TEXTURE_PATHS = [
   "/textures/flappy-bird.png",
@@ -26,9 +26,7 @@ const TEXTURE_PATHS = [
 ];
 
 export default function GamesText() {
-  const textures = useLoader(TextureLoader, TEXTURE_PATHS, (loader) => {
-    loader.manager = new THREE.LoadingManager();
-  });
+  const textures = useLoader(TextureLoader, TEXTURE_PATHS);
 
   const textureMap = useMemo(
     () => ({
@@ -127,27 +125,39 @@ export default function GamesText() {
           </mesh>
         </group>
 
-        {items.map((item, i) => (
-          <group
-            key={item.label}
-            position={[item.margin ?? 0, -3 - i * Y_OFFSET, 0]}
-            onClick={() => navigateTo(item.link)}
-          >
-            <PortalShader />
-            <Text font={FONT_URL} fontSize={0.2} color="silver">
-              {item.label}
-            </Text>
-            <mesh position={[item.space ?? DEFAULT_ICON_SPACE, 0.033, 0]}>
-              <planeGeometry
-                args={[
-                  item.iconSize ?? DEFAULT_ICON_SIZE,
-                  item.iconSize ?? DEFAULT_ICON_SIZE,
-                ]}
-              />
-              <meshBasicMaterial map={item.texture} transparent />
-            </mesh>
-          </group>
-        ))}
+        {items.map((item, i) => {
+          const hasLink = Boolean(item.link);
+          return (
+            <group
+              key={item.label}
+              position={[0, -3 - i * Y_OFFSET, 0]}
+              onClick={hasLink ? () => navigateTo(item.link) : undefined}
+            >
+            <group position={[PORTAL_COLUMN_X, 0, 0]}>
+              <PortalShader disabled={!hasLink} />
+            </group>
+
+            <group position={[item.margin ?? 0, 0, 0]}>
+              <Text
+                font={FONT_URL}
+                fontSize={0.2}
+                color={hasLink ? "silver" : "#7f8592"}
+              >
+                {item.label}
+              </Text>
+              <mesh position={[item.space ?? DEFAULT_ICON_SPACE, 0.033, 0]}>
+                <planeGeometry
+                  args={[
+                    item.iconSize ?? DEFAULT_ICON_SIZE,
+                    item.iconSize ?? DEFAULT_ICON_SIZE,
+                  ]}
+                />
+                <meshBasicMaterial map={item.texture} transparent />
+              </mesh>
+            </group>
+            </group>
+          );
+        })}
       </group>
 
       <group position={[3, -2.8, 0]}>

@@ -5,7 +5,7 @@ import Interface from "./components/UI/Interface";
 import { cameraLookAtConst } from "./constances/constances";
 import ErrorBoundary from "./components/ErrorBoundary";
 import HandlePerformance from "./performance/HandlePerformance";
-import { NoToneMapping, LoadingManager, Color } from "three";
+import { NoToneMapping } from "three";
 import ProgressTracker from "./components/Loader/ProgressTracker";
 import LoadingOverlay from "./components/Loader/LoadingOverlay";
 import { useLoadingManager } from "./components/Loader/useLoadingManager";
@@ -14,12 +14,9 @@ import { useAppStatusStore } from "./stores/useAppStatusStore";
 import { useArrowControls } from "./hooks/useArrowControls";
 import { usePaintingInit } from "./hooks/usePaintingInit";
 
-// Create a custom loading manager to track all assets
-const loadingManager = new LoadingManager();
-
 function App() {
-  const { setCameraLookAt } = useCameraControlStore();
-  const { setIsAppLoaded } = useAppStatusStore();
+  const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
+  const setIsAppLoaded = useAppStatusStore((s) => s.setIsAppLoaded);
   const {
     loaded,
     percent,
@@ -32,33 +29,6 @@ function App() {
   useArrowControls();
   usePaintingInit();
 
-  // Configure the loading manager
-  useEffect(() => {
-    let totalItems = 0;
-    let loadedItems = 0;
-
-    loadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
-      totalItems = itemsTotal;
-      loadedItems = itemsLoaded;
-    };
-
-    loadingManager.onLoad = () => {
-      // Individual item loaded
-      loadedItems++;
-      const progress = Math.min(95, (loadedItems / totalItems) * 100);
-      handleProgressUpdate(Math.round(progress));
-    };
-
-    loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
-      const progress = Math.min(95, (itemsLoaded / itemsTotal) * 100);
-      handleProgressUpdate(Math.round(progress));
-    };
-
-    loadingManager.onError = (url) => {
-      console.error("Error loading", url);
-    };
-  }, [handleProgressUpdate]);
-
   useEffect(() => {
     if (loaded) {
       setCameraLookAt(cameraLookAtConst);
@@ -69,7 +39,6 @@ function App() {
   return (
     <ErrorBoundary>
       <div className="w-full h-svh relative">
-        {/* Main content - hidden until loading is complete */}
         <div
           className={`w-full h-full ${
             showContent ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -80,7 +49,7 @@ function App() {
             camera={{ position: [0, 3, 8], fov: 50 }}
             shadows
             style={{ background: "rgb(42 50 60)" }}
-            frameloop={"always"}
+            frameloop="always"
             onPointerMissed={() => (document.body.style.cursor = "default")}
             gl={{
               antialias: true,
@@ -89,7 +58,7 @@ function App() {
               toneMapping: NoToneMapping,
             }}
           >
-            <Experience loadingManager={loadingManager} />
+            <Experience />
             <HandlePerformance />
             <ProgressTracker
               onProgressUpdate={handleProgressUpdate}
@@ -100,7 +69,6 @@ function App() {
           <Interface />
         </div>
 
-        {/* Loading overlay */}
         {showLoader && <LoadingOverlay percent={percent} />}
       </div>
     </ErrorBoundary>

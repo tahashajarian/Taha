@@ -1,30 +1,30 @@
-import React, { useRef, useState, useEffect } from "react"
-import { TextureLoader, RepeatWrapping } from "three"
-import { wallHeight, wallSize } from "../../constances/constances"
-import { Text } from "@react-three/drei"
+import React, { useMemo, useEffect } from "react";
+import { RepeatWrapping } from "three";
+import { wallHeight, wallSize } from "../../constances/constances";
+import { Text, useTexture } from "@react-three/drei";
+
+const BRICK_TEXTURE_URL = "/textures/brick.png";
+
+useTexture.preload(BRICK_TEXTURE_URL);
 
 const TheWallWallPaper = () => {
-  const ref = useRef()
-  const [texture, setTexture] = useState(null)
-  const fontURL = "/fonts/Floydian-v177.ttf"
+  const fontURL = "/fonts/Floydian-v177.ttf";
+  const mapTexture = useTexture(BRICK_TEXTURE_URL);
 
-  // Async texture loading
+  const texture = useMemo(() => {
+    const next = mapTexture.clone();
+    next.wrapS = RepeatWrapping;
+    next.wrapT = RepeatWrapping;
+    next.repeat.set(3, 2);
+    next.needsUpdate = true;
+    return next;
+  }, [mapTexture]);
+
   useEffect(() => {
-    const loader = new TextureLoader()
-    loader.load(
-      "/textures/brick.png",
-      (loaded) => {
-        loaded.wrapS = RepeatWrapping
-        loaded.wrapT = RepeatWrapping
-        loaded.repeat.set(3, 2)
-        setTexture(loaded)
-      },
-      undefined,
-      (err) => console.error("Texture load failed:", err)
-    )
-  }, [])
-
-  if (!texture) return null // wait until texture is loaded
+    return () => {
+      texture.dispose();
+    };
+  }, [texture]);
 
   return (
     <>
@@ -46,7 +46,7 @@ The
 Wall`}
       </Text>
 
-      <mesh position={[0, 0, 0]} ref={ref} receiveShadow>
+      <mesh position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[wallSize, wallHeight]} />
         <meshBasicMaterial map={texture} transparent opacity={0.2} />
       </mesh>
@@ -69,7 +69,7 @@ Wall`}
         `}
       </Text>
     </>
-  )
-}
+  );
+};
 
-export default React.memo(TheWallWallPaper)
+export default React.memo(TheWallWallPaper);

@@ -7,6 +7,11 @@ import { useGraphicsSettings } from "../stores/useGraphicsSettings";
 const HandlePerformance: React.FC = () => {
   useRecalculateDPR();
   const [lockedLowMode, setLockedLowMode] = React.useState(false);
+  const lockedLowModeRef = React.useRef(false);
+
+  React.useEffect(() => {
+    lockedLowModeRef.current = lockedLowMode;
+  }, [lockedLowMode]);
 
   return (
     <>
@@ -29,7 +34,7 @@ const HandlePerformance: React.FC = () => {
         onIncline={({ fps }) => {
           const { quality, setQuality } = useGraphicsSettings.getState();
 
-          if (lockedLowMode) {
+          if (lockedLowModeRef.current) {
             // Only allow upgrade one step, never back to high
             if (fps >= 35 && quality === "ultra-low") setQuality("low");
             return;

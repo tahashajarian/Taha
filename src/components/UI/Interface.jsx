@@ -15,7 +15,9 @@ const Interface = () => {
   const setAnimation = useCharacterAnimationsStore((s) => s.setAnimation);
 
   // include setChessMode so we can turn it off from UI
-  const { setCameraLookAt, chessMode, setChessMode } = useCameraControlStore();
+  const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
+  const chessMode = useCameraControlStore((s) => s.chessMode);
+  const setChessMode = useCameraControlStore((s) => s.setChessMode);
 
   const modalIsOpen = useAppStatusStore((s) => s.modalIsOpen);
   const setModalIsOpen = useAppStatusStore((s) => s.setModalIsOpen);

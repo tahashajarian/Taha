@@ -5,7 +5,7 @@ import { useCameraControlStore } from "../../stores/useCameraControlStore";
 
 const CameraControl = ({ colliderMeshes = [] }) => {
   const cameraControlsRef = useRef();
-  const { cameraLookAt } = useCameraControlStore();
+  const cameraLookAt = useCameraControlStore((s) => s.cameraLookAt);
 
   useEffect(() => {
     if (cameraLookAt && cameraControlsRef.current) {
@@ -27,7 +27,7 @@ const CameraControl = ({ colliderMeshes = [] }) => {
     <CameraControls
       ref={cameraControlsRef}
       minDistance={1.2}
-      maxDistance={ 5.5}
+      maxDistance={5.5}
       maxPolarAngle={Math.PI / 2}
       enablePan={false}
     />
