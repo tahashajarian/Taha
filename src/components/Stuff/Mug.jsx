@@ -1,104 +1,117 @@
-import React, { useRef, useMemo, useEffect } from "react"
+import React, { useRef, useEffect } from "react"
 import { useGLTF, useTexture } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 
-const PARTICLE_COUNT = 50
-const tmpMatrix = new THREE.Matrix4() // reusable rotation matrix
+const PARTICLE_COUNT = 32
+const STEAM_SOURCE_Y = 0.06
+const MAX_FRAME_DELTA = 1 / 24
+
+const createSteamParticle = () => ({
+  position: new THREE.Vector3(),
+  baseX: 0,
+  baseZ: 0,
+  age: 0,
+  lifeSpan: 0,
+  riseHeight: 0,
+  driftAmp: 0,
+  driftFreq: 0,
+  swirlAmp: 0,
+  swirlFreq: 0,
+  phase: 0,
+  sizeStart: 0,
+  sizeEnd: 0,
+  opacityPeak: 0,
+  rotationFactor: 0,
+  sprite: null,
+})
+
+const resetSteamParticle = (particle, randomizeAge = false) => {
+  const angle = Math.random() * Math.PI * 2
+  const radius = 0.005 + Math.random() * 0.02
+
+  particle.baseX = Math.cos(angle) * radius
+  particle.baseZ = Math.sin(angle) * radius
+  particle.lifeSpan = 3.8 + Math.random() * 2.2
+  particle.age = randomizeAge ? Math.random() * particle.lifeSpan : 0
+  particle.riseHeight = 0.3 + Math.random() * 0.18
+  particle.driftAmp = 0.012 + Math.random() * 0.015
+  particle.driftFreq = 0.35 + Math.random() * 0.35
+  particle.swirlAmp = 0.005 + Math.random() * 0.008
+  particle.swirlFreq = 0.6 + Math.random() * 0.5
+  particle.phase = Math.random() * Math.PI * 2
+  particle.sizeStart = 0.036 + Math.random() * 0.02
+  particle.sizeEnd = particle.sizeStart * (1.7 + Math.random() * 0.7)
+  particle.opacityPeak = 0.14 + Math.random() * 0.1
+  particle.rotationFactor = (Math.random() - 0.5) * 0.28
+  particle.position.set(particle.baseX, STEAM_SOURCE_Y, particle.baseZ)
+}
 
 export default function Mug(props) {
   const { nodes } = useGLTF("/models/mug.glb", "/draco/")
+  const { gl } = useThree()
   const group = useRef()
-  const particlesRef = useRef()
-
-  // Persistent particle data
-  const particlesData = useRef(
-    Array.from({ length: PARTICLE_COUNT }, () => ({
-      position: new THREE.Vector3(
-        (Math.random() - 0.5) * 0.1,
-        Math.random() * 0.1,
-        (Math.random() - 0.5) * 0.1
-      ),
-      velocity: new THREE.Vector3(
-        (Math.random() - 0.5) * 0.002,
-        0.002 + Math.random() * 0.001,
-        (Math.random() - 0.5) * 0.002
-      ),
-      rotationSpeed: (Math.random() - 0.5) * 0.0005,
-      life: Math.random() * 100 + 50,
-    }))
-  )
-
-  // Geometry (positions only)
-  const particleGeometry = useMemo(() => {
-    const geometry = new THREE.BufferGeometry()
-    geometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(new Float32Array(PARTICLE_COUNT * 3), 3)
-    )
-    return geometry
-  }, [])
-
-  const particleTexture = useTexture("/textures/smoke.png")
-
-  const particleMaterial = useMemo(
-    () =>
-      new THREE.PointsMaterial({
-        size: 0.1,
-        map: particleTexture,
-        transparent: true,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        opacity: 0.2,
-      }),
-    [particleTexture]
-  )
-
-  // initialize positions once
-  useEffect(() => {
-    const pos = particleGeometry.attributes.position.array
-    particlesData.current.forEach((p, i) => {
-      pos[i * 3] = p.position.x
-      pos[i * 3 + 1] = p.position.y
-      pos[i * 3 + 2] = p.position.z
+  const steamParticles = useRef(
+    Array.from({ length: PARTICLE_COUNT }, () => {
+      const particle = createSteamParticle()
+      resetSteamParticle(particle, true)
+      return particle
     })
-    particleGeometry.attributes.position.needsUpdate = true
-  }, [particleGeometry])
+  )
 
-  // Animate particles
-  useFrame(() => {
-    const pos = particleGeometry.attributes.position.array
+  const smokeTexture = useTexture("/textures/smoke.png")
+
+  useEffect(() => {
+    smokeTexture.generateMipmaps = true
+    smokeTexture.magFilter = THREE.LinearFilter
+    smokeTexture.minFilter = THREE.LinearMipmapLinearFilter
+    smokeTexture.anisotropy = Math.min(4, gl.capabilities.getMaxAnisotropy())
+    smokeTexture.needsUpdate = true
+  }, [gl, smokeTexture])
+
+  useFrame(({ clock }, delta) => {
+    const dt = Math.min(delta, MAX_FRAME_DELTA)
+    const elapsed = clock.elapsedTime
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const p = particlesData.current[i]
-      p.position.add(p.velocity)
+      const particle = steamParticles.current[i]
+      const sprite = particle.sprite
+      if (!sprite) continue
 
-      // apply small Y rotation using reusable matrix
-      tmpMatrix.makeRotationY(p.rotationSpeed)
-      p.velocity.applyMatrix4(tmpMatrix)
-
-      if (p.position.y > 0.9 || p.life <= 0) {
-        p.position.set(
-          (Math.random() - 0.5) * 0.1,
-          Math.random() * 0.1,
-          (Math.random() - 0.5) * 0.1
-        )
-        p.velocity.set(
-          (Math.random() - 0.5) * 0.002,
-          0.002 + Math.random() * 0.001,
-          (Math.random() - 0.5) * 0.002
-        )
-        p.life = Math.random() * 100 + 50
+      particle.age += dt
+      if (particle.age >= particle.lifeSpan) {
+        resetSteamParticle(particle)
       }
 
-      p.life -= 1
+      const lifeT = particle.age / particle.lifeSpan
+      const lift = lifeT * lifeT
+      const spread = 1 + lift * 2.1
+      const driftX =
+        Math.sin(elapsed * particle.driftFreq + particle.phase) * particle.driftAmp * spread
+      const driftZ =
+        Math.cos(elapsed * (particle.driftFreq * 0.87) + particle.phase) *
+        particle.driftAmp *
+        spread
+      const swirlPhase = elapsed * particle.swirlFreq + particle.phase
+      const swirlX = Math.cos(swirlPhase + lifeT * 5.5) * particle.swirlAmp * lift
+      const swirlZ = Math.sin(swirlPhase * 1.1 + lifeT * 4.6) * particle.swirlAmp * lift
 
-      pos[i * 3] = p.position.x
-      pos[i * 3 + 1] = p.position.y
-      pos[i * 3 + 2] = p.position.z
+      particle.position.x = particle.baseX + driftX + swirlX
+      particle.position.y = STEAM_SOURCE_Y + lift * particle.riseHeight
+      particle.position.z = particle.baseZ + driftZ + swirlZ
+
+      const fadeIn = THREE.MathUtils.smoothstep(lifeT, 0, 0.18)
+      const fadeOut = 1 - THREE.MathUtils.smoothstep(lifeT, 0.62, 1)
+      const middleBoost = 0.78 + (1 - Math.abs(lifeT - 0.5) * 2) * 0.22
+      const opacity = Math.min(fadeIn, fadeOut) * middleBoost * particle.opacityPeak
+      const width = THREE.MathUtils.lerp(particle.sizeStart, particle.sizeEnd, lifeT)
+      const height = width * THREE.MathUtils.lerp(1.2, 1.55, lifeT)
+
+      sprite.position.copy(particle.position)
+      sprite.scale.set(width, height, 1)
+      sprite.material.opacity = opacity
+      sprite.material.rotation = Math.sin(swirlPhase * 0.8) * particle.rotationFactor
     }
-
-    particleGeometry.attributes.position.needsUpdate = true
   })
 
   return (
@@ -110,7 +123,28 @@ export default function Mug(props) {
         <meshStandardMaterial color="#6F4F37" />
       </mesh>
 
-      <points ref={particlesRef} geometry={particleGeometry} material={particleMaterial} />
+      <group>
+        {steamParticles.current.map((particle, i) => (
+          <sprite
+            key={i}
+            ref={(node) => {
+              particle.sprite = node
+            }}
+            position={particle.position}
+          >
+            <spriteMaterial
+              map={smokeTexture}
+              color="#dbe1ea"
+              transparent
+              alphaTest={0.007}
+              depthWrite={false}
+              blending={THREE.NormalBlending}
+              toneMapped={false}
+              opacity={0}
+            />
+          </sprite>
+        ))}
+      </group>
     </group>
   )
 }
