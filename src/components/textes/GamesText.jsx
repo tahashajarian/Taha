@@ -50,7 +50,7 @@ export default function GamesText() {
         label: "Platformer",
         link: "https://taha-shajarian.ir/projects/platformer",
         texture: textureMap.platformer,
-        margin: -0.05,
+        margin: -0.06,
         iconSize: 0.3,
         space: 0.75,
       },
@@ -58,7 +58,6 @@ export default function GamesText() {
         label: "Slot Machine",
         link: "https://taha-shajarian.ir/projects/slot-machin",
         texture: textureMap.slot,
-        margin: 0.1,
         margin: 0.06,
 
       },
@@ -66,7 +65,6 @@ export default function GamesText() {
         label: "Simple Snake",
         link: "",
         texture: textureMap.snake,
-        margin: 0.1,
         margin: 0.06,
 
       },
