@@ -1,9 +1,11 @@
 import React from "react";
 
 const ColorAndBrushSelector = ({
+  currentColor,
   setCurrentColor,
   brushSize,
   setBrushSize,
+  brushType,
   setBrushType,
   clearCanvas,
   fetchPainting,
@@ -27,6 +29,7 @@ const ColorAndBrushSelector = ({
     >
       <input
         type="color"
+        value={currentColor}
         onChange={(e) => setCurrentColor(e.target.value)}
         className="
     w-6 h-6  cursor-pointer rounded-md
@@ -45,6 +48,7 @@ const ColorAndBrushSelector = ({
         "
       />
       <select
+        value={brushType}
         onChange={(e) => setBrushType(e.target.value)}
         className="
           px-3 py-1

@@ -8,9 +8,9 @@ const PaintingCanvas = ({ width, height, onSave }) => {
   const paintingImage = usePaintingStore((s) => s.paintingImage);
   const canvasRef = usePaintingStore((s) => s.canvasRef);
   const [isPainting, setIsPainting] = useState(false);
-  const [currentColor, setCurrentColor] = useState("black");
+  const [currentColor, setCurrentColor] = useState("#ffffff");
   const [brushSize, setBrushSize] = useState(5);
-  const [brushType, setBrushType] = useState("round");
+  const [brushType, setBrushType] = useState("spray");
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
   useCanvasEvents(
@@ -84,7 +84,9 @@ const PaintingCanvas = ({ width, height, onSave }) => {
       <ColorAndBrushSelector
         setBrushSize={setBrushSize}
         setCurrentColor={setCurrentColor}
+        currentColor={currentColor}
         brushSize={brushSize}
+        brushType={brushType}
         setBrushType={setBrushType}
         clearCanvas={clearCanvas}
       />
