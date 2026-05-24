@@ -101,20 +101,20 @@ const PRESETS = {
     floatXAmp: 0.038,
     floatZSpeed: 0.27,
     floatZAmp: 0.032,
-    roamSpeed: 1.25,
-    roamWanderSpeed: 0.42,
-    roamTurnStrength: 2.1,
+    roamSpeed: 0.34,
+    roamWanderSpeed: 0.16,
+    roamTurnStrength: 0.62,
     roamVerticalBias: 0.28,
-    roamDecisionMin: 1.2,
-    roamDecisionMax: 2.8,
-    roamJitter: 0.42,
+    roamDecisionMin: 1.8,
+    roamDecisionMax: 3.6,
+    roamJitter: 0.2,
     roomPadding: 0.7,
     roomFloorPadding: 0.86,
     roomCeilPadding: 0.7,
-    roomSwaySpeed: 0.23,
-    roomSwayAmp: 0.06,
-    breathSpeed: 0.34,
-    breathAmp: 0.014,
+    roomSwaySpeed: 0.16,
+    roomSwayAmp: 0.038,
+    breathSpeed: 0.24,
+    breathAmp: 0.01,
     maxPixelSize: 22,
     baseMin: 0.1,
     baseMax: 0.2,
@@ -137,6 +137,15 @@ const PRESETS = {
     waveSpeed: 0.95,
     waveSpatial: 1.75,
     waveAmp: 0.011,
+    liquidSpeed: 0.78,
+    liquidSpatial: 1.25,
+    liquidAmp: 0.12,
+    liquidShearAmp: 0.085,
+    liquidLiftAmp: 0.062,
+    liquidTwistSpeed: 0.46,
+    liquidTwistAmp: 0.1,
+    jellySquashAmp: 0.085,
+    jellySquashSpeed: 0.46,
     waveSizeAmp: 0.14,
     waveGlowAmp: 0.06,
     lineWaveAmp: 0.008,
@@ -152,9 +161,9 @@ const PRESETS = {
     lineSatSwing: 0.05,
     lineLightBase: 0.6,
     lineLightAura: 0.08,
-    clickScatter: 0.72,
+    clickScatter: 0.9,
     clickOutDuration: 0.09,
-    clickReturnDuration: 2.8,
+    clickReturnDuration: 3.5,
     clickMinSpread: 0.72,
     clickTintR: 0.16,
     clickTintG: 0.24,
@@ -180,20 +189,20 @@ const PRESETS = {
     floatXAmp: 0.046,
     floatZSpeed: 0.3,
     floatZAmp: 0.038,
-    roamSpeed: 1.58,
-    roamWanderSpeed: 0.52,
-    roamTurnStrength: 2.6,
+    roamSpeed: 0.41,
+    roamWanderSpeed: 0.17,
+    roamTurnStrength: 0.72,
     roamVerticalBias: 0.34,
-    roamDecisionMin: 1,
-    roamDecisionMax: 2.3,
-    roamJitter: 0.52,
+    roamDecisionMin: 1.6,
+    roamDecisionMax: 3.1,
+    roamJitter: 0.24,
     roomPadding: 0.64,
     roomFloorPadding: 0.82,
     roomCeilPadding: 0.66,
-    roomSwaySpeed: 0.27,
-    roomSwayAmp: 0.07,
-    breathSpeed: 0.42,
-    breathAmp: 0.024,
+    roomSwaySpeed: 0.19,
+    roomSwayAmp: 0.045,
+    breathSpeed: 0.28,
+    breathAmp: 0.012,
     maxPixelSize: 26,
     baseMin: 0.12,
     baseMax: 0.26,
@@ -216,6 +225,15 @@ const PRESETS = {
     waveSpeed: 1.28,
     waveSpatial: 2.2,
     waveAmp: 0.02,
+    liquidSpeed: 0.96,
+    liquidSpatial: 1.45,
+    liquidAmp: 0.16,
+    liquidShearAmp: 0.11,
+    liquidLiftAmp: 0.082,
+    liquidTwistSpeed: 0.58,
+    liquidTwistAmp: 0.13,
+    jellySquashAmp: 0.11,
+    jellySquashSpeed: 0.58,
     waveSizeAmp: 0.26,
     waveGlowAmp: 0.1,
     lineWaveAmp: 0.014,
@@ -231,9 +249,9 @@ const PRESETS = {
     lineSatSwing: 0.08,
     lineLightBase: 0.62,
     lineLightAura: 0.14,
-    clickScatter: 1.05,
+    clickScatter: 1.28,
     clickOutDuration: 0.08,
-    clickReturnDuration: 3.2,
+    clickReturnDuration: 4.1,
     clickMinSpread: 0.7,
     clickTintR: 0.2,
     clickTintG: 0.3,
@@ -270,6 +288,24 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
   const BASE_MAX = settings.baseMax
   const AMP_MIN = settings.ampMin
   const AMP_MAX = settings.ampMax
+  const roamBounds = useMemo(() => {
+    const minX = ROOM_BOUNDS.minX + settings.roomPadding
+    const maxX = ROOM_BOUNDS.maxX - settings.roomPadding
+    const minY = ROOM_BOUNDS.minY + settings.roomFloorPadding
+    const maxY = ROOM_BOUNDS.maxY - settings.roomCeilPadding
+    const minZ = ROOM_BOUNDS.minZ + settings.roomPadding
+    const maxZ = ROOM_BOUNDS.maxZ - settings.roomPadding
+
+    return {
+      minX: Math.min(minX, maxX),
+      maxX: Math.max(minX, maxX),
+      minY: Math.min(minY, maxY),
+      maxY: Math.max(minY, maxY),
+      minZ: Math.min(minZ, maxZ),
+      maxZ: Math.max(minZ, maxZ),
+      decisionSpan: Math.max(0.01, settings.roamDecisionMax - settings.roamDecisionMin),
+    }
+  }, [settings])
 
   useEffect(() => {
     const state = roamRef.current
@@ -508,6 +544,11 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
   useFrame(({ clock }, delta) => {
     const t = clock.getElapsedTime()
     burstTimerRef.current += delta
+    const waveTime = t * settings.waveSpeed
+    const liquidTime = t * settings.liquidSpeed
+    const liquidTwistTime = t * settings.liquidTwistSpeed
+    const clickJitterTime = t * settings.clickJitterSpeed + burstPhaseRef.current
+    const lineWaveTime = waveTime * 1.12
 
     let burstEase = 0
     const outDuration = settings.clickOutDuration
@@ -537,24 +578,10 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
           .normalize()
           .multiplyScalar(settings.roamSpeed)
         roam.targetVelocity.copy(roam.velocity)
-        const initialDecisionSpan = settings.roamDecisionMax - settings.roamDecisionMin
         roam.nextDecisionTime =
-          t + settings.roamDecisionMin + Math.random() * Math.max(0.01, initialDecisionSpan)
+          t + settings.roamDecisionMin + Math.random() * roamBounds.decisionSpan
         roam.ready = true
       }
-
-      const minX = ROOM_BOUNDS.minX + settings.roomPadding
-      const maxX = ROOM_BOUNDS.maxX - settings.roomPadding
-      const minY = ROOM_BOUNDS.minY + settings.roomFloorPadding
-      const maxY = ROOM_BOUNDS.maxY - settings.roomCeilPadding
-      const minZ = ROOM_BOUNDS.minZ + settings.roomPadding
-      const maxZ = ROOM_BOUNDS.maxZ - settings.roomPadding
-      const safeMinX = Math.min(minX, maxX)
-      const safeMaxX = Math.max(minX, maxX)
-      const safeMinY = Math.min(minY, maxY)
-      const safeMaxY = Math.max(minY, maxY)
-      const safeMinZ = Math.min(minZ, maxZ)
-      const safeMaxZ = Math.max(minZ, maxZ)
 
       if (t >= roam.nextDecisionTime) {
         const wanderAngle = t * settings.roamWanderSpeed + burstPhaseRef.current * 0.25
@@ -569,9 +596,8 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
           roam.targetVelocity.normalize().multiplyScalar(settings.roamSpeed)
         }
 
-        const nextDecisionSpan = settings.roamDecisionMax - settings.roamDecisionMin
         roam.nextDecisionTime =
-          t + settings.roamDecisionMin + Math.random() * Math.max(0.01, nextDecisionSpan)
+          t + settings.roamDecisionMin + Math.random() * roamBounds.decisionSpan
       }
 
       const turnLerp = Math.min(1, delta * settings.roamTurnStrength)
@@ -586,32 +612,32 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
       roam.position.addScaledVector(roam.velocity, delta)
       let didBounce = false
 
-      if (roam.position.x < safeMinX) {
-        roam.position.x = safeMinX
+      if (roam.position.x < roamBounds.minX) {
+        roam.position.x = roamBounds.minX
         roam.velocity.x = Math.abs(roam.velocity.x)
         didBounce = true
-      } else if (roam.position.x > safeMaxX) {
-        roam.position.x = safeMaxX
+      } else if (roam.position.x > roamBounds.maxX) {
+        roam.position.x = roamBounds.maxX
         roam.velocity.x = -Math.abs(roam.velocity.x)
         didBounce = true
       }
 
-      if (roam.position.y < safeMinY) {
-        roam.position.y = safeMinY
+      if (roam.position.y < roamBounds.minY) {
+        roam.position.y = roamBounds.minY
         roam.velocity.y = Math.abs(roam.velocity.y)
         didBounce = true
-      } else if (roam.position.y > safeMaxY) {
-        roam.position.y = safeMaxY
+      } else if (roam.position.y > roamBounds.maxY) {
+        roam.position.y = roamBounds.maxY
         roam.velocity.y = -Math.abs(roam.velocity.y)
         didBounce = true
       }
 
-      if (roam.position.z < safeMinZ) {
-        roam.position.z = safeMinZ
+      if (roam.position.z < roamBounds.minZ) {
+        roam.position.z = roamBounds.minZ
         roam.velocity.z = Math.abs(roam.velocity.z)
         didBounce = true
-      } else if (roam.position.z > safeMaxZ) {
-        roam.position.z = safeMaxZ
+      } else if (roam.position.z > roamBounds.maxZ) {
+        roam.position.z = roamBounds.maxZ
         roam.velocity.z = -Math.abs(roam.velocity.z)
         didBounce = true
       }
@@ -643,11 +669,17 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
       group.position.x = roam.localPosition.x + localFloatX
       group.position.y = roam.localPosition.y + localFloatY
       group.position.z = roam.localPosition.z + localFloatZ
-      group.scale.setScalar(1 + Math.sin(t * settings.breathSpeed) * settings.breathAmp)
+      const breath = Math.sin(t * settings.breathSpeed) * settings.breathAmp
+      const jelly = Math.sin(t * settings.jellySquashSpeed + 0.9) * settings.jellySquashAmp
+      group.scale.set(
+        1 + breath + jelly * 0.6,
+        1 + breath - jelly,
+        1 + breath + jelly * 0.6
+      )
     }
 
     const aura = 0.5 + Math.sin(t * settings.auraSpeed) * 0.5
-    const globalWave = Math.sin(t * settings.waveSpeed)
+    const globalWave = Math.sin(waveTime)
 
     if (pointsRef.current) {
       for (let i = 0; i < count; i++) {
@@ -677,11 +709,21 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
           0.85
         const lift =
           Math.sin(t * 0.5 + pointOrbitPhase[i] * 1.1) * pointOrbitStrength[i] * 0.35
-        const wave = Math.sin(t * settings.waveSpeed + pointWaveOffsets[i]) * settings.waveAmp
+        const wave = Math.sin(waveTime + pointWaveOffsets[i]) * settings.waveAmp
+        const liquidPhase =
+          liquidTime +
+          phases[i] * 0.7 +
+          (nx - nz) * settings.liquidSpatial
+        const liquidWave = Math.sin(liquidPhase) * settings.liquidAmp
+        const liquidShear = Math.cos(liquidPhase * 0.82 + pointOrbitPhase[i]) * settings.liquidShearAmp
+        const liquidLift = Math.sin(liquidPhase * 1.17 + pointOrbitPhase[i] * 0.5) * settings.liquidLiftAmp
+        const liquidTwist =
+          Math.sin(liquidTwistTime + pointOrbitPhase[i] + ny * 1.4) *
+          settings.liquidTwistAmp
         const burstJitter =
           (settings.clickMinSpread +
             (1 - settings.clickMinSpread) *
-              (Math.sin(t * settings.clickJitterSpeed + burstSeeds[i] + burstPhaseRef.current) *
+              (Math.sin(clickJitterTime + burstSeeds[i]) *
                 0.5 +
                 0.5)) *
           burstEase
@@ -690,9 +732,26 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
         const burstY = burstDirections[idx + 1] * burstScatter
         const burstZ = burstDirections[idx + 2] * burstScatter
 
-        pointPositions[idx] = x + nx * (orbitA + wave) + tx * orbitB + burstX
-        pointPositions[idx + 1] = y + ny * (orbitA + wave) + ty * orbitB + lift + wave * 0.3 + burstY
-        pointPositions[idx + 2] = z + nz * (orbitA + wave) + tz * orbitB + burstZ
+        pointPositions[idx] =
+          x +
+          nx * (orbitA + wave + liquidWave) +
+          tx * (orbitB + liquidShear) +
+          ny * liquidTwist +
+          burstX
+        pointPositions[idx + 1] =
+          y +
+          ny * (orbitA + wave + liquidWave * 0.72) +
+          ty * (orbitB + liquidShear * 0.6) +
+          lift +
+          wave * 0.3 +
+          liquidLift +
+          burstY
+        pointPositions[idx + 2] =
+          z +
+          nz * (orbitA + wave + liquidWave) +
+          tz * (orbitB + liquidShear) -
+          ny * liquidTwist +
+          burstZ
 
         const glow =
           settings.glowBase +
@@ -734,12 +793,19 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
 
         const bend = Math.sin(t * lineFreqs[i] + linePhases[i]) * lineAmps[i]
         const curl = Math.cos(t * (lineFreqs[i] * 0.72) + linePhases[i] * 1.2) * lineAmps[i] * 0.75
-        const travelingWave = Math.sin(t * settings.waveSpeed * 1.12 + lineWaveOffsets[i]) * settings.lineWaveAmp
+        const travelingWave = Math.sin(lineWaveTime + lineWaveOffsets[i]) * settings.lineWaveAmp
+        const lineLiquidPhase =
+          liquidTime + linePhases[i] * 0.65 + (nx - nz) * settings.liquidSpatial
+        const lineLiquid = Math.sin(lineLiquidPhase) * settings.liquidAmp * 0.5
+        const lineShear = Math.cos(lineLiquidPhase * 0.84) * settings.liquidShearAmp * 0.4
 
-        linePositions[idx] = x + nx * (bend + travelingWave) + tx * curl
+        linePositions[idx] = x + nx * (bend + travelingWave + lineLiquid) + tx * (curl + lineShear)
         linePositions[idx + 1] =
-          y + ny * (bend + travelingWave) + Math.sin(t * 0.7 + linePhases[i]) * lineAmps[i] * 0.22
-        linePositions[idx + 2] = z + nz * (bend + travelingWave) + tz * curl
+          y +
+          ny * (bend + travelingWave + lineLiquid * 0.7) +
+          Math.sin(t * 0.7 + linePhases[i]) * lineAmps[i] * 0.22 +
+          Math.sin(lineLiquidPhase * 1.2) * settings.liquidLiftAmp * 0.35
+        linePositions[idx + 2] = z + nz * (bend + travelingWave + lineLiquid) + tz * (curl + lineShear)
       }
 
       linePositionAttr.needsUpdate = true
@@ -772,6 +838,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
       <points ref={pointsRef} geometry={pointsGeometry} onClick={triggerBurst}>
         <primitive object={shaderMat} attach="material" />
       </points>
+
     </group>
   )
 }
