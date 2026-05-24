@@ -59,12 +59,16 @@ export default function GamesText() {
         link: "https://taha-shajarian.ir/projects/slot-machin",
         texture: textureMap.slot,
         margin: 0.1,
+        margin: 0.06,
+
       },
       {
         label: "Simple Snake",
         link: "",
         texture: textureMap.snake,
         margin: 0.1,
+        margin: 0.06,
+
       },
       {
         label: "Earth",
@@ -78,6 +82,8 @@ export default function GamesText() {
         link: "https://taha-shajarian.ir/projects/blackjack",
         texture: textureMap.jeton,
         space: 0.8,
+        margin: -0.05,
+
       },
       {
         label: "War Land",
