@@ -26,12 +26,12 @@ export const Cat3 = (props) => {
         <mesh
           geometry={borderGeometry}
           material={borderMaterial}
-          position={[0, -0.02, 0.25]}
+          position={[0, -0.02, 0.26]}
         />
         <mesh
           geometry={borderGeometry}
           material={borderMaterial}
-          position={[0, -0.02, -0.25]}
+          position={[0, -0.02, -0.26]}
         />
         <mesh
           geometry={borderGeometry}

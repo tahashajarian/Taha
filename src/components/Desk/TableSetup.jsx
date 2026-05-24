@@ -11,6 +11,7 @@ import Monitor2 from "../Stuff/Monitor2";
 import Mug from "../Stuff/Mug";
 import Papers from "../Stuff/Papers";
 import Clock from "../Stuff/Clock";
+import Thing from "../Stuff/Thing";
 
 const Cat3 = lazy(() => import("../Stuff/Cat3"));
 
@@ -50,6 +51,9 @@ const TableSetup = () => {
             <Cat3 />
           </Suspense>
         )}
+      </group>
+      <group position={[3, 2.5, -3]} scale={0.7}>
+        <Thing rotate />
       </group>
     </group>
   );
