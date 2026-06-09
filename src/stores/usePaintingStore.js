@@ -3,7 +3,11 @@ import { create } from "zustand";
 export const usePaintingStore = create((set, get) => ({
   paintingImage: "",
   loading: false,
+  brushType: "spray",
+  brushColor: "#ffffff",
+  brushSize: 5,
   canvasRef: { current: null },
+  preloadedImage: null, // OPTIMIZATION: Store decoded image element
 
   setPaintingImage: async (image) => {
     if (image === get().paintingImage) return;
@@ -33,11 +37,46 @@ export const usePaintingStore = create((set, get) => ({
         "https://taha-shajarian.ir/server/load_painting.php"
       );
       const data = await res.text();
-      if (data && data !== get().paintingImage) set({ paintingImage: data });
+      if (data && data !== get().paintingImage) {
+        set({ paintingImage: data });
+        
+        // OPTIMIZATION: Immediately decode image in background
+        if (data) {
+          const img = new Image();
+          img.src = data;
+          
+          // Use decode() API for async non-blocking decode
+          if (img.decode) {
+            img.decode()
+              .then(() => {
+                set({ preloadedImage: img });
+              })
+              .catch(err => console.warn("Image decode failed:", err));
+          } else {
+            // Fallback for older browsers
+            img.onload = () => set({ preloadedImage: img });
+          }
+        }
+      }
     } catch (err) {
       console.error("Error fetching painting:", err);
     } finally {
       set({ loading: false });
     }
+  },
+
+  setBrushType: (type) => {
+    if (type === get().brushType) return;
+    set({ brushType: type });
+  },
+
+  setBrushColor: (color) => {
+    if (color === get().brushColor) return;
+    set({ brushColor: color });
+  },
+
+  setBrushSize: (size) => {
+    if (size === get().brushSize) return;
+    set({ brushSize: size });
   },
 }));

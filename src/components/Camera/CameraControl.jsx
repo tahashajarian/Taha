@@ -6,6 +6,7 @@ import { useCameraControlStore } from "../../stores/useCameraControlStore";
 const CameraControl = ({ colliderMeshes = [] }) => {
   const cameraControlsRef = useRef();
   const cameraLookAt = useCameraControlStore((s) => s.cameraLookAt);
+  const prevCollidersRef = useRef(colliderMeshes); // OPTIMIZATION: track previous
 
   useEffect(() => {
     if (cameraLookAt && cameraControlsRef.current) {
@@ -13,14 +14,22 @@ const CameraControl = ({ colliderMeshes = [] }) => {
     }
   }, [cameraLookAt]);
 
-  // When colliderMeshes change, assign them to the control instance
+  // OPTIMIZATION: Only update when collider array contents actually change
   useEffect(() => {
     const cc = cameraControlsRef.current;
     if (!cc) return;
-    // camera-controls expects actual Mesh objects
+
+    // Shallow check: if array length and mesh refs are same, skip
+    const prev = prevCollidersRef.current;
+    if (
+      prev.length === colliderMeshes.length &&
+      prev.every((m, i) => m === colliderMeshes[i])
+    ) {
+      return;
+    }
+
     cc.colliderMeshes = colliderMeshes;
-    // optional: small collision offset if you see the camera touch geometry
-    // cc.collisionOffset = 0.05; // might not exist depending on camera-controls version
+    prevCollidersRef.current = colliderMeshes;
   }, [colliderMeshes]);
 
   return (

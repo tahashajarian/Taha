@@ -13,6 +13,7 @@ const useCanvasEvents = (
   const drawConfigRef = useRef({ currentColor, brushSize, brushType });
   const onSaveRef = useRef(onSave);
   const touchOptions = useRef({ passive: false });
+  const coordsCache = useRef({ clientX: 0, clientY: 0 }); // ← OPTIMIZATION: reuse coords
 
   useEffect(() => {
     isPaintingRef.current = isPainting;
@@ -36,15 +37,13 @@ const useCanvasEvents = (
     const getCoords = (event) => {
       const rect = canvas.getBoundingClientRect();
       if (event.type === "touchmove" || event.type === "touchstart") {
-        return {
-          clientX: event.touches[0].clientX - rect.left,
-          clientY: event.touches[0].clientY - rect.top,
-        };
+        coordsCache.current.clientX = event.touches[0].clientX - rect.left;
+        coordsCache.current.clientY = event.touches[0].clientY - rect.top;
+      } else {
+        coordsCache.current.clientX = event.clientX - rect.left;
+        coordsCache.current.clientY = event.clientY - rect.top;
       }
-      return {
-        clientX: event.clientX - rect.left,
-        clientY: event.clientY - rect.top,
-      };
+      return coordsCache.current; // ← OPTIMIZATION: return cached object
     };
 
     const draw = (event) => {
@@ -52,7 +51,9 @@ const useCanvasEvents = (
 
       if (event.cancelable) event.preventDefault();
 
-      const { clientX, clientY } = getCoords(event);
+      const coords = getCoords(event);
+      const clientX = coords.clientX;
+      const clientY = coords.clientY;
       const { currentColor: color, brushSize: size, brushType: type } =
         drawConfigRef.current;
 

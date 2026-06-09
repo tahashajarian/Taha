@@ -81,4 +81,5 @@ const ColorAndBrushSelector = ({
   );
 };
 
-export default ColorAndBrushSelector;
+// OPTIMIZATION: Prevent unnecessary rerenders
+export default React.memo(ColorAndBrushSelector);

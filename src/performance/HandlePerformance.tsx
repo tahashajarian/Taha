@@ -47,7 +47,6 @@ const HandlePerformance: React.FC = () => {
       />
 
       <WebGLPerformanceManager />
-      {/* <Stats className="z-999" /> */}
     </>
   );
 };
