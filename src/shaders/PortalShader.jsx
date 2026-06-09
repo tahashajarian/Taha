@@ -2,6 +2,7 @@
 import React, { memo, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useGraphicsSettings } from "../stores/useGraphicsSettings";
 
 const CYBER_VARIANT = "brighter";
 const CYBER_PRESETS = {
@@ -119,6 +120,8 @@ void main() {
 `;
 
 const PortalShader = memo(({ disabled = false }) => {
+  const quality = useGraphicsSettings((s) => s.quality);
+  
   const meshRef = useRef(null);
   const materialRef = useRef(null);
   const seed = useMemo(() => Math.random() * 10, []);
@@ -139,22 +142,31 @@ const PortalShader = memo(({ disabled = false }) => {
   );
 
   useFrame(({ clock }) => {
-    if (disabled) return;
+    // Skip animation on non-high quality
+    if (quality !== "high") return;
 
     const time = clock.elapsedTime;
 
     if (materialRef.current) {
       materialRef.current.uniforms.uTime.value = time;
-      materialRef.current.uniforms.uPulse.value =
-        preset.pulseBase + Math.sin(time * preset.pulseSpeed + seed) * preset.pulseAmplitude;
+      
+      if (!disabled) {
+        materialRef.current.uniforms.uPulse.value =
+          preset.pulseBase + Math.sin(time * preset.pulseSpeed + seed) * preset.pulseAmplitude;
+      }
     }
 
-    if (meshRef.current) {
+    if (meshRef.current && !disabled) {
       meshRef.current.rotation.z = Math.sin(time * 0.65 + seed) * 0.12;
       const scale = 1 + Math.sin(time * 1.2 + seed * 0.7) * 0.055;
       meshRef.current.scale.setScalar(scale);
     }
   });
+
+  // Don't render on non-high quality
+  if (quality !== "high") {
+    return null;
+  }
 
   return (
     <mesh ref={meshRef}>

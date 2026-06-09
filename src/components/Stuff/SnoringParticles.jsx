@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 
@@ -19,6 +19,8 @@ const createTextTexture = (text) => {
 const SnoreParticles = ({ count = 3 }) => {
   const groupRef = useRef();
   const texture = useMemo(() => createTextTexture("Z"), []);
+  
+  useEffect(() => () => texture.dispose(), [texture]);
 
   // Particle state stored in a ref
   const particlesRef = useRef(

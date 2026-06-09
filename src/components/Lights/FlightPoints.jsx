@@ -3,12 +3,17 @@ import { wallHeight, wallSize } from "../../constances/constances";
 import FloatingPoint from "./FloatingLight";
 import RectAreaLightComponent from "./RectArealLightComponent";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 
 const FlightPoints = () => {
   const isMobileDevice = useAppStatusStore((s) => s.isMobileDevice);
+    const quality = useGraphicsSettings((s) => s.quality);
+  
+  const isLowQuality = quality === "low" || quality === "ultra-low";
+
   return (
     <>
-      {!isMobileDevice && (
+      {!isMobileDevice && !isLowQuality && (
         <>
           <FloatingPoint
             color="red"

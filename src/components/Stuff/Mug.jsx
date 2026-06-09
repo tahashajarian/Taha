@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react"
 import { useGLTF, useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 
 const PARTICLE_COUNT = 32
 const STEAM_SOURCE_Y = 0.06
@@ -50,6 +51,7 @@ const resetSteamParticle = (particle, randomizeAge = false) => {
 export default function Mug(props) {
   const { nodes } = useGLTF("/models/mug.glb", "/draco/")
   const { gl } = useThree()
+  const quality = useGraphicsSettings((s) => s.quality)
   const group = useRef()
   const steamParticles = useRef(
     Array.from({ length: PARTICLE_COUNT }, () => {
@@ -70,6 +72,9 @@ export default function Mug(props) {
   }, [gl, smokeTexture])
 
   useFrame(({ clock }, delta) => {
+    // Skip steam animation on non-high quality
+    if (quality !== "high") return
+
     const dt = Math.min(delta, MAX_FRAME_DELTA)
     const elapsed = clock.elapsedTime
 

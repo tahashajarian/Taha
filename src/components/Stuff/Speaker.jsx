@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -34,14 +34,16 @@ const Speaker = (props) => {
   const circleRef = useRef();
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const shaderMaterial = new THREE.ShaderMaterial({
+  const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
     vertexShader,
     fragmentShader,
     uniforms: {
       time: { value: 0.0 },
       isPlaying: { value: false },
     },
-  });
+  }), []);
+
+  useEffect(() => () => shaderMaterial.dispose(), [shaderMaterial]);
 
   useFrame(({ clock }) => {
     if (circleRef.current) {

@@ -14,17 +14,13 @@ const Frame = React.memo(
     const frameWidth = useMemo(() => width + thickness * 1, [width, thickness]);
     const frameHeight = useMemo(() => height + thickness * 1, [height, thickness]);
     const materialRef = useRef();
-    const tempColor = useRef(new Color(color));
 
     useFrame((state) => {
-      if (!materialRef.current) return;
-      if (isLoading) {
-        const t = (Math.sin(state.clock.elapsedTime * 5) + 1) / 2;
-        tempColor.current.setRGB(0.1 * t, 0.1 * t, 0.1 * t);
-        materialRef.current.color.copy(tempColor.current);
-      } else {
-        materialRef.current.color.set(color);
-      }
+      if (!isLoading || !materialRef.current) return;
+      
+      const t = (Math.sin(state.clock.elapsedTime * 5) + 1) / 2;
+      const intensity = 0.1 * t;
+      materialRef.current.color.setRGB(intensity, intensity, intensity);
     });
 
     return (

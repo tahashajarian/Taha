@@ -2,6 +2,7 @@ import { useFrame } from "@react-three/fiber"
 import React, { useRef, useMemo, useCallback, useEffect } from "react"
 import * as THREE from "three"
 import { wallData, wallHeight, wallSize } from "../../constances/constances"
+import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 
 const vertexShader = `
 precision mediump float;
@@ -163,7 +164,7 @@ const PRESETS = {
     lineLightAura: 0.08,
     clickScatter: 0.9,
     clickOutDuration: 0.09,
-    clickReturnDuration: 3.5,
+    clickReturnDuration: 0.8,
     clickMinSpread: 0.72,
     clickTintR: 0.16,
     clickTintG: 0.24,
@@ -251,7 +252,7 @@ const PRESETS = {
     lineLightAura: 0.14,
     clickScatter: 1.28,
     clickOutDuration: 0.08,
-    clickReturnDuration: 4.1,
+    clickReturnDuration: 0.9,
     clickMinSpread: 0.7,
     clickTintR: 0.2,
     clickTintG: 0.3,
@@ -264,6 +265,8 @@ const PRESETS = {
 }
 
 const Thing = ({ rotate = true, preset = "cosmic" }) => {
+  const quality = useGraphicsSettings((s) => s.quality)
+  
   const groupRef = useRef(null)
   const pointsRef = useRef(null)
   const linesRef = useRef(null)
@@ -347,7 +350,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     count,
     lineCount,
   } = useMemo(() => {
-    const ico = new THREE.IcosahedronGeometry(1, 3)
+    const ico = new THREE.IcosahedronGeometry(1, 2)
     const edges = new THREE.EdgesGeometry(ico)
     const pos = edges.attributes.position.array
     const lineCount = pos.length / 3
@@ -508,10 +511,26 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     }
   }, [settings, AMP_MIN, AMP_MAX, BASE_MIN, BASE_MAX])
 
+  const burstDistanceRef = useRef(0.9)
+  const lastClickTimeRef = useRef(-999)
+  const clockRef = useRef(0)
+  const persistentBurstRef = useRef(0)
+  const storedPersistentRef = useRef(0)
+
   const triggerBurst = useCallback((event) => {
     event.stopPropagation()
+    const now = clockRef.current
+    const timeSinceLastClick = now - lastClickTimeRef.current
+    
+    // If clicking rapidly, keep and increase current position
+    if (timeSinceLastClick < 1.0) {
+      // Lock in current burst state and add more
+      persistentBurstRef.current = Math.min(persistentBurstRef.current + 0.4, 2.5)
+    } else {
+      persistentBurstRef.current = 0
+    }
+    lastClickTimeRef.current = now
     burstTimerRef.current = 0
-    burstPhaseRef.current = Math.random() * Math.PI * 2
   }, [])
 
   const shaderMat = useMemo(
@@ -542,7 +561,11 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
   )
 
   useFrame(({ clock }, delta) => {
+    // Skip animation if not high quality
+    if (quality !== "high") return
+
     const t = clock.getElapsedTime()
+    clockRef.current = t
     burstTimerRef.current += delta
     const waveTime = t * settings.waveSpeed
     const liquidTime = t * settings.liquidSpeed
@@ -556,12 +579,36 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     const totalDuration = outDuration + returnDuration
 
     if (burstTimerRef.current < outDuration) {
+      // Out phase - keep it with cubic easing for punch
       const outT = burstTimerRef.current / outDuration
       burstEase = 1 - Math.pow(1 - outT, 3)
     } else if (burstTimerRef.current < totalDuration) {
+      // Return phase - linear
       const backT = (burstTimerRef.current - outDuration) / returnDuration
-      burstEase = 1 - THREE.MathUtils.smootherstep(backT, 0, 1)
+      burstEase = 1 - backT
     }
+
+    // Calculate total offset
+    const currentBurstAmount = burstEase * 0.9
+
+    // Decay persistent offset linearly when animation completes
+    const timeSinceLastClick = t - lastClickTimeRef.current
+    if (burstTimerRef.current >= totalDuration && persistentBurstRef.current > 0) {
+      // Store the value when decay starts
+      if (storedPersistentRef.current === 0) {
+        storedPersistentRef.current = persistentBurstRef.current
+      }
+      
+      // Linear decay over fixed duration (same as return animation)
+      const decayDuration = timeSinceLastClick > 1.0 ? 0.5 : returnDuration
+      const decayElapsed = burstTimerRef.current - totalDuration
+      const decayProgress = Math.min(1, decayElapsed / decayDuration)
+      persistentBurstRef.current = storedPersistentRef.current * (1 - decayProgress)
+      
+      if (decayProgress >= 1) storedPersistentRef.current = 0
+    }
+
+    const totalBurstOffset = persistentBurstRef.current + currentBurstAmount
 
     const group = groupRef.current
     if (rotate && group) {
@@ -726,7 +773,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
               (Math.sin(clickJitterTime + burstSeeds[i]) *
                 0.5 +
                 0.5)) *
-          burstEase
+          totalBurstOffset
         const burstScatter = settings.clickScatter * burstJitter
         const burstX = burstDirections[idx] * burstScatter
         const burstY = burstDirections[idx + 1] * burstScatter
@@ -828,6 +875,11 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
       }
     }
   })
+
+  // Don't render on non-high quality
+  if (quality !== "high") {
+    return null
+  }
 
   return (
     <group ref={groupRef}>
