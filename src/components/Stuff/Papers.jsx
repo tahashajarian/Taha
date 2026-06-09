@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from "react";
+import React, { useMemo, memo, useEffect } from "react";
 import * as THREE from "three";
 import { randomColor } from "../../constances/constances";
 
@@ -16,15 +16,15 @@ const Papers = () => {
       
       return {
         rotation: [0, 0, (Math.random() * Math.PI) / 6],
-        position: [0, 0, i * 0.0001],
+        position: [0, 0, i * 0.001],
         material,
       };
     });
   }, []);
 
   // Cleanup materials on unmount
-  useMemo(() => {
-    return () => papers.forEach(p => p.material.dispose());
+  useEffect(() => {
+    return () => papers.forEach(p => p.material?.dispose());
   }, [papers]);
 
   return (
