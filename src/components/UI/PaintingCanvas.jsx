@@ -15,7 +15,6 @@ const PaintingCanvas = ({ width, height, onSave }) => {
   const setBrushSize = usePaintingStore((s) => s.setBrushSize);
   const [isPainting, setIsPainting] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const imageCache = useRef(null); // OPTIMIZATION: Cache loaded image
 
   useCanvasEvents(
     canvasRef,
@@ -27,46 +26,19 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     brushType
   );
 
-  // OPTIMIZATION: Pre-load and cache image to avoid lag on first open
-  useEffect(() => {
-    if (!paintingImage) return;
-    
-    // Reuse cached image if source hasn't changed
-    if (imageCache.current && imageCache.current.src.endsWith(paintingImage)) {
-      return;
-    }
-
-    const img = new Image();
-    img.src = paintingImage;
-    imageCache.current = img;
-  }, [paintingImage]);
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !containerRef.current) return;
     
-    const context = canvas.getContext("2d", { 
-      alpha: true,
-      desynchronized: true // OPTIMIZATION: Hint for better performance
-    });
+    const context = canvas.getContext("2d");
 
-    const drawImage = () => {
+    const tempImage = new Image();
+    tempImage.src = paintingImage;
+    tempImage.onload = function () {
       canvas.width = containerRef.current.clientWidth;
       canvas.height = containerRef.current.clientHeight;
-      
-      if (imageCache.current && imageCache.current.complete) {
-        context.drawImage(imageCache.current, 0, 0, canvas.width, canvas.height);
-      }
+      context.drawImage(tempImage, 0, 0, canvas.width, canvas.height);
     };
-
-    // Use cached image if already loaded
-    if (imageCache.current) {
-      if (imageCache.current.complete) {
-        drawImage();
-      } else {
-        imageCache.current.onload = drawImage;
-      }
-    }
   }, [paintingImage, canvasRef]);
 
   const onMouseMoveCanvas = (event) => {
@@ -80,7 +52,6 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     onSave(canvas.toDataURL());
   };
 
-  // OPTIMIZATION: Memoize cursor style to avoid recreating object on every render
   const cursorStyle = useMemo(() => ({
     position: "fixed",
     width: `${brushSize}px`,

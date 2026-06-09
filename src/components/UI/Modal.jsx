@@ -2,12 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 const Modal = ({ isOpen, onClose, children, className = "" }) => {
-  // OPTIMIZATION: Render children even when closed (display:none) to pre-mount heavy components
+  if (!isOpen) return null;
+
   return ReactDOM.createPortal(
-    <div 
-      className="fixed inset-0 flex items-center justify-center z-50"
-      style={{ display: isOpen ? 'flex' : 'none' }}
-    >
+    <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
         className="fixed inset-0 bg-black opacity-50"
         onClick={onClose}
