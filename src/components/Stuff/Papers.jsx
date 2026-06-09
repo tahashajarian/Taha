@@ -52,7 +52,7 @@ const Pen = () => {
   );
 
   return (
-    <mesh position={[0, 0, 0.005]} geometry={geometry}>
+    <mesh position={[0, 0, 0.011]} geometry={geometry}>
       <meshBasicMaterial color="black" />
     </mesh>
   );
