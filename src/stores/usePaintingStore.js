@@ -2,12 +2,11 @@ import { create } from "zustand";
 
 export const usePaintingStore = create((set, get) => ({
   paintingImage: "",
-  loading: false,
+  loading: true, // CHANGE: Start with loading=true to avoid flash
   brushType: "spray",
   brushColor: "#ffffff",
   brushSize: 5,
   canvasRef: { current: null },
-  preloadedImage: null, // OPTIMIZATION: Store decoded image element
 
   setPaintingImage: async (image) => {
     if (image === get().paintingImage) return;
@@ -30,7 +29,7 @@ export const usePaintingStore = create((set, get) => ({
   },
 
   fetchPainting: async () => {
-    if (get().loading) return;
+    if (get().loading && get().paintingImage !== "") return; // Don't refetch if already loading with data
     set({ loading: true });
     try {
       const res = await fetch(
@@ -39,24 +38,6 @@ export const usePaintingStore = create((set, get) => ({
       const data = await res.text();
       if (data && data !== get().paintingImage) {
         set({ paintingImage: data });
-        
-        // OPTIMIZATION: Immediately decode image in background
-        if (data) {
-          const img = new Image();
-          img.src = data;
-          
-          // Use decode() API for async non-blocking decode
-          if (img.decode) {
-            img.decode()
-              .then(() => {
-                set({ preloadedImage: img });
-              })
-              .catch(err => console.warn("Image decode failed:", err));
-          } else {
-            // Fallback for older browsers
-            img.onload = () => set({ preloadedImage: img });
-          }
-        }
       }
     } catch (err) {
       console.error("Error fetching painting:", err);

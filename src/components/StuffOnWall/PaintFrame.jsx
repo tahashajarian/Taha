@@ -1,5 +1,5 @@
 import React, { useRef, useMemo, useEffect, useState } from "react";
-import { CanvasTexture, TextureLoader } from "three";
+import { TextureLoader } from "three";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { usePaintingStore } from "../../stores/usePaintingStore";
@@ -32,7 +32,7 @@ const Frame = React.memo(
   },
 );
 
-const Picture = React.memo(({ width, height, map, preloadedImage }) => {
+const Picture = React.memo(({ width, height, map }) => {
   const geometryArgs = useMemo(() => [width, height], [width, height]);
   const [texture, setTexture] = useState(null);
   const textureRef = useRef(null);
@@ -47,28 +47,6 @@ const Picture = React.memo(({ width, height, map, preloadedImage }) => {
       return;
     }
 
-    // OPTIMIZATION: Use preloaded image if available (already decoded)
-    if (preloadedImage && preloadedImage.complete) {
-      if (textureRef.current) {
-        textureRef.current.dispose();
-      }
-
-      // Create texture directly from decoded Image element
-      const canvas = document.createElement('canvas');
-      canvas.width = preloadedImage.width;
-      canvas.height = preloadedImage.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(preloadedImage, 0, 0);
-
-      const canvasTexture = new CanvasTexture(canvas);
-      canvasTexture.needsUpdate = true;
-      
-      textureRef.current = canvasTexture;
-      setTexture(canvasTexture);
-      return;
-    }
-
-    // Fallback: Load with TextureLoader if no preloaded image
     let disposed = false;
     const loader = new TextureLoader();
 
@@ -95,7 +73,7 @@ const Picture = React.memo(({ width, height, map, preloadedImage }) => {
     return () => {
       disposed = true;
     };
-  }, [map, preloadedImage]);
+  }, [map]);
 
   useEffect(
     () => () => {
@@ -131,7 +109,6 @@ const RefreshIcon = React.memo(({ onClick }) => {
 
 const ShaderFrame = () => {
   const paintingImage = usePaintingStore((s) => s.paintingImage);
-  const preloadedImage = usePaintingStore((s) => s.preloadedImage);
   const fetchPainting = usePaintingStore((s) => s.fetchPainting);
   const loading = usePaintingStore((s) => s.loading);
   const setPaintModalIsOpen = useAppStatusStore((s) => s.setPaintModalIsOpen);
@@ -165,7 +142,6 @@ const ShaderFrame = () => {
           width={pictureWidth} 
           height={pictureHeight} 
           map={paintingImage}
-          preloadedImage={preloadedImage}
         />
       </group>
     </>
