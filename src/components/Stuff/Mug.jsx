@@ -72,8 +72,8 @@ export default function Mug(props) {
   }, [gl, smokeTexture])
 
   useFrame(({ clock }, delta) => {
-    // Skip steam animation on non-high quality
-    if (quality !== "high") return
+    // Skip steam animation only on ultra-low quality
+    if (quality === "ultra-low") return
 
     const dt = Math.min(delta, MAX_FRAME_DELTA)
     const elapsed = clock.elapsedTime

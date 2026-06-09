@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, memo } from "react";
 import * as THREE from "three";
 import { randomColor } from "../../constances/constances";
 
@@ -9,15 +9,23 @@ const Papers = () => {
   const geometry = useMemo(() => new THREE.PlaneGeometry(0.2, 0.3), []);
 
   // Generate static paper data once
-  const papers = useMemo(
-    () =>
-      Array.from({ length: PAPER_COUNT }, (_, i) => ({
+  const papers = useMemo(() => {
+    return Array.from({ length: PAPER_COUNT }, (_, i) => {
+      const color = randomColor();
+      const material = new THREE.MeshBasicMaterial({ color });
+      
+      return {
         rotation: [0, 0, (Math.random() * Math.PI) / 6],
         position: [0, 0, i * 0.0001],
-        color: randomColor(),
-      })),
-    [],
-  );
+        material,
+      };
+    });
+  }, []);
+
+  // Cleanup materials on unmount
+  useMemo(() => {
+    return () => papers.forEach(p => p.material.dispose());
+  }, [papers]);
 
   return (
     <group>
@@ -28,15 +36,14 @@ const Papers = () => {
           geometry={geometry}
           rotation={p.rotation}
           position={p.position}
-        >
-          <meshBasicMaterial color={p.color} />
-        </mesh>
+          material={p.material}
+        />
       ))}
     </group>
   );
 };
 
-export default Papers;
+export default memo(Papers);
 
 const Pen = () => {
   const geometry = useMemo(
