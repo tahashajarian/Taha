@@ -52,9 +52,9 @@ const TableSetup = () => {
           </Suspense>
         )}
       </group>
-      <group position={[3, 2.5, -3]} scale={0.7}>
+      {/* <group position={[3, 2.5, -3]} scale={0.7}>
         <Thing rotate />
-      </group>
+      </group> */}
     </group>
   );
 };
