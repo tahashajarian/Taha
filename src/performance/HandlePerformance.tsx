@@ -32,7 +32,8 @@ const HandlePerformance: React.FC = () => {
           }
         }}
         onIncline={({ fps }) => {
-          const { quality, setQuality } = useGraphicsSettings.getState();
+          const { quality, setQuality, beginHighQualityTransition } =
+            useGraphicsSettings.getState();
 
           if (lockedLowModeRef.current) {
             // Only allow upgrade one step, never back to high
@@ -40,8 +41,7 @@ const HandlePerformance: React.FC = () => {
             return;
           }
 
-          // Normal upgrade path if not locked
-          if (fps >= 45 && quality === "medium") setQuality("high");
+          if (fps >= 45 && quality === "medium") beginHighQualityTransition();
           else if (fps >= 30 && quality === "low") setQuality("medium");
         }}
       />

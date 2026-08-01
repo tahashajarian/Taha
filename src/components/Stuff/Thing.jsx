@@ -266,6 +266,8 @@ const PRESETS = {
 
 const Thing = ({ rotate = true, preset = "cosmic" }) => {
   const quality = useGraphicsSettings((s) => s.quality)
+  const highQualityStage = useGraphicsSettings((s) => s.highQualityStage)
+  const useHighEffects = quality === "high" && highQualityStage >= 3
   
   const groupRef = useRef(null)
   const pointsRef = useRef(null)
@@ -347,6 +349,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     lineNormals,
     lineTangents,
     lineWaveOffsets,
+    linePointIndices,
     count,
     lineCount,
   } = useMemo(() => {
@@ -367,6 +370,20 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     }
 
     const cnt = unique.length / 3
+    const pointIndexByPosition = new Map()
+    for (let i = 0; i < cnt; i++) {
+      const idx = i * 3
+      const key = `${unique[idx].toFixed(5)}_${unique[idx + 1].toFixed(5)}_${unique[idx + 2].toFixed(5)}`
+      pointIndexByPosition.set(key, i)
+    }
+
+    const linePointIndices = new Int32Array(lineCount)
+    for (let i = 0; i < lineCount; i++) {
+      const idx = i * 3
+      const key = `${pos[idx].toFixed(5)}_${pos[idx + 1].toFixed(5)}_${pos[idx + 2].toFixed(5)}`
+      linePointIndices[i] = pointIndexByPosition.get(key)
+    }
+
     const ph = new Float32Array(cnt)
     const fr = new Float32Array(cnt)
     const ap = new Float32Array(cnt)
@@ -447,17 +464,19 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     const linePositionAttr = edges.getAttribute("position")
     linePositionAttr.setUsage(THREE.DynamicDrawUsage)
 
-    const linePhases = new Float32Array(lineCount)
-    const lineFreqs = new Float32Array(lineCount)
-    const lineAmps = new Float32Array(lineCount)
-    const lineNormals = new Float32Array(lineCount * 3)
-    const lineTangents = new Float32Array(lineCount * 3)
-    const lineWaveOffsets = new Float32Array(lineCount)
-    for (let i = 0; i < lineCount; i++) {
+    // Line deformation is independent from the floating points. Parameters
+    // live per unique sphere vertex so duplicated edge endpoints stay joined.
+    const linePhases = new Float32Array(cnt)
+    const lineFreqs = new Float32Array(cnt)
+    const lineAmps = new Float32Array(cnt)
+    const lineNormals = new Float32Array(cnt * 3)
+    const lineTangents = new Float32Array(cnt * 3)
+    const lineWaveOffsets = new Float32Array(cnt)
+    for (let i = 0; i < cnt; i++) {
       const idx = i * 3
-      const x = pos[idx]
-      const y = pos[idx + 1]
-      const z = pos[idx + 2]
+      const x = unique[idx]
+      const y = unique[idx + 1]
+      const z = unique[idx + 2]
       const length = Math.sqrt(x * x + y * y + z * z) || 1
       const nx = x / length
       const ny = y / length
@@ -506,6 +525,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
       lineNormals,
       lineTangents,
       lineWaveOffsets,
+      linePointIndices,
       count: cnt,
       lineCount,
     }
@@ -515,7 +535,6 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
   const lastClickTimeRef = useRef(-999)
   const clockRef = useRef(0)
   const persistentBurstRef = useRef(0)
-  const storedPersistentRef = useRef(0)
 
   const triggerBurst = useCallback((event) => {
     event.stopPropagation()
@@ -527,7 +546,9 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
       // Lock in current burst state and add more
       persistentBurstRef.current = Math.min(persistentBurstRef.current + 0.4, 2.5)
     } else {
-      persistentBurstRef.current = 0
+      // Give a single click the same soft return behavior, at a gentler
+      // strength than a rapid multi-click burst.
+      persistentBurstRef.current = 0.4
     }
     lastClickTimeRef.current = now
     burstTimerRef.current = 0
@@ -562,7 +583,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
 
   useFrame(({ clock }, delta) => {
     // Skip animation if not high quality
-    if (quality !== "high") return
+    if (!useHighEffects) return
 
     const t = clock.getElapsedTime()
     clockRef.current = t
@@ -575,7 +596,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
 
     let burstEase = 0
     const outDuration = settings.clickOutDuration
-    const returnDuration = settings.clickReturnDuration
+    const returnDuration = settings.clickReturnDuration * 1.6
     const totalDuration = outDuration + returnDuration
 
     if (burstTimerRef.current < outDuration) {
@@ -583,29 +604,22 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
       const outT = burstTimerRef.current / outDuration
       burstEase = 1 - Math.pow(1 - outT, 3)
     } else if (burstTimerRef.current < totalDuration) {
-      // Return phase - linear
+      // Use the same soft return character for single and repeated clicks.
       const backT = (burstTimerRef.current - outDuration) / returnDuration
-      burstEase = 1 - backT
+      burstEase = 1 - (backT * backT * (3 - 2 * backT))
     }
 
     // Calculate total offset
     const currentBurstAmount = burstEase * 0.9
 
-    // Decay persistent offset linearly when animation completes
-    const timeSinceLastClick = t - lastClickTimeRef.current
-    if (burstTimerRef.current >= totalDuration && persistentBurstRef.current > 0) {
-      // Store the value when decay starts
-      if (storedPersistentRef.current === 0) {
-        storedPersistentRef.current = persistentBurstRef.current
+    // Always ease accumulated rapid-click displacement back to the base
+    // shape. Exponential decay stays smooth even when another click arrives
+    // during the return animation.
+    if (burstTimerRef.current >= outDuration && persistentBurstRef.current > 0) {
+      persistentBurstRef.current *= Math.exp(-delta * 1.08)
+      if (persistentBurstRef.current < 0.001) {
+        persistentBurstRef.current = 0
       }
-      
-      // Linear decay over fixed duration (same as return animation)
-      const decayDuration = timeSinceLastClick > 1.0 ? 0.5 : returnDuration
-      const decayElapsed = burstTimerRef.current - totalDuration
-      const decayProgress = Math.min(1, decayElapsed / decayDuration)
-      persistentBurstRef.current = storedPersistentRef.current * (1 - decayProgress)
-      
-      if (decayProgress >= 1) storedPersistentRef.current = 0
     }
 
     const totalBurstOffset = persistentBurstRef.current + currentBurstAmount
@@ -829,30 +843,43 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     if (linesRef.current) {
       for (let i = 0; i < lineCount; i++) {
         const idx = i * 3
-        const x = baseLinePositions[idx]
-        const y = baseLinePositions[idx + 1]
-        const z = baseLinePositions[idx + 2]
-        const nx = lineNormals[idx]
-        const ny = lineNormals[idx + 1]
-        const nz = lineNormals[idx + 2]
-        const tx = lineTangents[idx]
-        const tz = lineTangents[idx + 2]
+        const vertexIndex = linePointIndices[i]
+        const vertexIdx = vertexIndex * 3
+        const x = basePointPositions[vertexIdx]
+        const y = basePointPositions[vertexIdx + 1]
+        const z = basePointPositions[vertexIdx + 2]
+        const nx = lineNormals[vertexIdx]
+        const ny = lineNormals[vertexIdx + 1]
+        const nz = lineNormals[vertexIdx + 2]
+        const tx = lineTangents[vertexIdx]
+        const tz = lineTangents[vertexIdx + 2]
 
-        const bend = Math.sin(t * lineFreqs[i] + linePhases[i]) * lineAmps[i]
-        const curl = Math.cos(t * (lineFreqs[i] * 0.72) + linePhases[i] * 1.2) * lineAmps[i] * 0.75
-        const travelingWave = Math.sin(lineWaveTime + lineWaveOffsets[i]) * settings.lineWaveAmp
-        const lineLiquidPhase =
-          liquidTime + linePhases[i] * 0.65 + (nx - nz) * settings.liquidSpatial
-        const lineLiquid = Math.sin(lineLiquidPhase) * settings.liquidAmp * 0.5
-        const lineShear = Math.cos(lineLiquidPhase * 0.84) * settings.liquidShearAmp * 0.4
+        const bend =
+          Math.sin(t * lineFreqs[vertexIndex] + linePhases[vertexIndex]) *
+          lineAmps[vertexIndex]
+        const travelingWave =
+          Math.sin(lineWaveTime + lineWaveOffsets[vertexIndex]) *
+          settings.lineWaveAmp
+        const clickWave =
+          Math.sin(
+            burstTimerRef.current * 18 -
+              lineWaveOffsets[vertexIndex] * 1.5
+          ) *
+          0.08 *
+          burstEase
+        const curl =
+          Math.cos(
+            t * (lineFreqs[vertexIndex] * 0.72) +
+              linePhases[vertexIndex] * 1.2
+          ) *
+          lineAmps[vertexIndex] *
+          0.35
 
-        linePositions[idx] = x + nx * (bend + travelingWave + lineLiquid) + tx * (curl + lineShear)
-        linePositions[idx + 1] =
-          y +
-          ny * (bend + travelingWave + lineLiquid * 0.7) +
-          Math.sin(t * 0.7 + linePhases[i]) * lineAmps[i] * 0.22 +
-          Math.sin(lineLiquidPhase * 1.2) * settings.liquidLiftAmp * 0.35
-        linePositions[idx + 2] = z + nz * (bend + travelingWave + lineLiquid) + tz * (curl + lineShear)
+        const radialWave = bend + travelingWave + clickWave
+
+        linePositions[idx] = x + nx * radialWave + tx * curl
+        linePositions[idx + 1] = y + ny * radialWave
+        linePositions[idx + 2] = z + nz * radialWave + tz * curl
       }
 
       linePositionAttr.needsUpdate = true
@@ -877,7 +904,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
   })
 
   // Don't render on non-high quality
-  if (quality !== "high") {
+  if (!useHighEffects) {
     return null
   }
 

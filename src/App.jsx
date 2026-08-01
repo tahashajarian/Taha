@@ -13,10 +13,12 @@ import { useCameraControlStore } from "./stores/useCameraControlStore";
 import { useAppStatusStore } from "./stores/useAppStatusStore";
 import { useArrowControls } from "./hooks/useArrowControls";
 import { usePaintingInit } from "./hooks/usePaintingInit";
+import { useGraphicsSettings } from "./stores/useGraphicsSettings";
 
 function App() {
   const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
   const setIsAppLoaded = useAppStatusStore((s) => s.setIsAppLoaded);
+  const pixelRatio = useGraphicsSettings((s) => s.pixelRatio);
   const {
     loaded,
     percent,
@@ -47,6 +49,7 @@ function App() {
         >
           <Canvas
             camera={{ position: [0, 3, 8], fov: 50 }}
+            dpr={pixelRatio}
             shadows
             style={{ background: "rgb(42 50 60)" }}
             frameloop="always"

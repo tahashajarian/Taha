@@ -7,6 +7,8 @@ import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 const Keyboard = (props) => {
   const { nodes, materials } = useGLTF("/models/keyboard.glb", "/draco/")
   const quality = useGraphicsSettings((s) => s.quality)
+  const highQualityStage = useGraphicsSettings((s) => s.highQualityStage)
+  const useHighEffects = quality === "high" && highQualityStage >= 1
 
   // keep original material values so we can restore them when returning to "high"
   const origRef = useRef(null)
@@ -22,7 +24,7 @@ const Keyboard = (props) => {
       }
     }
 
-    if (quality === "high") {
+    if (useHighEffects) {
       // restore original values (if we have them)
       const o = origRef.current
       m.metalness = o?.metalness ?? m.metalness
@@ -36,15 +38,15 @@ const Keyboard = (props) => {
     }
     // note: we intentionally mutate the gltf material once here,
     // that's fine because we avoid doing it every render.
-  }, [materials, quality])
+  }, [materials, quality, useHighEffects])
 
   return (
     <group {...props} dispose={null}>
       {/* Only mount RGB lights in high quality */}
-      {quality === "high" && <RGBLightHigh />}
+      {useHighEffects && <RGBLightHigh />}
 
       <mesh
-        castShadow={quality === "high"}
+        castShadow={useHighEffects}
         receiveShadow={quality !== "low"}
         geometry={nodes.Cube.geometry}
         material={materials.klawisze}

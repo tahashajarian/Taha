@@ -121,6 +121,8 @@ void main() {
 
 const PortalShader = memo(({ disabled = false }) => {
   const quality = useGraphicsSettings((s) => s.quality);
+  const highQualityStage = useGraphicsSettings((s) => s.highQualityStage);
+  const useHighEffects = quality === "high" && highQualityStage >= 2;
   
   const meshRef = useRef(null);
   const materialRef = useRef(null);
@@ -143,7 +145,7 @@ const PortalShader = memo(({ disabled = false }) => {
 
   useFrame(({ clock }) => {
     // Skip animation on non-high quality
-    if (quality !== "high") return;
+    if (!useHighEffects) return;
 
     const time = clock.elapsedTime;
 
@@ -164,7 +166,7 @@ const PortalShader = memo(({ disabled = false }) => {
   });
 
   // Don't render on non-high quality
-  if (quality !== "high") {
+  if (!useHighEffects) {
     return null;
   }
 

@@ -1,5 +1,12 @@
 import { create } from 'zustand'
 
+let highTransitionTimers = []
+
+const cancelHighTransition = () => {
+  highTransitionTimers.forEach((timer) => clearTimeout(timer))
+  highTransitionTimers = []
+}
+
 const getDPR = () =>
   typeof window !== 'undefined'
     ? Math.min(window.devicePixelRatio, 2)
@@ -15,7 +22,7 @@ export const PRESETS = {
 // Enhanced device capability detection
 const detectDeviceCapability = () => {
   if (typeof window === 'undefined' || typeof navigator === 'undefined')
-    return 'high'
+    return 'medium'
 
   const userAgent = navigator.userAgent.toLowerCase()
   const isMobile =
@@ -26,12 +33,12 @@ const detectDeviceCapability = () => {
   let isLowEndDevice = false
 
   // Memory detection
-  if (navigator.deviceMemory && navigator.deviceMemory < 4) {
+  if (navigator.deviceMemory && navigator.deviceMemory <= 4) {
     isLowEndDevice = true
   }
 
   // CPU core detection
-  if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) {
+  if (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) {
     isLowEndDevice = true
   }
 
@@ -54,12 +61,14 @@ const detectDeviceCapability = () => {
     isLowEndDevice = true
   }
 
-  return isLowEndDevice ? 'medium' : 'high'
+  // Start conservatively. PerformanceMonitor can raise the quality after the
+  // scene is stable, without making weaker devices pay a high startup cost.
+  return isLowEndDevice ? 'low' : 'medium'
 }
 
 // Get initial quality setting
 const getInitialQuality = () => {
-  if (typeof window === 'undefined') return 'high'
+  if (typeof window === 'undefined') return 'medium'
 
   try {
     const savedQuality = localStorage.getItem('graphics-quality')
@@ -81,10 +90,13 @@ export const useGraphicsSettings = create((set, get) => {
 
   return {
     quality: initialQuality,
+    highQualityStage: initialQuality === 'high' ? 3 : 0,
     pixelRatio:
       typeof window !== 'undefined' ? PRESETS[initialQuality]() : 1,
 
     setQuality: (q) => {
+      cancelHighTransition()
+
       try {
         localStorage.setItem('graphics-quality', q)
       } catch (e) {
@@ -93,8 +105,36 @@ export const useGraphicsSettings = create((set, get) => {
 
       set({
         quality: q,
+        highQualityStage: q === 'high' ? 3 : 0,
         pixelRatio: PRESETS[q](),
       })
+    },
+
+    beginHighQualityTransition: () => {
+      if (get().quality !== 'medium') return
+
+      cancelHighTransition()
+
+      try {
+        localStorage.setItem('graphics-quality', 'high')
+      } catch (e) {
+        console.warn('Could not save to localStorage:', e)
+      }
+
+      const targetDPR = PRESETS.high()
+      set({ quality: 'high', highQualityStage: 0 })
+
+      const scheduleStage = (delay, stage, pixelRatio) => {
+        const timer = setTimeout(() => {
+          if (get().quality !== 'high') return
+          set({ highQualityStage: stage, pixelRatio })
+        }, delay)
+        highTransitionTimers.push(timer)
+      }
+
+      scheduleStage(600, 1, Math.min(targetDPR, 1.25))
+      scheduleStage(1400, 2, Math.min(targetDPR, 1.5))
+      scheduleStage(2400, 3, targetDPR)
     },
 
     recalculatePixelRatio: () => {
