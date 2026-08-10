@@ -29,7 +29,7 @@ const Outside = () => {
       <mesh
         ref={ref}
         rotation={[0, Math.PI, 0]}
-        position={[0, wallHeight / 2 - 0.5, wallSize / 2 + 8]}
+        position={[0, wallHeight / 2 + 0.5, wallSize / 2 + 8]}
       >
         <planeGeometry args={[26, 14.625]} />
         <meshBasicMaterial

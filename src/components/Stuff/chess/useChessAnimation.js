@@ -5,24 +5,21 @@ import * as THREE from "three";
 
 /* ---------------- helpers ---------------- */
 
-const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+const easeInQuartic = (value) => value * value * value * value;
 
 const FEEDBACK_MAP = {
-  queen1: { path: "/textures/moves/brilliant.png", duration: 1500 },
-  queenB: { path: "/textures/moves/forced.png", duration: 1500 },
-  knight: { path: "/textures/moves/best.png", duration: 1500 },
+  queen1: { path: "/textures/moves/brilliant.png", duration: 1700 },
 };
 
 /* ---------------- hook ---------------- */
 
-export function useChessController({ nodes, moveDuration, kingBRef }) {
+export function useChessController({ nodes, moveDuration, kingPivotPosition }) {
   const chessPlay = useAppStatusStore((s) => s.chessPlay);
   const setChessPlayEnd = useAppStatusStore((s) => s.setChessPlayEnd);
   const resetChess = useAppStatusStore((s) => s.resetChess);
   const setResetChess = useAppStatusStore((s) => s.setResetChess);
 
   const timeoutsRef = useRef([]);
-  const kingBInitial = useRef(null);
   const texturesRef = useRef({});
 
   const [feedbacks, setFeedbacks] = useState([]);
@@ -31,6 +28,8 @@ export function useChessController({ nodes, moveDuration, kingBRef }) {
 
   const [queenSpring, queenApi] = useSpring(() => ({
     position: nodes?.queen?.position.toArray() ?? [0, 0, 0],
+    rotation: nodes?.queen?.rotation.toArray().slice(0, 3) ?? [0, 0, 0],
+    scale: nodes?.queen?.scale.toArray() ?? [1, 1, 1],
     immediate: true,
   }));
 
@@ -49,15 +48,11 @@ export function useChessController({ nodes, moveDuration, kingBRef }) {
     immediate: true,
   }));
 
-  /* -------- save initial king state -------- */
-
-  useEffect(() => {
-    if (!kingBRef.current || kingBInitial.current) return;
-    kingBInitial.current = {
-      position: kingBRef.current.position.clone(),
-      rotation: kingBRef.current.rotation.clone(),
-    };
-  }, [kingBRef]);
+  const [kingBSpring, kingBApi] = useSpring(() => ({
+    position: kingPivotPosition ?? [0, 0, 0],
+    rotation: nodes?.Rey_Circle001?.rotation.toArray().slice(0, 3) ?? [0, 0, 0],
+    immediate: true,
+  }));
 
   /* -------- load textures -------- */
 
@@ -92,7 +87,15 @@ export function useChessController({ nodes, moveDuration, kingBRef }) {
 
     if (!chessPlay) {
       const cfg = { duration: 600 };
-      queenApi.start({ position: nodes.queen.position.toArray(), config: cfg });
+      queenApi.start({
+        rotation: nodes.queen.rotation.toArray().slice(0, 3),
+        immediate: true,
+      });
+      queenApi.start({
+        position: nodes.queen.position.toArray(),
+        scale: nodes.queen.scale.toArray(),
+        config: cfg,
+      });
       pawnApi.start({ position: nodes.pawn.position.toArray(), config: cfg });
       queenBApi.start({
         position: nodes.queenB.position.toArray(),
@@ -108,20 +111,53 @@ export function useChessController({ nodes, moveDuration, kingBRef }) {
 
     const MOVE = Math.max(1, Math.round(moveDuration));
     const GAP = 1000;
-    const OVERLAP_PAWN = clamp(450, 0, MOVE - 50);
-    const OVERLAP_QUEEN2 = clamp(800, 0, MOVE - 50);
+    const OVERLAP_QUEEN2 = Math.max(0, Math.min(800, MOVE - 50));
+    const SAC_DURATION = MOVE + 400;
+    const QUEEN_IMPACT_AT = SAC_DURATION * 0.9;
     const cfg = { duration: MOVE };
-    const sac = { duration: MOVE };
+    const queenStart = nodes.queen.position.toArray();
+    const queenTarget = [0, 0, -0.37];
+    const queenRotation = nodes.queen.rotation.toArray().slice(0, 3);
+    const queenScale = nodes.queen.scale.toArray();
 
     const sequence = [
       {
         key: "queen1",
-        fn: () => queenApi.start({ position: [0, 0, -0.37], config: sac }),
-        feedback: { position: [0.23, 0.05, -0.27], delay: 150 },
+        fn: () => queenApi.start({
+          to: async (next) => {
+            await next({
+              position: [queenStart[0], queenStart[1] + 0.004, queenStart[2]],
+              rotation: [queenRotation[0], queenRotation[1], queenRotation[2] - 0.018],
+              scale: queenScale.map((value) => value * 0.985),
+              config: { duration: SAC_DURATION * 0.09 },
+            });
+            await next({
+              position: queenStart,
+              rotation: [queenRotation[0], queenRotation[1], queenRotation[2] + 0.018],
+              scale: queenScale.map((value) => value * 1.015),
+              config: { duration: SAC_DURATION * 0.09 },
+            });
+            await next({
+              position: queenStart,
+              rotation: queenRotation,
+              config: { duration: SAC_DURATION * 0.09 },
+            });
+            await next({
+              position: queenTarget,
+              rotation: queenRotation,
+              scale: queenScale,
+              config: { duration: SAC_DURATION * 0.63, easing: easeInQuartic },
+            });
+          },
+        }),
+        feedback: {
+          position: [0.23, 0.05, -0.27],
+          delay: QUEEN_IMPACT_AT - MOVE + 40,
+        },
       },
       {
         fn: () => pawnApi.start({ position: [0.12, 0, -0.2], config: cfg }),
-        overlap: OVERLAP_PAWN,
+        at: QUEEN_IMPACT_AT,
       },
       {
         key: "queenB",
@@ -145,7 +181,9 @@ export function useChessController({ nodes, moveDuration, kingBRef }) {
     let prevStart = 0;
     sequence.forEach((step, i) => {
       const startAt =
-        i === 0
+        Number.isFinite(step.at)
+          ? step.at
+          : i === 0
           ? 0
           : step.overlap
             ? prevStart + MOVE - step.overlap
@@ -174,34 +212,63 @@ export function useChessController({ nodes, moveDuration, kingBRef }) {
     const end = prevStart + MOVE;
     timeoutsRef.current.push(
       setTimeout(() => {
-        if (kingBRef.current) {
-          kingBRef.current.rotation.z = -Math.PI / 2 - 0.1;
-          kingBRef.current.position.set(0.2, 0.3, 0);
-        }
+        const kingRotation = nodes.Rey_Circle001.rotation.toArray().slice(0, 3);
+        kingBApi.start({
+          to: async (next) => {
+            await next({
+              rotation: [kingRotation[0], kingRotation[1], kingRotation[2] - 0.28],
+              config: { duration: 180 },
+            });
+            await next({
+              rotation: [
+                kingRotation[0],
+                kingRotation[1],
+                kingRotation[2] - Math.PI / 2 - 0.1,
+              ],
+              config: { tension: 240, friction: 18 },
+            });
+          },
+        });
       }, end + 1000),
     );
 
     return () => timeoutsRef.current.forEach(clearTimeout);
-  }, [chessPlay, nodes, moveDuration]);
+  }, [chessPlay, nodes, moveDuration, kingPivotPosition]);
 
   /* -------- reset -------- */
 
   useEffect(() => {
     if (!nodes || !resetChess) return;
     const cfg = { tension: 220, friction: 22 };
-    queenApi.start({ position: nodes.queen.position.toArray(), config: cfg });
+    queenApi.start({
+      rotation: nodes.queen.rotation.toArray().slice(0, 3),
+      immediate: true,
+    });
+    queenApi.start({
+      position: nodes.queen.position.toArray(),
+      scale: nodes.queen.scale.toArray(),
+      config: cfg,
+    });
     pawnApi.start({ position: nodes.pawn.position.toArray(), config: cfg });
     queenBApi.start({ position: nodes.queenB.position.toArray(), config: cfg });
     knightApi.start({ position: nodes.knight.position.toArray(), config: cfg });
 
-    if (kingBRef.current && kingBInitial.current) {
-      kingBRef.current.position.copy(kingBInitial.current.position);
-      kingBRef.current.rotation.copy(kingBInitial.current.rotation);
-    }
+    kingBApi.start({
+      position: kingPivotPosition,
+      rotation: nodes.Rey_Circle001.rotation.toArray().slice(0, 3),
+      config: cfg,
+    });
 
     setFeedbacks([]);
     setResetChess(false);
-  }, [resetChess, nodes]);
+  }, [resetChess, nodes, kingPivotPosition]);
 
-  return { queenSpring, pawnSpring, queenBSpring, knightSpring, feedbacks };
+  return {
+    queenSpring,
+    pawnSpring,
+    queenBSpring,
+    knightSpring,
+    kingBSpring,
+    feedbacks,
+  };
 }

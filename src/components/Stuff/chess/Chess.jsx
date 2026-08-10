@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useMemo, useRef } from "react"
 import { useGLTF } from "@react-three/drei"
 import { a } from "@react-spring/three"
 import { useChessController } from "./useChessAnimation"
@@ -11,10 +11,33 @@ export function Chess({ moveDuration = 600, ...props }) {
   const pawnRef = useRef()
   const queenBRef = useRef()
   const knightRef = useRef()
-  const kingBRef = useRef()
+  const kingPivot = useMemo(() => {
+    const geometry = nodes.Rey_Circle001.geometry
+    geometry.computeBoundingBox()
+    const bounds = geometry.boundingBox
+    const offset = [bounds?.max.x ?? 0, bounds?.min.y ?? 0, 0]
+    return {
+      offset,
+      position: [
+        nodes.Rey_Circle001.position.x + offset[0],
+        nodes.Rey_Circle001.position.y + offset[1],
+        nodes.Rey_Circle001.position.z,
+      ],
+    }
+  }, [nodes])
 
-  const { queenSpring, pawnSpring, queenBSpring, knightSpring, feedbacks } =
-    useChessController({ nodes, moveDuration, kingBRef })
+  const {
+    queenSpring,
+    pawnSpring,
+    queenBSpring,
+    knightSpring,
+    kingBSpring,
+    feedbacks,
+  } = useChessController({
+    nodes,
+    moveDuration,
+    kingPivotPosition: kingPivot.position,
+  })
 
   useEffect(() => {
     if (queenBRef.current) queenBRef.current.scale.set(1.02, 1.02, 1.02)
@@ -34,6 +57,8 @@ export function Chess({ moveDuration = 600, ...props }) {
         geometry={nodes.queen.geometry}
         material={materials.WHITE}
         position={queenSpring.position}
+        rotation={queenSpring.rotation}
+        scale={queenSpring.scale}
       />
       <a.mesh
         ref={knightRef}
@@ -91,9 +116,17 @@ export function Chess({ moveDuration = 600, ...props }) {
         "Peon_Circle016",
       ].map((n) =>
         n === "Rey_Circle001" ? (
-          <group key={n} ref={kingBRef} position={nodes[n].position}>
-            <mesh geometry={nodes[n].geometry} material={materials.BLACK} />
-          </group>
+          <a.group
+            key={n}
+            position={kingBSpring.position}
+            rotation={kingBSpring.rotation}
+          >
+            <mesh
+              geometry={nodes[n].geometry}
+              material={materials.BLACK}
+              position={[-kingPivot.offset[0], -kingPivot.offset[1], 0]}
+            />
+          </a.group>
         ) : (
           <mesh key={n} geometry={nodes[n].geometry} material={materials.BLACK} position={nodes[n].position} />
         )
