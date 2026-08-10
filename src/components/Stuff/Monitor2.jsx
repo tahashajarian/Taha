@@ -152,13 +152,24 @@ const drawCodingScreen = (context, characterCount, elapsed) => {
   context.fillRect(40, 310, SCREEN_WIDTH - 40, 52)
   context.fillStyle = "#30363d"
   context.fillRect(40, 310, SCREEN_WIDTH - 40, 1)
-  context.font = "12px monospace"
-  context.fillStyle = "#7ee787"
-  context.fillText("$ npm run dev", 55, 329)
+  context.fillRect(500, 310, 1, 52)
+
+  context.font = "10px monospace"
   context.fillStyle = "#8b949e"
+  context.fillText("TERMINAL", 55, 322)
+  context.fillText("DEV NOTES", 515, 322)
+
+  context.font = "11px monospace"
+  context.fillStyle = "#c9d1d9"
+  context.fillText("$ vite --host", 55, 339)
+  context.fillStyle = "#7ee787"
+  context.fillText("ready in 428 ms  Local: localhost:5173", 55, 354)
+
   const terminalMessage =
     TERMINAL_MESSAGES[Math.floor(elapsed / 8) % TERMINAL_MESSAGES.length]
-  context.fillText(terminalMessage, 55, 350)
+  context.font = "10px monospace"
+  context.fillStyle = "#d2a8ff"
+  context.fillText(terminalMessage, 515, 345)
 
   context.globalAlpha = 0.08
   context.fillStyle = "#58a6ff"
