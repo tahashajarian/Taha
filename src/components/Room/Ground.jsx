@@ -2,7 +2,6 @@ import React, { useEffect, useMemo } from "react";
 import { wallSize } from "../../constances/constances";
 import { RepeatWrapping } from "three";
 import { useTexture } from "@react-three/drei";
-import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const FLOOR_TEXTURE_URL =
   "/textures/Poliigon_SlateFloorTile_7657/1K/Poliigon_SlateFloorTile_7657_BaseColor.jpg";
@@ -10,7 +9,6 @@ const FLOOR_TEXTURE_URL =
 useTexture.preload(FLOOR_TEXTURE_URL);
 
 const TexturedFloor = () => {
-  const isApploaded = useAppStatusStore((s) => s.isApploaded);
   const mapTexture = useTexture(FLOOR_TEXTURE_URL);
 
   const map = useMemo(() => {
@@ -34,11 +32,7 @@ const TexturedFloor = () => {
       position={[0, 0, 0]}
     >
       <planeGeometry args={[wallSize, wallSize]} />
-      {isApploaded ? (
-        <meshStandardMaterial map={map} color={0xffffff} />
-      ) : (
-        <meshStandardMaterial color="gray" />
-      )}
+      <meshStandardMaterial map={map} color={0xffffff} />
     </mesh>
   );
 };

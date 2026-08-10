@@ -59,7 +59,7 @@ export default function FireCube() {
           position={[0, 0.5, 0]}
           color={"#ffaaaa"}
           intensity={isUltraLow ? 0 : isLowQuality ? 0.8 : 6} // off on ultra-low
-          castShadow={!isLowQuality} // avoid point-shadow cost on low
+          castShadow={false}
         />
       </group>
 

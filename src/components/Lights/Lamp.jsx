@@ -47,9 +47,7 @@ const Lamp = (props) => {
         decay={0.5}
         power={10}
         intensity={lampIsOn ? 8 : 0}
-        castShadow={!isLowQuality}
-        shadow-mapSize-width={!isLowQuality ? 1024 : 0}
-        shadow-mapSize-height={!isLowQuality ? 1024 : 0}
+        castShadow={false}
       />
     </group>
   )

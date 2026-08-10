@@ -9,7 +9,7 @@ const cancelHighTransition = () => {
 
 const getDPR = () =>
   typeof window !== 'undefined'
-    ? Math.min(window.devicePixelRatio, 2)
+    ? Math.min(window.devicePixelRatio, 1.5)
     : 1
 
 export const PRESETS = {
@@ -76,7 +76,9 @@ const getInitialQuality = () => {
       savedQuality &&
       ['high', 'medium', 'low', 'ultra-low'].includes(savedQuality)
     ) {
-      return savedQuality
+      // Never cold-start with the most expensive preset. The performance
+      // monitor can safely raise quality after the scene has warmed up.
+      return savedQuality === 'high' ? 'medium' : savedQuality
     }
   } catch (e) {
     console.warn('Could not access localStorage:', e)

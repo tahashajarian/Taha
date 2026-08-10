@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { RepeatWrapping, Shape, ShapeGeometry } from "three";
 import { useTexture } from "@react-three/drei";
-import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 const WALL_TEXTURE_URL =
   "/textures/Poliigon_PlasticMoldDryBlast_7495/256/Poliigon_PlasticMoldDryBlast_7495_BaseColor.jpg";
@@ -65,7 +64,6 @@ const releaseCachedWallGeometry = (args, windowPosition, windowSize) => {
 };
 
 const Wall = ({ position, rotation, args, windowPosition, windowSize }) => {
-  const isApploaded = useAppStatusStore((s) => s.isApploaded);
   const texture = useTexture(WALL_TEXTURE_URL);
 
   const map = useMemo(() => {
@@ -91,16 +89,12 @@ const Wall = ({ position, rotation, args, windowPosition, windowSize }) => {
   return (
     <mesh rotation={rotation} position={position} castShadow receiveShadow>
       <primitive object={wallGeometry} />
-      {isApploaded ? (
-        <meshStandardMaterial
-          map={map}
-          metalness={0.0}
-          roughness={1.0}
-          color={0xffffff}
-        />
-      ) : (
-        <meshStandardMaterial color="gray" />
-      )}
+      <meshStandardMaterial
+        map={map}
+        metalness={0.0}
+        roughness={1.0}
+        color={0xffffff}
+      />
     </mesh>
   );
 };

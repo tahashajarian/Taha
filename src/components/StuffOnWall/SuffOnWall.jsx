@@ -8,16 +8,12 @@ import Sofa from "../Stuff/Sofa";
 import PaintFrame from "./PaintFrame";
 import Window from "./Window";
 import Curtain from "../Curtain/Curtain";
-import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import Textes from "../textes/Textes";
 
 const SuffOnWall = () => {
-  const isApploaded = useAppStatusStore((s) => s.isApploaded);
-
   return (
     <group>
-      {isApploaded && (
-        <>
+      <>
           <group
             rotation={[0, Math.PI / -2, 0]}
             position={[wallSize / 2.001, wallHeight / 2, 2]}
@@ -61,8 +57,7 @@ const SuffOnWall = () => {
           </group> */}
           <Sofa />
           <Textes />
-        </>
-      )}
+      </>
     </group>
   );
 };

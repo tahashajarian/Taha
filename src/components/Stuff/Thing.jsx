@@ -596,7 +596,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
 
     let burstEase = 0
     const outDuration = settings.clickOutDuration
-    const returnDuration = settings.clickReturnDuration * 1.6
+    const returnDuration = settings.clickReturnDuration * 1.85
     const totalDuration = outDuration + returnDuration
 
     if (burstTimerRef.current < outDuration) {
@@ -616,7 +616,7 @@ const Thing = ({ rotate = true, preset = "cosmic" }) => {
     // shape. Exponential decay stays smooth even when another click arrives
     // during the return animation.
     if (burstTimerRef.current >= outDuration && persistentBurstRef.current > 0) {
-      persistentBurstRef.current *= Math.exp(-delta * 1.08)
+      persistentBurstRef.current *= Math.exp(-delta * 0.88)
       if (persistentBurstRef.current < 0.001) {
         persistentBurstRef.current = 0
       }

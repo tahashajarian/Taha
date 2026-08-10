@@ -9,7 +9,7 @@ const Taha = ({ charRef, nodes, materials }) => {
       dispose={null}
       frustumCulled={false}
     >
-      <group receiveShadow castShadow name="Scene" frustumCulled={false}>
+      <group receiveShadow castShadow name="Scene">
         <group
           receiveShadow
           castShadow

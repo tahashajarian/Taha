@@ -1,6 +1,5 @@
-import React, { lazy, Suspense } from "react";
+import React from "react";
 import { tablePosition, tableRotation } from "../../constances/constances";
-import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
 import Textes from "../textes/Textes";
 import Chair from "../Stuff/Chair";
@@ -12,12 +11,9 @@ import Mug from "../Stuff/Mug";
 import Papers from "../Stuff/Papers";
 import Clock from "../Stuff/Clock";
 import Thing from "../Stuff/Thing";
-
-const Cat3 = lazy(() => import("../Stuff/Cat3"));
+import Cat3 from "../Stuff/Cat3";
 
 const TableSetup = () => {
-  const isApploaded = useAppStatusStore((s) => s.isApploaded);
-
   return (
     <group position={tablePosition} rotation={tableRotation}>
       <Chair />
@@ -46,11 +42,7 @@ const TableSetup = () => {
         <Clock />
       </group>
       <group position={[0.7, 0.748, 0.9]} rotation={[0, -Math.PI / 2, 0]}>
-        {isApploaded && (
-          <Suspense fallback={null}>
-            <Cat3 />
-          </Suspense>
-        )}
+        <Cat3 />
       </group>
       {/* <group position={[3, 2.5, -3]} scale={0.7}>
         <Thing rotate />

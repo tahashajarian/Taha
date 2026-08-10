@@ -6,6 +6,7 @@ import StuffOnWall from "./StuffOnWall/SuffOnWall";
 import Lights from "./Lights/Lights";
 import Walls from "./Room/Walls";
 import FireCube from "./Lights/Fireplace/Fire";
+import { Preload } from "@react-three/drei";
 
 const Experience = () => {
   const [colliders, setColliders] = useState([]);
@@ -23,6 +24,7 @@ const Experience = () => {
       <Walls onCollidersReady={handleCollidersReady} />
       <StuffOnWall />
       <FireCube />
+      <Preload all />
     </>
   );
 };
