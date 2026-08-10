@@ -1,32 +1,38 @@
 import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 
-const FloatingPoint = ({ color, position, amplitude, frequency }) => {
-  const groupRef = useRef();
-  let elapsed = useRef(0);
+const FloatingPoints = ({ points }) => {
+  const groupRefs = useRef([]);
+  const elapsed = useRef(0);
 
-  useFrame((state, delta) => {
-    if (!groupRef.current) return;
-    
+  useFrame((_, delta) => {
     elapsed.current += delta;
-    const time = elapsed.current * frequency;
-
-    const newY = position[1] + amplitude * Math.cos(time);
-    const newZ = position[2] + amplitude * Math.sin(2 * time);
-
-    groupRef.current.position.y = newY;
-    groupRef.current.position.z = newZ;
+    for (let i = 0; i < points.length; i += 1) {
+      const group = groupRefs.current[i];
+      if (!group) continue;
+      const { position, amplitude, frequency } = points[i];
+      const time = elapsed.current * frequency;
+      group.position.y = position[1] + amplitude * Math.cos(time);
+      group.position.z = position[2] + amplitude * Math.sin(2 * time);
+    }
   });
 
   return (
-    <group ref={groupRef} position={[position[0], position[1], position[2]]}>
-      <mesh>
-        <sphereGeometry args={[0.02, 4, 4]} />
-        <meshStandardMaterial emissive={color} emissiveIntensity={10} />
-      </mesh>
-      <pointLight power={1} color={color} intensity={1} distance={2} />
-    </group>
+    <>
+      {points.map(({ color, position }, index) => (
+        <group
+          key={`${color}-${position.join("-")}`}
+          ref={(node) => { groupRefs.current[index] = node; }}
+          position={position}
+        >
+          <mesh>
+            <sphereGeometry args={[0.02, 4, 4]} />
+            <meshStandardMaterial emissive={color} emissiveIntensity={10} />
+          </mesh>
+        </group>
+      ))}
+    </>
   );
 };
 
-export default FloatingPoint;
+export default FloatingPoints;

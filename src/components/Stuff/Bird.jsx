@@ -1,17 +1,8 @@
-import React, { useRef, useMemo } from 'react'
+import React from 'react'
 import { useGLTF } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
 
-const Bird = ({ seed =1}) => {
+const Bird = ({ groupRef }) => {
   const { nodes, materials } = useGLTF('/models/bird.glb', '/draco/')
-  const groupRef = useRef()
-  const offset = useMemo(() => seed, []) // Unique offset per instance
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.x = Math.cos(state.clock.elapsedTime + offset)
-    }
-  })
 
   return (
     <group ref={groupRef} dispose={null} scale={0.04}>

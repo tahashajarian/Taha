@@ -10,7 +10,6 @@ const Lights = () => {
   const dirLightRef = useRef(null);
   const curtainOpen = useAppStatusStore((s) => s.curtainOpen);
   const quality = useGraphicsSettings((s) => s.quality);
-  const highQualityStage = useGraphicsSettings((s) => s.highQualityStage);
 
   const isLowQuality = quality === "low" || quality === "ultra-low";
 
@@ -26,13 +25,7 @@ const Lights = () => {
         ref={dirLightRef}
         position={[0, 3, 8]}
         intensity={!curtainOpen ? 5 : 1}
-        castShadow={quality === "high" && highQualityStage >= 3}
-        shadow-mapSize-width={
-          quality === "high" && highQualityStage >= 3 ? 1024 : 0
-        }
-        shadow-mapSize-height={
-          quality === "high" && highQualityStage >= 3 ? 1024 : 0
-        }
+        castShadow={false}
         shadow-camera-far={50}
         shadow-camera-left={-10}
         shadow-camera-right={10}

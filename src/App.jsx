@@ -16,6 +16,9 @@ import { usePaintingInit } from "./hooks/usePaintingInit";
 import { useGraphicsSettings } from "./stores/useGraphicsSettings";
 
 function App() {
+  const [pageVisible, setPageVisible] = React.useState(
+    () => document.visibilityState === "visible",
+  );
   const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
   const setIsAppLoaded = useAppStatusStore((s) => s.setIsAppLoaded);
   const pixelRatio = useGraphicsSettings((s) => s.pixelRatio);
@@ -38,6 +41,14 @@ function App() {
     }
   }, [loaded, setCameraLookAt, setIsAppLoaded]);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setPageVisible(document.visibilityState === "visible");
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   return (
     <ErrorBoundary>
       <div className="w-full h-svh relative">
@@ -50,9 +61,8 @@ function App() {
           <Canvas
             camera={{ position: [0, 3, 8], fov: 50 }}
             dpr={pixelRatio}
-            shadows
             style={{ background: "rgb(42 50 60)" }}
-            frameloop="always"
+            frameloop={pageVisible ? "always" : "never"}
             onPointerMissed={() => (document.body.style.cursor = "default")}
             gl={{
               antialias: true,

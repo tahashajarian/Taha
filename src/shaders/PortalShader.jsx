@@ -126,6 +126,7 @@ const PortalShader = memo(({ disabled = false }) => {
   
   const meshRef = useRef(null);
   const materialRef = useRef(null);
+  const renderedLastFrameRef = useRef(true);
   const seed = useMemo(() => Math.random() * 10, []);
   const preset = disabled ? CYBER_PRESETS.disabled : ACTIVE_PRESET;
 
@@ -144,8 +145,10 @@ const PortalShader = memo(({ disabled = false }) => {
   );
 
   useFrame(({ clock }) => {
+    const wasRendered = renderedLastFrameRef.current;
+    renderedLastFrameRef.current = false;
     // Skip animation on non-high quality
-    if (!useHighEffects) return;
+    if (!useHighEffects || !wasRendered) return;
 
     const time = clock.elapsedTime;
 
@@ -165,13 +168,11 @@ const PortalShader = memo(({ disabled = false }) => {
     }
   });
 
-  // Don't render on non-high quality
-  if (!useHighEffects) {
-    return null;
-  }
-
   return (
-    <mesh ref={meshRef}>
+    <mesh
+      ref={meshRef}
+      onBeforeRender={() => { renderedLastFrameRef.current = true; }}
+    >
       <planeGeometry args={[0.4, 0.4]} />
       <shaderMaterial
         ref={materialRef}

@@ -18,6 +18,7 @@ const createTextTexture = (text) => {
 
 const SnoreParticles = ({ count = 3 }) => {
   const groupRef = useRef();
+  const renderedLastFrameRef = useRef(true);
   const texture = useMemo(() => createTextTexture("Z"), []);
   
   useEffect(() => () => texture.dispose(), [texture]);
@@ -38,6 +39,10 @@ const SnoreParticles = ({ count = 3 }) => {
   );
 
   useFrame((_, delta) => {
+    const wasRendered = renderedLastFrameRef.current;
+    renderedLastFrameRef.current = false;
+    if (!wasRendered) return;
+
     particlesRef.current.forEach((p) => {
       p.position.y += p.speed;
       p.life += delta;
@@ -66,6 +71,7 @@ const SnoreParticles = ({ count = 3 }) => {
         <sprite
           key={i}
           ref={(el) => (p.sprite = el)}
+          onBeforeRender={i === 0 ? () => { renderedLastFrameRef.current = true; } : undefined}
           scale={[0.1, 0.1, 0.1]}
         >
           <spriteMaterial

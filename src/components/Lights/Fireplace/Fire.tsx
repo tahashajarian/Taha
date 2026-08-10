@@ -74,6 +74,7 @@ export default function FireCube() {
 /* FIRE MESH */
 function Fire({ color = 0xeeeeee, isUltraLow = false, isMedium = false, ...props }) {
   const ref = useRef<THREE.Mesh>(null);
+  const renderedLastFrameRef = useRef(true);
   const texture = useLoader(THREE.TextureLoader, "/textures/fire.png");
 
   // convert color to THREE.Color once
@@ -110,13 +111,15 @@ function Fire({ color = 0xeeeeee, isUltraLow = false, isMedium = false, ...props
 
   // animation loop: skip or throttle based on quality
   useFrame((state, delta) => {
+    const wasRendered = renderedLastFrameRef.current;
+    renderedLastFrameRef.current = false;
     const mesh = ref.current;
     if (!mesh) return;
     const mat = mesh.material as THREE.ShaderMaterial;
     if (!mat || !mat.uniforms) return;
 
     // If ultra-low, do nothing (we hid mesh above)
-    if (isUltraLow) return;
+    if (isUltraLow || !wasRendered) return;
 
     // If medium, advance time slower to reduce work
     if (isMedium) {
@@ -136,7 +139,13 @@ function Fire({ color = 0xeeeeee, isUltraLow = false, isMedium = false, ...props
   });
 
   return (
-    <mesh ref={ref} {...props} scale={new THREE.Vector3(1.2, 2, 1.2)} position={[0, 0, 0]}>
+    <mesh
+      ref={ref}
+      {...props}
+      scale={new THREE.Vector3(1.2, 2, 1.2)}
+      position={[0, 0, 0]}
+      onBeforeRender={() => { renderedLastFrameRef.current = true; }}
+    >
       <boxGeometry args={[1, 1, 1]} />
       {/* your custom shader material (from extend) */}
       <fireMaterial transparent={!isUltraLow} opacity={1} side={THREE.DoubleSide} />

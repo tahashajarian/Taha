@@ -70,7 +70,7 @@ export default function GamesText() {
       },
       {
         label: "Earth",
-        link: "https://taha-shajarian.ir/projects/earth",
+        link: "",
         texture: textureMap.earth,
         margin: -0.3,
         space: 0.5,

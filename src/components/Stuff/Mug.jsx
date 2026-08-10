@@ -53,6 +53,7 @@ export default function Mug(props) {
   const { gl } = useThree()
   const quality = useGraphicsSettings((s) => s.quality)
   const group = useRef()
+  const renderedLastFrameRef = useRef(true)
   const steamParticles = useRef(
     Array.from({ length: PARTICLE_COUNT }, () => {
       const particle = createSteamParticle()
@@ -72,8 +73,10 @@ export default function Mug(props) {
   }, [gl, smokeTexture])
 
   useFrame(({ clock }, delta) => {
+    const wasRendered = renderedLastFrameRef.current
+    renderedLastFrameRef.current = false
     // Skip steam animation only on ultra-low quality
-    if (quality === "ultra-low") return
+    if (quality === "ultra-low" || !wasRendered) return
 
     const dt = Math.min(delta, MAX_FRAME_DELTA)
     const elapsed = clock.elapsedTime
@@ -121,7 +124,13 @@ export default function Mug(props) {
 
   return (
     <group {...props} ref={group} dispose={null} scale={0.6} rotation={[0, Math.PI / 2, 0]}>
-      <mesh castShadow receiveShadow geometry={nodes.Mug.geometry} material={nodes.Mug.material} />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Mug.geometry}
+        material={nodes.Mug.material}
+        onBeforeRender={() => { renderedLastFrameRef.current = true }}
+      />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
         <circleGeometry args={[0.079, 16]} />

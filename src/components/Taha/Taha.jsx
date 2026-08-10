@@ -1,4 +1,43 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
+import * as THREE from "three";
+
+const SoftCharacterShadow = () => {
+  const texture = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 64;
+    const context = canvas.getContext("2d");
+    const gradient = context.createRadialGradient(32, 32, 2, 32, 32, 30);
+    gradient.addColorStop(0, "rgba(0,0,0,0.65)");
+    gradient.addColorStop(0.55, "rgba(0,0,0,0.3)");
+    gradient.addColorStop(1, "rgba(0,0,0,0)");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, 64, 64);
+
+    const next = new THREE.CanvasTexture(canvas);
+    next.colorSpace = THREE.SRGBColorSpace;
+    return next;
+  }, []);
+
+  useEffect(() => () => texture.dispose(), [texture]);
+
+  return (
+    <mesh
+      position={[0, 0.012, 0]}
+      rotation={[-Math.PI / 2, 0, 0]}
+      scale={[0.48, 0.32, 1]}
+      renderOrder={1}
+    >
+      <circleGeometry args={[1, 32]} />
+      <meshBasicMaterial
+        map={texture}
+        transparent
+        opacity={0.5}
+        depthWrite={false}
+        toneMapped={false}
+      />
+    </mesh>
+  );
+};
 
 const Taha = ({ charRef, nodes, materials }) => {
   return (
@@ -9,6 +48,7 @@ const Taha = ({ charRef, nodes, materials }) => {
       dispose={null}
       frustumCulled={false}
     >
+      <SoftCharacterShadow />
       <group receiveShadow castShadow name="Scene">
         <group
           receiveShadow

@@ -8,6 +8,7 @@ const Birds = ({ baseRadius = 1.5, speed = 2.5 }) => {
   const birdCountRef = useRef(Math.floor(Math.random() * 19) + 1)
   const zOffsetRef = useRef(Math.random() * 10)
   const birdPositionsRef = useRef([])
+  const birdRefs = useRef([])
 
   const generatePositions = () => {
     const count = Math.floor(Math.random() * 19) + 1
@@ -43,13 +44,18 @@ const Birds = ({ baseRadius = 1.5, speed = 2.5 }) => {
         Math.max(wallSize / 2 + zOffsetRef.current, wallSize / 2 + 4)
       )
     }
+
+    for (let i = 0; i < birdRefs.current.length; i += 1) {
+      const bird = birdRefs.current[i]
+      if (bird) bird.rotation.x = Math.cos(time + i * 0.37)
+    }
   })
 
   return (
     <group ref={groupRef}>
       {birdPositionsRef.current.map(([x, y, z], i) => (
         <group key={i} position={[x, y, z]}>
-          <Bird />
+          <Bird groupRef={(node) => { birdRefs.current[i] = node }} />
         </group>
       ))}
     </group>
