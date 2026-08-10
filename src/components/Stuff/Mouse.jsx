@@ -18,6 +18,8 @@ const FINGERTIP_RELEASE_DISTANCE = 0.15
 const FOLLOW_DAMPING = 14
 const SECOND_CONTACT_Z_CORRECTION = -0.035
 
+export const mouseInteractionRef = { current: false }
+
 const dampMouseHome = (group, smoothing) => {
   group.position.x = THREE.MathUtils.lerp(group.position.x, 0, smoothing)
   group.position.z = THREE.MathUtils.lerp(group.position.z, 0, smoothing)
@@ -42,6 +44,7 @@ const Mouse = (props) => {
     const parent = group?.parent
     if (!group || !fingertip || !palmControl || !parent) {
       trackingRef.current.attached = false
+      mouseInteractionRef.current = false
       return
     }
 
@@ -50,6 +53,7 @@ const Mouse = (props) => {
     if (animation !== "typing") {
       trackingRef.current.attached = false
       trackingRef.current.contactIndex = 0
+      mouseInteractionRef.current = false
       dampMouseHome(group, smoothing)
       return
     }
@@ -65,15 +69,18 @@ const Mouse = (props) => {
 
     if (!tracking.attached) {
       if (fingertipDistance > FINGERTIP_ATTACH_DISTANCE) {
+        mouseInteractionRef.current = false
         dampMouseHome(group, smoothing)
         return
       }
       tracking.attached = true
+      mouseInteractionRef.current = true
       tracking.contactIndex = (tracking.contactIndex % 2) + 1
       tracking.offsetX = mouseWorld.x - palmControlWorld.x
       tracking.offsetZ = mouseWorld.z - palmControlWorld.z
     } else if (fingertipDistance > FINGERTIP_RELEASE_DISTANCE) {
       tracking.attached = false
+      mouseInteractionRef.current = false
       dampMouseHome(group, smoothing)
       return
     }
