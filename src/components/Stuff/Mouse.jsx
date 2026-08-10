@@ -14,8 +14,9 @@ const targetLocal = new THREE.Vector3()
 const MAX_MOUSE_X = 0.11
 const MAX_MOUSE_Z = 0.09
 const FINGERTIP_ATTACH_DISTANCE = 0.12
-const FINGERTIP_RELEASE_DISTANCE = FINGERTIP_ATTACH_DISTANCE * 1.6
+const FINGERTIP_RELEASE_DISTANCE = 0.15
 const FOLLOW_DAMPING = 14
+const SECOND_CONTACT_Z_CORRECTION = -0.035
 
 const dampMouseHome = (group, smoothing) => {
   group.position.x = THREE.MathUtils.lerp(group.position.x, 0, smoothing)
@@ -29,7 +30,12 @@ const Mouse = (props) => {
   const palmControl = characterNodes.RightHandMiddle1
   const animation = useCharacterAnimationsStore((s) => s.animation)
   const groupRef = useRef(null)
-  const trackingRef = useRef({ attached: false, offsetX: 0, offsetZ: 0 })
+  const trackingRef = useRef({
+    attached: false,
+    offsetX: 0,
+    offsetZ: 0,
+    contactIndex: 0,
+  })
 
   useFrame((_, delta) => {
     const group = groupRef.current
@@ -43,6 +49,7 @@ const Mouse = (props) => {
 
     if (animation !== "typing") {
       trackingRef.current.attached = false
+      trackingRef.current.contactIndex = 0
       dampMouseHome(group, smoothing)
       return
     }
@@ -62,6 +69,7 @@ const Mouse = (props) => {
         return
       }
       tracking.attached = true
+      tracking.contactIndex = (tracking.contactIndex % 2) + 1
       tracking.offsetX = mouseWorld.x - palmControlWorld.x
       tracking.offsetZ = mouseWorld.z - palmControlWorld.z
     } else if (fingertipDistance > FINGERTIP_RELEASE_DISTANCE) {
@@ -77,6 +85,9 @@ const Mouse = (props) => {
     )
     targetLocal.copy(targetWorld)
     parent.worldToLocal(targetLocal)
+    if (tracking.contactIndex === 2) {
+      targetLocal.z += SECOND_CONTACT_Z_CORRECTION
+    }
     targetLocal.x = THREE.MathUtils.clamp(
       targetLocal.x,
       -MAX_MOUSE_X,
