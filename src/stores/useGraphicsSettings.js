@@ -9,7 +9,7 @@ const cancelHighTransition = () => {
 
 const getDPR = () =>
   typeof window !== 'undefined'
-    ? Math.min(window.devicePixelRatio, 1.5)
+    ? Math.min(window.devicePixelRatio, 1.25)
     : 1
 
 export const PRESETS = {

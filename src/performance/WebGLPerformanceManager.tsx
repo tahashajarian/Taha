@@ -1,29 +1,16 @@
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import { Texture, LinearFilter, LinearMipmapLinearFilter } from "three";
-import { useShallow } from "zustand/react/shallow";
 import { useGraphicsSettings } from "../stores/useGraphicsSettings";
 
 export default function WebGLPerformanceManager() {
   const { gl } = useThree();
-  const { pixelRatio, quality } = useGraphicsSettings(
-    useShallow((s) => ({ quality: s.quality, pixelRatio: s.pixelRatio })),
-  );
+  const quality = useGraphicsSettings((s) => s.quality);
 
   const devLog = (...args: any[]) => {
     if (process.env.NODE_ENV !== "production")
       console.log("[WebGLPerf]", ...args);
   };
-
-  // DPR handling
-  useEffect(() => {
-    if (!gl) return;
-
-    const canvas = gl.domElement;
-    gl.setPixelRatio(pixelRatio);
-    gl.setSize(canvas.clientWidth, canvas.clientHeight, false);
-    canvas.style.imageRendering = pixelRatio < 1 ? "crisp-edges" : "auto";
-  }, [gl, pixelRatio]);
 
   // Texture quality handling
   useEffect(() => {

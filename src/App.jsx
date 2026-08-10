@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import Experience from "./components/Experience";
 import Interface from "./components/UI/Interface";
 import { cameraLookAtConst } from "./constances/constances";
@@ -14,6 +14,18 @@ import { useAppStatusStore } from "./stores/useAppStatusStore";
 import { useArrowControls } from "./hooks/useArrowControls";
 import { usePaintingInit } from "./hooks/usePaintingInit";
 import { useGraphicsSettings } from "./stores/useGraphicsSettings";
+
+const VisibilityRenderControl = ({ pageVisible }) => {
+  const setFrameloop = useThree((s) => s.setFrameloop);
+  const invalidate = useThree((s) => s.invalidate);
+
+  useEffect(() => {
+    setFrameloop(pageVisible ? "always" : "never");
+    if (pageVisible) invalidate();
+  }, [pageVisible, setFrameloop, invalidate]);
+
+  return null;
+};
 
 function App() {
   const [pageVisible, setPageVisible] = React.useState(
@@ -62,7 +74,7 @@ function App() {
             camera={{ position: [0, 3, 8], fov: 50 }}
             dpr={pixelRatio}
             style={{ background: "rgb(42 50 60)" }}
-            frameloop={pageVisible ? "always" : "never"}
+            frameloop="always"
             onPointerMissed={() => (document.body.style.cursor = "default")}
             gl={{
               antialias: true,
@@ -71,6 +83,7 @@ function App() {
               toneMapping: NoToneMapping,
             }}
           >
+            <VisibilityRenderControl pageVisible={pageVisible} />
             <Experience />
             <HandlePerformance />
             <ProgressTracker
