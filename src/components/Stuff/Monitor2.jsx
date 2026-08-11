@@ -12,6 +12,8 @@ import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore"
 import { mouseInteractionRef } from "./Mouse"
 
+export const monitorTypingRef = { current: false }
+
 // ✅ init once (module scope)
 RectAreaLightUniformsLib.init()
 
@@ -214,17 +216,21 @@ const useCodingScreen = (quality, isWorking) => {
   useFrame((_, delta) => {
     const wasRendered = renderedLastFrameRef.current
     renderedLastFrameRef.current = false
-    if (!wasRendered || !isWorking || mouseInteractionRef.current) return
+    if (!wasRendered || !isWorking || mouseInteractionRef.current) {
+      monitorTypingRef.current = false
+      return
+    }
 
     screenTimeRef.current += Math.min(delta, 0.1)
     const elapsed = screenTimeRef.current
+    const typingDuration = CODE_TEXT.length / 22
+    const loopDuration = typingDuration + 4
+    const loopTime = elapsed % loopDuration
+    monitorTypingRef.current = loopTime < typingDuration
     const interval =
       quality === "high" ? 1 / 20 : quality === "medium" ? 1 / 15 : 1 / 10
     if (elapsed - updateRef.current.lastTime < interval) return
 
-    const typingDuration = CODE_TEXT.length / 22
-    const loopDuration = typingDuration + 4
-    const loopTime = elapsed % loopDuration
     const naturalTypingPosition =
       loopTime * 22 + Math.sin(loopTime * 2.4) * 2 + Math.sin(loopTime * 0.7) * 3
     const characterCount = Math.min(

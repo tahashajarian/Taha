@@ -11,8 +11,12 @@ const PaintingModal = ({ modalIsOpen, closeModal }) => {
     setPaintingImage(imageData);
   };
   return (
-    <Modal isOpen={modalIsOpen} onClose={closeModal}>
-      <div className="bg-black max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl">
+    <Modal
+      isOpen={modalIsOpen}
+      onClose={closeModal}
+      className="!max-w-3xl !p-3 sm:!p-6"
+    >
+      <div className="w-full">
         <PaintingCanvas
           width={4}
           height={3}

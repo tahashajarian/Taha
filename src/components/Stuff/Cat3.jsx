@@ -1,6 +1,5 @@
 import React, { useMemo, useRef, memo } from "react";
 import { useGLTF } from "@react-three/drei";
-import Sound from "./Sound";
 import SnoreParticles from "./SnoringParticles";
 import * as THREE from "three";
 
@@ -58,7 +57,6 @@ export const Cat3 = (props) => {
 
       <SnoreParticles />
 
-      <Sound url="/audio/cat.mp3" isPlaying={true} volume={8.0} />
     </group>
   );
 };

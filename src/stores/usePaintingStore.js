@@ -1,5 +1,24 @@
 import { create } from "zustand";
 
+let saveTimer;
+
+const savePainting = async (image) => {
+  try {
+    const res = await fetch(
+      "https://taha-shajarian.ir/server/save_painting.php",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ image_data: image }),
+      }
+    );
+    const text = await res.text();
+    console.log("Saved painting:", text);
+  } catch (err) {
+    console.error("Error saving painting:", err);
+  }
+};
+
 export const usePaintingStore = create((set, get) => ({
   paintingImage: "",
   loading: true, // CHANGE: Start with loading=true to avoid flash
@@ -8,24 +27,12 @@ export const usePaintingStore = create((set, get) => ({
   brushSize: 5,
   canvasRef: { current: null },
 
-  setPaintingImage: async (image) => {
+  setPaintingImage: (image) => {
     if (image === get().paintingImage) return;
     set({ paintingImage: image });
     if (!image) return;
-    try {
-      const res = await fetch(
-        "https://taha-shajarian.ir/server/save_painting.php",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({ image_data: image }),
-        }
-      );
-      const text = await res.text();
-      console.log("Saved painting:", text);
-    } catch (err) {
-      console.error("Error saving painting:", err);
-    }
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => savePainting(image), 700);
   },
 
   fetchPainting: async () => {

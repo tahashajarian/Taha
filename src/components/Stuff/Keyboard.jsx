@@ -3,6 +3,7 @@ import { useGLTF } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import * as THREE from "three"
 import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
+import KeyboardSound from "./KeyboardSound"
 
 /* ----------------- Keyboard ----------------- */
 const Keyboard = (props) => {
@@ -90,13 +91,14 @@ const Keyboard = (props) => {
       m.roughness = o?.roughness ?? m.roughness
       m.envMapIntensity = o?.envMapIntensity ?? m.envMapIntensity
     } else {
-      // low/medium quality overrides
+      // Low/medium only simplify reflections; RGB key lighting stays enabled.
       m.metalness = 0.6
       m.roughness = quality === "medium" ? 0.4 : 0.5
       m.envMapIntensity = quality === "medium" ? 0.8 : 0.4
-      m.emissive.setRGB(0, 0, 0)
-      m.emissiveIntensity = 0
     }
+    m.emissive.setRGB(1, 1, 1)
+    m.emissiveIntensity =
+      quality === "high" ? 1.35 : quality === "medium" ? 0.9 : 0.65
     // note: we intentionally mutate the gltf material once here,
     // that's fine because we avoid doing it every render.
   }, [keyboardMaterial, quality, useHighEffects])
@@ -125,6 +127,7 @@ const Keyboard = (props) => {
         material={keyboardMaterial}
         rotation={[0, Math.PI / 2, 0]}
       />
+      <KeyboardSound />
     </group>
   )
 }

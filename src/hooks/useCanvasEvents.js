@@ -1,31 +1,27 @@
 import { useEffect, useRef } from "react";
 
+const BASE_BRUSH_WIDTH = 600;
+
 const useCanvasEvents = (
   canvasRef,
-  isPainting,
-  setIsPainting,
   currentColor,
   brushSize,
   onSave,
   brushType,
+  onStrokeStart,
 ) => {
-  const isPaintingRef = useRef(isPainting);
+  const isPaintingRef = useRef(false);
   const drawConfigRef = useRef({ currentColor, brushSize, brushType });
-  const onSaveRef = useRef(onSave);
-  const touchOptions = useRef({ passive: false });
-  const coordsCache = useRef({ clientX: 0, clientY: 0 }); // ← OPTIMIZATION: reuse coords
-
-  useEffect(() => {
-    isPaintingRef.current = isPainting;
-  }, [isPainting]);
+  const callbacksRef = useRef({ onSave, onStrokeStart });
+  const coordsRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     drawConfigRef.current = { currentColor, brushSize, brushType };
   }, [currentColor, brushSize, brushType]);
 
   useEffect(() => {
-    onSaveRef.current = onSave;
-  }, [onSave]);
+    callbacksRef.current = { onSave, onStrokeStart };
+  }, [onSave, onStrokeStart]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -36,151 +32,120 @@ const useCanvasEvents = (
 
     const getCoords = (event) => {
       const rect = canvas.getBoundingClientRect();
-      if (event.type === "touchmove" || event.type === "touchstart") {
-        coordsCache.current.clientX = event.touches[0].clientX - rect.left;
-        coordsCache.current.clientY = event.touches[0].clientY - rect.top;
-      } else {
-        coordsCache.current.clientX = event.clientX - rect.left;
-        coordsCache.current.clientY = event.clientY - rect.top;
-      }
-      return coordsCache.current; // ← OPTIMIZATION: return cached object
+      coordsRef.current.x =
+        (event.clientX - rect.left) * (canvas.width / rect.width);
+      coordsRef.current.y =
+        (event.clientY - rect.top) * (canvas.height / rect.height);
+      return coordsRef.current;
     };
 
     const draw = (event) => {
       if (!isPaintingRef.current) return;
-
       if (event.cancelable) event.preventDefault();
 
-      const coords = getCoords(event);
-      const clientX = coords.clientX;
-      const clientY = coords.clientY;
+      const { x, y } = getCoords(event);
       const { currentColor: color, brushSize: size, brushType: type } =
         drawConfigRef.current;
+      const logicalSize = size * (canvas.width / BASE_BRUSH_WIDTH);
 
       context.strokeStyle = color;
-      context.lineWidth = size;
+      context.fillStyle = color;
+      context.lineWidth = logicalSize;
 
       switch (type) {
-        case "round":
-          context.lineCap = "round";
-          context.lineTo(clientX, clientY);
-          context.stroke();
-          context.beginPath();
-          context.moveTo(clientX, clientY);
-          break;
-
-        case "square":
-          context.lineCap = "butt";
-          context.lineTo(clientX, clientY);
-          context.stroke();
-          context.beginPath();
-          context.moveTo(clientX, clientY);
-          break;
-
         case "triangle":
-          context.save();
           context.beginPath();
-          context.moveTo(clientX, clientY - size / 2);
-          context.lineTo(clientX + size / 2, clientY + size / 2);
-          context.lineTo(clientX - size / 2, clientY + size / 2);
+          context.moveTo(x, y - logicalSize / 2);
+          context.lineTo(x + logicalSize / 2, y + logicalSize / 2);
+          context.lineTo(x - logicalSize / 2, y + logicalSize / 2);
           context.closePath();
-          context.fillStyle = color;
           context.fill();
-          context.restore();
-          break;
-
-        case "line":
-          context.lineCap = "square";
-          context.lineTo(clientX, clientY);
-          context.stroke();
-          context.beginPath();
-          context.moveTo(clientX, clientY);
           break;
 
         case "circle":
           context.beginPath();
-          context.arc(clientX, clientY, size / 2, 0, Math.PI * 2);
-          context.fillStyle = color;
+          context.arc(x, y, logicalSize / 2, 0, Math.PI * 2);
           context.fill();
           context.beginPath();
-          context.moveTo(clientX, clientY);
+          context.moveTo(x, y);
           break;
 
         case "spray":
-          context.fillStyle = color;
-          for (let i = 0; i < 10; i++) {
-            const offsetX = (Math.random() - 0.5) * size;
-            const offsetY = (Math.random() - 0.5) * size;
-            context.fillRect(clientX + offsetX, clientY + offsetY, 1, 1);
+          for (let index = 0; index < 10; index += 1) {
+            const offsetX = (Math.random() - 0.5) * logicalSize;
+            const offsetY = (Math.random() - 0.5) * logicalSize;
+            context.fillRect(x + offsetX, y + offsetY, 2, 2);
           }
           context.beginPath();
-          context.moveTo(clientX, clientY);
+          context.moveTo(x, y);
           break;
 
         case "pattern":
-          context.fillStyle = color;
-          for (let i = 0; i < size; i += 5) {
-            context.fillRect(clientX + i, clientY + i, 5, 5);
+          for (let offset = 0; offset < logicalSize; offset += 10) {
+            context.fillRect(x + offset, y + offset, 8, 8);
           }
           context.beginPath();
-          context.moveTo(clientX, clientY);
+          context.moveTo(x, y);
           break;
 
         case "calligraphy":
           context.lineCap = "butt";
-          context.lineTo(clientX, clientY);
+          context.lineTo(x, y);
           context.stroke();
           context.beginPath();
-          context.moveTo(clientX, clientY);
-          context.lineWidth = size / 2;
-          context.lineTo(clientX + size / 2, clientY + size / 2);
+          context.moveTo(x, y);
+          context.lineWidth = logicalSize / 2;
+          context.lineTo(x + logicalSize / 2, y + logicalSize / 2);
           context.stroke();
-          context.lineWidth = size;
+          context.beginPath();
+          context.moveTo(x, y);
           break;
 
         default:
-          context.lineCap = "round";
-          context.lineTo(clientX, clientY);
+          context.lineCap = type === "square" || type === "line" ? "butt" : "round";
+          context.lineJoin = "round";
+          context.lineTo(x, y);
           context.stroke();
           context.beginPath();
-          context.moveTo(clientX, clientY);
+          context.moveTo(x, y);
           break;
       }
     };
 
     const startPosition = (event) => {
+      if (event.button !== undefined && event.button !== 0) return;
       event.preventDefault();
+      canvas.setPointerCapture?.(event.pointerId);
+      callbacksRef.current.onStrokeStart?.();
       isPaintingRef.current = true;
-      setIsPainting(true);
+      const { x, y } = getCoords(event);
+      context.beginPath();
+      context.moveTo(x, y);
       draw(event);
     };
 
-    const endPosition = () => {
+    const endPosition = (event) => {
       if (!isPaintingRef.current) return;
       isPaintingRef.current = false;
-      setIsPainting(false);
-      onSaveRef.current(canvas.toDataURL());
       context.closePath();
+      if (canvas.hasPointerCapture?.(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+      callbacksRef.current.onSave?.(canvas.toDataURL("image/png"));
     };
 
-    canvas.addEventListener("mousedown", startPosition);
-    canvas.addEventListener("mousemove", draw);
-    canvas.addEventListener("mouseup", endPosition);
-    canvas.addEventListener("mouseleave", endPosition);
-    canvas.addEventListener("touchstart", startPosition, touchOptions.current);
-    canvas.addEventListener("touchmove", draw, touchOptions.current);
-    canvas.addEventListener("touchend", endPosition);
+    canvas.addEventListener("pointerdown", startPosition);
+    canvas.addEventListener("pointermove", draw);
+    canvas.addEventListener("pointerup", endPosition);
+    canvas.addEventListener("pointercancel", endPosition);
 
     return () => {
-      canvas.removeEventListener("mousedown", startPosition);
-      canvas.removeEventListener("mousemove", draw);
-      canvas.removeEventListener("mouseup", endPosition);
-      canvas.removeEventListener("mouseleave", endPosition);
-      canvas.removeEventListener("touchstart", startPosition, touchOptions.current);
-      canvas.removeEventListener("touchmove", draw, touchOptions.current);
-      canvas.removeEventListener("touchend", endPosition);
+      canvas.removeEventListener("pointerdown", startPosition);
+      canvas.removeEventListener("pointermove", draw);
+      canvas.removeEventListener("pointerup", endPosition);
+      canvas.removeEventListener("pointercancel", endPosition);
     };
-  }, [canvasRef, setIsPainting]);
+  }, [canvasRef]);
 };
 
 export default useCanvasEvents;

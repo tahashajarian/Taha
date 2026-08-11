@@ -1,10 +1,13 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import useCanvasEvents from "../../hooks/useCanvasEvents";
 import ColorAndBrushSelector from "./ColorAndBrushSelector";
 import { usePaintingStore } from "../../stores/usePaintingStore";
 
+const CANVAS_WIDTH = 1200;
+const CANVAS_HEIGHT = 900;
+const HISTORY_LIMIT = 12;
+
 const PaintingCanvas = ({ width, height, onSave }) => {
-  const containerRef = useRef(null);
   const paintingImage = usePaintingStore((s) => s.paintingImage);
   const canvasRef = usePaintingStore((s) => s.canvasRef);
   const brushType = usePaintingStore((s) => s.brushType);
@@ -13,79 +16,151 @@ const PaintingCanvas = ({ width, height, onSave }) => {
   const setBrushType = usePaintingStore((s) => s.setBrushType);
   const setBrushColor = usePaintingStore((s) => s.setBrushColor);
   const setBrushSize = usePaintingStore((s) => s.setBrushSize);
-  const [isPainting, setIsPainting] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const cursorRef = useRef(null);
+  const currentImageRef = useRef("");
+  const historyRef = useRef({ undo: [], redo: [] });
+  const [historyState, setHistoryState] = useState({
+    canUndo: false,
+    canRedo: false,
+  });
 
-  useCanvasEvents(
-    canvasRef,
-    isPainting,
-    setIsPainting,
-    brushColor,
-    brushSize,
-    onSave,
-    brushType
-  );
+  const updateHistoryState = useCallback(() => {
+    setHistoryState({
+      canUndo: historyRef.current.undo.length > 0,
+      canRedo: historyRef.current.redo.length > 0,
+    });
+  }, []);
+
+  const drawImage = useCallback((imageData, done) => {
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext("2d");
+    if (!canvas || !context) return;
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    if (!imageData) {
+      done?.();
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => {
+      const scale = Math.min(
+        canvas.width / image.naturalWidth,
+        canvas.height / image.naturalHeight,
+      );
+      const drawWidth = image.naturalWidth * scale;
+      const drawHeight = image.naturalHeight * scale;
+      context.drawImage(
+        image,
+        (canvas.width - drawWidth) / 2,
+        (canvas.height - drawHeight) / 2,
+        drawWidth,
+        drawHeight,
+      );
+      done?.();
+    };
+    image.src = imageData;
+  }, [canvasRef]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !containerRef.current) return;
-    
-    const context = canvas.getContext("2d");
+    if (!canvas) return;
 
-    const tempImage = new Image();
-    tempImage.src = paintingImage;
-    tempImage.onload = function () {
-      canvas.width = containerRef.current.clientWidth;
-      canvas.height = containerRef.current.clientHeight;
-      context.drawImage(tempImage, 0, 0, canvas.width, canvas.height);
-    };
-  }, [paintingImage, canvasRef]);
+    if (paintingImage === currentImageRef.current && currentImageRef.current) {
+      return;
+    }
+    if (canvas.width !== CANVAS_WIDTH || canvas.height !== CANVAS_HEIGHT) {
+      canvas.width = CANVAS_WIDTH;
+      canvas.height = CANVAS_HEIGHT;
+    }
+    if (!paintingImage) {
+      currentImageRef.current = canvas.toDataURL("image/png");
+      return;
+    }
 
-  const onMouseMoveCanvas = (event) => {
-    setCursorPosition({ x: event.clientX, y: event.clientY });
-  };
+    drawImage(paintingImage, () => {
+      currentImageRef.current = paintingImage;
+      historyRef.current = { undo: [], redo: [] };
+      updateHistoryState();
+    });
+  }, [canvasRef, drawImage, paintingImage, updateHistoryState]);
 
-  const clearCanvas = () => {
+  const rememberCurrentImage = useCallback(() => {
+    const imageData = currentImageRef.current;
+    if (!imageData) return;
+    const undo = historyRef.current.undo;
+    if (undo[undo.length - 1] !== imageData) undo.push(imageData);
+    if (undo.length > HISTORY_LIMIT) undo.shift();
+    historyRef.current.redo = [];
+    updateHistoryState();
+  }, [updateHistoryState]);
+
+  const saveImage = useCallback((imageData) => {
+    currentImageRef.current = imageData;
+    onSave(imageData);
+  }, [onSave]);
+
+  useCanvasEvents(
+    canvasRef,
+    brushColor,
+    brushSize,
+    saveImage,
+    brushType,
+    rememberCurrentImage,
+  );
+
+  const restoreImage = useCallback((direction) => {
+    const source = historyRef.current[direction];
+    if (!source.length) return;
+
+    const target = direction === "undo" ? "redo" : "undo";
+    historyRef.current[target].push(currentImageRef.current);
+    const imageData = source.pop();
+    drawImage(imageData, () => {
+      saveImage(imageData);
+      updateHistoryState();
+    });
+  }, [drawImage, saveImage, updateHistoryState]);
+
+  const moveCursor = (event) => {
+    const cursor = cursorRef.current;
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    onSave(canvas.toDataURL());
+    if (!cursor || !canvas || event.pointerType === "touch") return;
+    const displaySize = brushSize * (canvas.getBoundingClientRect().width / 600);
+    cursor.style.width = `${displaySize}px`;
+    cursor.style.height = `${displaySize}px`;
+    cursor.style.left = `${event.clientX}px`;
+    cursor.style.top = `${event.clientY}px`;
+    cursor.style.opacity = "1";
   };
-
-  const cursorStyle = useMemo(() => ({
-    position: "fixed",
-    width: `${brushSize}px`,
-    height: `${brushSize}px`,
-    borderRadius: "50%",
-    backgroundColor: brushColor,
-    border:
-      brushColor === "white" || brushColor === "#ffffff"
-        ? "1px solid black"
-        : "1px solid white",
-    pointerEvents: "none",
-    zIndex: 1000,
-    transform: "translate(-50%, -50%)",
-    left: `${cursorPosition.x}px`,
-    top: `${cursorPosition.y}px`,
-  }), [brushSize, brushColor, cursorPosition.x, cursorPosition.y]);
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full relative"
-      style={{ aspectRatio: `${width} / ${height}` }}
-    >
-      <canvas
-        onMouseMove={onMouseMoveCanvas}
-        ref={canvasRef}
-        style={{
-          border: "1px solid black",
-          width: "100%",
-          height: "100%",
-          cursor: "none",
-        }}
-      />
-      <div className="absolute" style={cursorStyle} />
+    <div className="w-full">
+      <div
+        className="relative w-full overflow-hidden rounded-t-lg border border-white/20 bg-black"
+        style={{ aspectRatio: `${width} / ${height}` }}
+      >
+        <canvas
+          ref={canvasRef}
+          width={CANVAS_WIDTH}
+          height={CANVAS_HEIGHT}
+          onPointerMove={moveCursor}
+          onPointerLeave={() => {
+            if (cursorRef.current) cursorRef.current.style.opacity = "0";
+          }}
+          className="block h-full w-full"
+          style={{ cursor: "none", touchAction: "none" }}
+        />
+        <div
+          ref={cursorRef}
+          className="pointer-events-none fixed z-[1000] rounded-full border opacity-0"
+          style={{
+            backgroundColor: brushColor,
+            borderColor: brushColor === "#ffffff" ? "black" : "white",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      </div>
       <ColorAndBrushSelector
         setBrushSize={setBrushSize}
         setCurrentColor={setBrushColor}
@@ -93,7 +168,10 @@ const PaintingCanvas = ({ width, height, onSave }) => {
         brushSize={brushSize}
         brushType={brushType}
         setBrushType={setBrushType}
-        clearCanvas={clearCanvas}
+        undo={() => restoreImage("undo")}
+        redo={() => restoreImage("redo")}
+        canUndo={historyState.canUndo}
+        canRedo={historyState.canRedo}
       />
     </div>
   );
