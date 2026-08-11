@@ -10,6 +10,7 @@ import { useGraphicsSettings } from "../../../stores/useGraphicsSettings";
 extend({ FireMaterial });
 
 const LOG_BASE_COLOR = new THREE.Color("red");
+const LOG_LOW_COLOR = new THREE.Color("#24130d");
 const LOG_HOT_COLOR = new THREE.Color("#ff6a24");
 const logColor = new THREE.Color();
 
@@ -22,13 +23,13 @@ export default function FireCube() {
   const liveSparkCountRef = useRef(0);
   const quality = useGraphicsSettings((s) => s.quality);
   const isLowQuality = quality === "low" || quality === "ultra-low";
-  const isUltraLow = quality === "ultra-low";
   const isMedium = quality === "medium";
 
   // fire colors / emissive strength based on quality
-  const fireColor = isUltraLow ? "black" : "red";
-  const fireEmissive = isUltraLow ? 0 : isLowQuality ? 0.6 : 1.5;
-  const baseLightIntensity = isUltraLow ? 0 : isLowQuality ? 0.8 : 6;
+  const fireColor = isLowQuality ? "#24130d" : "red";
+  const logBaseColor = isLowQuality ? LOG_LOW_COLOR : LOG_BASE_COLOR;
+  const fireEmissive = isLowQuality ? 0 : 1.5;
+  const baseLightIntensity = isLowQuality ? 0 : 6;
   const sparkCount = isLowQuality ? 0 : isMedium ? 7 : 10;
   const sparkPositions = useMemo(
     () => new Float32Array(Math.max(sparkCount, 1) * 3),
@@ -56,13 +57,13 @@ export default function FireCube() {
     }
     logMaterialsRef.current.forEach((material) => {
       if (material) {
-        material.color.copy(LOG_BASE_COLOR);
-        material.emissive.copy(LOG_BASE_COLOR);
+        material.color.copy(logBaseColor);
+        material.emissive.copy(logBaseColor);
         material.emissiveIntensity = fireEmissive;
       }
     });
     if (sparkPointsRef.current) sparkPointsRef.current.visible = false;
-  }, [baseLightIntensity, fireEmissive, isLowQuality]);
+  }, [baseLightIntensity, fireEmissive, isLowQuality, logBaseColor]);
 
   const ignite = (event) => {
     event.stopPropagation();
@@ -101,7 +102,7 @@ export default function FireCube() {
         flameGroup.position.y = 0.8 + (scaleY - 0.8);
       }
       logColor
-        .copy(LOG_BASE_COLOR)
+        .copy(logBaseColor)
         .lerp(LOG_HOT_COLOR, Math.min(flare * 0.28, 0.28));
       logMaterialsRef.current.forEach((material) => {
         if (material) {
@@ -120,8 +121,8 @@ export default function FireCube() {
       }
       logMaterialsRef.current.forEach((material) => {
         if (material) {
-          material.color.copy(LOG_BASE_COLOR);
-          material.emissive.copy(LOG_BASE_COLOR);
+          material.color.copy(logBaseColor);
+          material.emissive.copy(logBaseColor);
           material.emissiveIntensity = fireEmissive;
         }
       });
@@ -218,7 +219,7 @@ export default function FireCube() {
         <Fire
           scale={4}
           color={0xffaa88}
-          isUltraLow={isUltraLow}
+          isUltraLow={isLowQuality}
           isMedium={isMedium}
           interactionStrengthRef={flareRef}
         />
