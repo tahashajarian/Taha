@@ -65,17 +65,18 @@ const Sofa = (props) => {
         position={[0, 0, 1.7]}
         scale={0.6}
         ref={asaliRef}
-        onPointerDown={handleDeskClick}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          document.body.style.cursor = "pointer";
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          document.body.style.cursor = "default";
-        }}
       >
-        <Asali />
+        <Asali
+          onChessPointerDown={handleDeskClick}
+          onChessPointerOver={(e) => {
+            e.stopPropagation();
+            document.body.style.cursor = "pointer";
+          }}
+          onChessPointerOut={(e) => {
+            e.stopPropagation();
+            document.body.style.cursor = "default";
+          }}
+        />
       </group>
     </group>
   );

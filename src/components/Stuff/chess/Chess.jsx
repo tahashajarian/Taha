@@ -4,9 +4,16 @@ import { a } from "@react-spring/three"
 import { useChessController } from "./useChessAnimation"
 import MoveFeedback from "./MoveFeedBack"
 
-export function Chess({ moveDuration = 600, ...props }) {
+export function Chess({
+  moveDuration = 600,
+  onPointerDown,
+  onPointerOver,
+  onPointerOut,
+  ...props
+}) {
   const { nodes, materials } = useGLTF("/models/chess.glb")
 
+  const groupRef = useRef()
   const queenRef = useRef()
   const pawnRef = useRef()
   const queenBRef = useRef()
@@ -43,9 +50,32 @@ export function Chess({ moveDuration = 600, ...props }) {
     if (queenBRef.current) queenBRef.current.scale.set(1.02, 1.02, 1.02)
   }, [])
 
+  const isFrontmostChessHit = (event) => {
+    let object = event.intersections[0]?.object
+    while (object) {
+      if (object === groupRef.current) return true
+      object = object.parent
+    }
+    return false
+  }
+
+  const handlePointerDown = (event) => {
+    if (!isFrontmostChessHit(event)) return
+    onPointerDown?.(event)
+  }
+
+  const handlePointerOver = (event) => {
+    if (!isFrontmostChessHit(event)) return
+    onPointerOver?.(event)
+  }
+
   return (
     <group
+      ref={groupRef}
       {...props}
+      onPointerDown={handlePointerDown}
+      onPointerOver={handlePointerOver}
+      onPointerOut={onPointerOut}
       scale={1.5}
       position={[-0.3, 1.12, 0]}
       rotation={[0, Math.PI, 0]}

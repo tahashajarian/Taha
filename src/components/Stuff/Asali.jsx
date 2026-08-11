@@ -3,7 +3,12 @@ import { useGLTF } from "@react-three/drei";
 import Book from "./Book";
 import { Chess } from "./chess/Chess";
 
-const Asali = (props) => {
+const Asali = ({
+  onChessPointerDown,
+  onChessPointerOver,
+  onChessPointerOut,
+  ...props
+}) => {
   const { nodes, materials } = useGLTF("/models/asali.glb", "/draco/");
   return (
     <group castShadow receiveShadow {...props} dispose={null}>
@@ -24,7 +29,11 @@ const Asali = (props) => {
           rotation={[Math.PI / 2, 0, 0]}
         />
       </group>
-      <Chess />
+      <Chess
+        onPointerDown={onChessPointerDown}
+        onPointerOver={onChessPointerOver}
+        onPointerOut={onChessPointerOut}
+      />
       <mesh
         scale={1.6}
         castShadow
