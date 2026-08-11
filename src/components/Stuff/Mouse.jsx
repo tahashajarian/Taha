@@ -123,7 +123,7 @@ const Mouse = (props) => {
       <group
         position={[0, 0.022, 0]}
         rotation={[Math.PI / 2, 0, 0]}
-        scale={1.6}
+        scale={[1.6, 1.6, 1.8]}
       >
         <mesh
           geometry={nodes.Cube001.geometry}
