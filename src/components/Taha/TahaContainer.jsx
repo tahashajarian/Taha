@@ -8,6 +8,7 @@ import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimations
 import { useArrowsStore } from "../../stores/useArrowStore";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import { useArrowControls } from "../../hooks/useArrowControls";
+import { useTourStore } from "../../stores/useTourStore";
 import { tableRotation } from "../../constances/constances";
 
 /* -------------------- CONSTANTS -------------------- */
@@ -66,6 +67,7 @@ const TahaContainer = (props) => {
   const activeAction = useRef(null);
   const typingForcedRef = useRef(false);
   const typingKeyRef = useRef(null);
+  const preWelcomeRotationRef = useRef(null);
 
   const { nodes, materials, animations } = useGLTF(
     "/models/Taha.glb",
@@ -87,9 +89,23 @@ const TahaContainer = (props) => {
 
   const modalIsOpen = useAppStatusStore((s) => s.modalIsOpen);
   const isApploaded = useAppStatusStore((s) => s.isApploaded);
+  const welcomeOpen = useAppStatusStore((s) => s.welcomeOpen);
+  const tourActive = useTourStore((s) => s.active);
   const { camera } = useThree();
 
   useArrowControls();
+
+  useEffect(() => {
+    if (!welcomeOpen || !group.current) return;
+    preWelcomeRotationRef.current = group.current.quaternion.clone();
+
+    return () => {
+      if (group.current && preWelcomeRotationRef.current) {
+        group.current.quaternion.copy(preWelcomeRotationRef.current);
+      }
+      preWelcomeRotationRef.current = null;
+    };
+  }, [welcomeOpen]);
 
   /* ---------- REGISTER ANIMATION NAMES ---------- */
   useEffect(() => {
@@ -114,6 +130,19 @@ const TahaContainer = (props) => {
     activeAction.current = null;
   }, [actions]);
 
+  /* ---------- WELCOME: IDLE, FACING THE CAMERA ---------- */
+  useEffect(() => {
+    if (!welcomeOpen || !actions || !group.current) return;
+    const idleKey = Object.keys(actions).find(
+      (key) => key.toLowerCase() === "idle",
+    );
+    if (!idleKey) return;
+
+    const idleAction = actions[idleKey];
+    idleAction.reset().fadeIn(0.15).play();
+    activeAction.current = idleAction;
+  }, [welcomeOpen, actions]);
+
   /* ---------- helper: play one action and stop all others ---------- */
   const playExclusive = (key, fade = 0.2) => {
     if (!actions) return;
@@ -129,7 +158,7 @@ const TahaContainer = (props) => {
   useEffect(() => {
     if (typingForcedRef.current) return;
     if (!actions || !group.current) return;
-    if (!isApploaded || modalIsOpen) return;
+    if (!isApploaded || modalIsOpen || welcomeOpen || tourActive) return;
     // only force if there's no movement now
     if (
       useArrowsStore.getState().forward ||
@@ -162,6 +191,8 @@ const TahaContainer = (props) => {
     actions,
     isApploaded,
     modalIsOpen,
+    welcomeOpen,
+    tourActive,
     resetArrows,
     setAnimation,
     setPosition,
@@ -196,20 +227,45 @@ const TahaContainer = (props) => {
       setPosition?.(pos);
       setRotation?.(tableRotation);
 
-      vOffset.set(0, 2.0, -3.5);
-      vOffset.applyQuaternion(group.current.quaternion);
-      camera.position.copy(group.current.position).add(vOffset);
+      if (!tourActive) {
+        vOffset.set(0, 2.0, -3.5);
+        vOffset.applyQuaternion(group.current.quaternion);
+        camera.position.copy(group.current.position).add(vOffset);
+      }
     }
 
     // normal crossfade to next
     activeAction.current?.fadeOut(0.2);
     next.reset().fadeIn(0.2).play();
     activeAction.current = next;
-  }, [animation, actions, resetArrows, setPosition, setRotation, camera]);
+  }, [
+    animation,
+    actions,
+    resetArrows,
+    setPosition,
+    setRotation,
+    camera,
+    tourActive,
+  ]);
 
   /* ---------------- MOVEMENT (camera follow intentionally removed) ---------------- */
   useFrame((_, delta) => {
     if (!group.current || modalIsOpen) return;
+    if (welcomeOpen) {
+      vCamDir.copy(camera.position).sub(group.current.position);
+      vCamDir.y = 0;
+      if (vCamDir.lengthSq() > 0.0001) {
+        qTarget.setFromAxisAngle(
+          THREE.Object3D.DEFAULT_UP,
+          Math.atan2(vCamDir.x, vCamDir.z),
+        );
+        group.current.quaternion.slerp(
+          qTarget,
+          1 - Math.exp(-6 * delta),
+        );
+      }
+      return;
+    }
     if (animation === "typing") return; // lock movement while typing
 
     // read arrows state once per frame (avoids re-subscribing)

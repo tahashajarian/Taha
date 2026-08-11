@@ -1,11 +1,14 @@
 import { useEffect, useCallback } from "react";
 import { useArrowsStore } from "../stores/useArrowStore";
+import { useTourStore } from "../stores/useTourStore";
 
 export const useArrowControls = () => {
   const setArrow = useArrowsStore((s) => s.setArrow);
+  const tourActive = useTourStore((s) => s.active);
 
   const handleKey = useCallback(
     (code, state) => {
+      if (tourActive) return;
       switch (code) {
         case "ArrowLeft":
         case "KeyA":
@@ -25,7 +28,7 @@ export const useArrowControls = () => {
           break;
       }
     },
-    [setArrow]
+    [setArrow, tourActive]
   );
 
   useEffect(() => {

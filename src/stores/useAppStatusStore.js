@@ -10,6 +10,7 @@ export const useAppStatusStore = create((set) => ({
   chessPlay: false,
   chessPlayEnd: false,
   resetChess: false,
+  welcomeOpen: true,
 
   // Accept optional value; default true -> triggers a reset
   setResetChess: (value = true) =>
@@ -32,6 +33,8 @@ export const useAppStatusStore = create((set) => ({
     }),
 
   setModalIsOpen: (value) => set((s) => (s.modalIsOpen === value ? s : { modalIsOpen: value })),
+  setWelcomeOpen: (value) =>
+    set((s) => (s.welcomeOpen === value ? s : { welcomeOpen: value })),
   setIsAppLoaded: (value) => set((s) => (s.isApploaded === value ? s : { isApploaded: value })),
   setPaintModalIsOpen: (value) =>
     set((s) => (s.paintModalIsPoen === value ? s : { paintModalIsPoen: value })),

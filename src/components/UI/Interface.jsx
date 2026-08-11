@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { cameraIdle, cameraLookAtConst } from "../../constances/constances";
 import EmailModal from "./EmailModal";
 import WelcomeMessage from "./WelcomeMessage";
@@ -9,6 +9,8 @@ import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimations
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import { useArrowsStore } from "../../stores/useArrowStore";
 import QualityTag from "./QualityTag";
+import GuidedTour from "./GuidedTour";
+import { useTourStore } from "../../stores/useTourStore";
 
 const Interface = () => {
   const animation = useCharacterAnimationsStore((s) => s.animation);
@@ -27,20 +29,35 @@ const Interface = () => {
   const setChessPlay = useAppStatusStore((s) => s.setChessPlay);
   const chessPlayEnd = useAppStatusStore((s) => s.chessPlayEnd);
   const setResetChess = useAppStatusStore((s) => s.setResetChess);
+  const showMessage = useAppStatusStore((s) => s.welcomeOpen);
+  const setShowMessage = useAppStatusStore((s) => s.setWelcomeOpen);
+  const tourActive = useTourStore((s) => s.active);
+  const startTour = useTourStore((s) => s.startTour);
 
   // grab resetArrows *without subscribing* to avoid rerenders
   const resetArrows = useArrowsStore.getState().resetArrows;
 
-  const [showMessage, setShowMessage] = useState(true);
-
   useEffect(() => {
     const isMessageShown = localStorage.getItem("welcomeMessageShown");
     if (isMessageShown) setShowMessage(false);
-  }, []);
+  }, [setShowMessage]);
 
   const handleClose = () => {
     localStorage.setItem("welcomeMessageShown", "true");
     setShowMessage(false);
+    resetArrows();
+    setChessMode(false);
+    setAnimation("typing");
+    if (!localStorage.getItem("guidedTourSeen")) {
+      startTour();
+    }
+  };
+
+  const handleStartTour = () => {
+    resetArrows();
+    setChessMode(false);
+    setAnimation("idle");
+    startTour();
   };
 
   // Button click to reset camera and exit chessMode
@@ -58,8 +75,15 @@ const Interface = () => {
       {isApploaded && (
         <>
           <QualityTag />
-          {!(modalIsOpen || showMessage || paintModalIsPoen) && !chessMode && (
+          {!(modalIsOpen || showMessage || paintModalIsPoen) && !chessMode && !tourActive && (
             <>
+              <button
+                type="button"
+                onClick={handleStartTour}
+                className="absolute right-8 top-16 rounded-xl border border-white/20 bg-black/40 px-4 py-2 text-sm font-semibold text-white/70 backdrop-blur-xl transition hover:bg-white/15 active:scale-95"
+              >
+                Tour
+              </button>
               <button
                 className="
                   absolute bottom-10 right-8
@@ -104,6 +128,7 @@ const Interface = () => {
             closeModal={() => setPaintModalIsOpen(false)}
             modalIsOpen={paintModalIsPoen}
           />
+          <GuidedTour />
         </>
       )}
       {chessMode && (
