@@ -7,8 +7,14 @@ import { wallSize } from "../../constances/constances";
 const ROOM_MARGIN = 0.35;
 const BOOK_COUNT = 54;
 const MIN_LANDING_SPACING = 0.32;
+const SOFA_BOUNDS = {
+  minX: 2,
+  maxX: 5,
+  minZ: -6.05,
+  maxZ: -4.05,
+};
 
-const createLandingTargets = () => {
+const createLandingTargets = (libraryPosition) => {
   let seed = 481516;
   const random = () => {
     seed = (seed * 16807) % 2147483647;
@@ -26,6 +32,16 @@ const createLandingTargets = () => {
         -2.3555 + random() * 0.018,
         -1.6 + random() * 3.2,
       ];
+      const worldX = candidate[0] + libraryPosition[0];
+      const worldZ = candidate[2] + libraryPosition[2];
+      if (
+        worldX >= SOFA_BOUNDS.minX &&
+        worldX <= SOFA_BOUNDS.maxX &&
+        worldZ >= SOFA_BOUNDS.minZ &&
+        worldZ <= SOFA_BOUNDS.maxZ
+      ) {
+        continue;
+      }
       let nearestDistance = Infinity;
       for (let targetIndex = 0; targetIndex < targets.length; targetIndex += 1) {
         const deltaX = candidate[0] - targets[targetIndex][0];
@@ -57,8 +73,10 @@ const Library = ({ position }) => {
     -roomLimit - position[2],
     roomLimit - position[2],
   ];
-  const landingTargets = useMemo(() => createLandingTargets(), []);
-
+  const landingTargets = useMemo(
+    () => createLandingTargets(position),
+    [position[0], position[1], position[2]],
+  );
   return (
     <group position={position}>
       <Text
