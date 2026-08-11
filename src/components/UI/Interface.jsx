@@ -80,7 +80,7 @@ const Interface = () => {
               <button
                 type="button"
                 onClick={handleStartTour}
-                className="absolute right-8 top-16 rounded-xl border border-white/20 bg-black/40 px-4 py-2 text-sm font-semibold text-white/70 backdrop-blur-xl transition hover:bg-white/15 active:scale-95"
+                className="absolute right-8 top-4 rounded-xl border border-white/20 bg-black/40 px-4 py-2 text-sm font-semibold text-white/70 backdrop-blur-xl transition hover:bg-white/15 active:scale-95"
               >
                 Tour
               </button>

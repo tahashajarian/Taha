@@ -112,7 +112,7 @@ const GuidedTour = () => {
       <button
         type="button"
         onClick={finishTour}
-        className="absolute right-4 top-16 rounded-xl border border-white/20 bg-black/45 px-4 py-2 text-sm text-white/75 backdrop-blur-xl transition hover:bg-white/15 sm:right-8"
+        className="absolute right-4 top-4 rounded-xl border border-white/20 bg-black/45 px-4 py-2 text-sm text-white/75 backdrop-blur-xl transition hover:bg-white/15 sm:right-8"
       >
         Skip tour
       </button>
