@@ -57,7 +57,7 @@ const Interface = () => {
   const handleStartTour = () => {
     resetArrows();
     setChessMode(false);
-    setAnimation("idle");
+    setAnimation("typing");
     startTour();
   };
 

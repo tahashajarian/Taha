@@ -65,6 +65,12 @@ const Book = ({
   dropBounds,
   plannedDropPosition,
 }) => {
+  const [positionX, positionY, positionZ] = position;
+  const [rotationX, rotationY, rotationZ] = rotation;
+  const dropMinX = dropBounds?.[0];
+  const dropMaxX = dropBounds?.[1];
+  const dropMinZ = dropBounds?.[2];
+  const dropMaxZ = dropBounds?.[3];
   const [dropped, setDropped] = useState(false);
   const animationRunRef = useRef(0);
   const meshRef = useRef(null);
@@ -115,23 +121,23 @@ const Book = ({
     const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
     const clampPosition = (target, limitTravel = true) => {
       const roomClamped = [
-        dropBounds ? clamp(target[0], dropBounds[0], dropBounds[1]) : target[0],
+        dropBounds ? clamp(target[0], dropMinX, dropMaxX) : target[0],
         target[1],
-        dropBounds ? clamp(target[2], dropBounds[2], dropBounds[3]) : target[2],
+        dropBounds ? clamp(target[2], dropMinZ, dropMaxZ) : target[2],
       ];
       if (!limitTravel) return roomClamped;
 
-      const deltaX = roomClamped[0] - position[0];
-      const deltaZ = roomClamped[2] - position[2];
+      const deltaX = roomClamped[0] - positionX;
+      const deltaZ = roomClamped[2] - positionZ;
       const travelDistance = Math.hypot(deltaX, deltaZ);
       const maxTravel = 1.05 + (idHash % 11) * 0.045;
       if (travelDistance <= maxTravel) return roomClamped;
 
       const travelScale = maxTravel / travelDistance;
       return [
-        position[0] + deltaX * travelScale,
+        positionX + deltaX * travelScale,
         roomClamped[1],
-        position[2] + deltaZ * travelScale,
+        positionZ + deltaZ * travelScale,
       ];
     };
     const saved = loadDrops()[id];
@@ -148,15 +154,26 @@ const Book = ({
     if (saved && saved.position && saved.rotation) {
       return { position: clampPosition(saved.position), rotation: saved.rotation };
     }
-    const x = position[0] + Math.random() * -4;
-    const z = position[2] + Math.random() * 2;
+    const x = positionX + Math.random() * -4;
+    const z = positionZ + Math.random() * 2;
     const y = -2.3555 + Math.random() * 0.02;
     const rotZ = (Math.random() - 0.5) * 0.5;
     return {
       position: clampPosition([x, y + tinyYOffset, z]),
       rotation: [Math.PI / 2, 0, rotZ * Math.PI],
     };
-  }, [dropBounds, id, idHash, plannedDropPosition, position, tinyYOffset]);
+  }, [
+    dropMaxX,
+    dropMaxZ,
+    dropMinX,
+    dropMinZ,
+    id,
+    idHash,
+    plannedDropPosition,
+    positionX,
+    positionZ,
+    tinyYOffset,
+  ]);
 
   useEffect(() => {
     const saved = loadDrops()[id];
@@ -164,8 +181,8 @@ const Book = ({
   }, [id]);
 
   const [{ pos, rot, scale }, api] = useSpring(() => ({
-    pos: [position[0], position[1], position[2]],
-    rot: rotation,
+    pos: [positionX, positionY, positionZ],
+    rot: [rotationX, rotationY, rotationZ],
     scale: [1, 1, 1],
     config: { mass: 1, tension: 120, friction: 18 },
   }));
@@ -254,7 +271,7 @@ const Book = ({
 
       api.stop();
       const velocityY = Math.sqrt(2 * GRAVITY * motionProfile.launchY);
-      const verticalDelta = impactPos[1] - position[1];
+      const verticalDelta = impactPos[1] - positionY;
       const duration =
         (velocityY +
           Math.sqrt(velocityY * velocityY - 2 * GRAVITY * verticalDelta)) /
@@ -264,31 +281,44 @@ const Book = ({
       flight.elapsed = 0;
       flight.duration = duration;
       flight.runId = runId;
-      flight.startX = position[0];
-      flight.startY = position[1];
-      flight.startZ = position[2];
-      flight.velocityX = (impactPos[0] - position[0]) / duration;
+      flight.startX = positionX;
+      flight.startY = positionY;
+      flight.startZ = positionZ;
+      flight.velocityX = (impactPos[0] - positionX) / duration;
       flight.velocityY = velocityY;
-      flight.velocityZ = (impactPos[2] - position[2]) / duration;
-      flight.startRotX = rotation[0];
-      flight.startRotY = rotation[1];
-      flight.startRotZ = rotation[2];
-      flight.angularX = (impactRot[0] - rotation[0]) / duration;
-      flight.angularY = (impactRot[1] - rotation[1]) / duration;
-      flight.angularZ = (impactRot[2] - rotation[2]) / duration;
+      flight.velocityZ = (impactPos[2] - positionZ) / duration;
+      flight.startRotX = rotationX;
+      flight.startRotY = rotationY;
+      flight.startRotZ = rotationZ;
+      flight.angularX = (impactRot[0] - rotationX) / duration;
+      flight.angularY = (impactRot[1] - rotationY) / duration;
+      flight.angularZ = (impactRot[2] - rotationZ) / duration;
     } else {
       animationRunRef.current += 1;
       flightRef.current.active = false;
       impactHandlerRef.current = null;
       api.start({
-        pos: position,
-        rot: rotation,
+        pos: [positionX, positionY, positionZ],
+        rot: [rotationX, rotationY, rotationZ],
         scale: [1, 1, 1],
         config: { duration: 220, easing: easeOutCubic },
       });
       removeDropFromStorage(id);
     }
-  }, [api, dropped, dropTarget, id, idHash, motionProfile, position, rotation]);
+  }, [
+    api,
+    dropped,
+    dropTarget,
+    id,
+    idHash,
+    motionProfile,
+    positionX,
+    positionY,
+    positionZ,
+    rotationX,
+    rotationY,
+    rotationZ,
+  ]);
 
   const derivedRot = rot.to((r0, r1, r2) => [r0, r1, r2]);
 

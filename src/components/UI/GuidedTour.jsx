@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { cameraIdle } from "../../constances/constances";
 import { useCameraControlStore } from "../../stores/useCameraControlStore";
-import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
 import { useTourStore } from "../../stores/useTourStore";
 
 const TOUR_STOPS = [
@@ -58,15 +57,13 @@ const GuidedTour = () => {
   const setStep = useTourStore((s) => s.setStep);
   const stopTour = useTourStore((s) => s.stopTour);
   const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
-  const setAnimation = useCharacterAnimationsStore((s) => s.setAnimation);
   const wheelReadyRef = useRef(true);
   const touchStartRef = useRef(0);
 
   useEffect(() => {
     if (!active) return;
-    setAnimation("typing");
     setCameraLookAt(TOUR_STOPS[step].camera);
-  }, [active, setAnimation, setCameraLookAt, step]);
+  }, [active, setCameraLookAt, step]);
 
   const finishTour = () => {
     localStorage.setItem("guidedTourSeen", "true");
