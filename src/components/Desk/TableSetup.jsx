@@ -11,7 +11,6 @@ import Mug from "../Stuff/Mug";
 import Papers from "../Stuff/Papers";
 import Clock from "../Stuff/Clock";
 import Thing from "../Stuff/Thing";
-import Cat3 from "../Stuff/Cat3";
 
 const TableSetup = () => {
   return (
@@ -40,9 +39,6 @@ const TableSetup = () => {
       </group>
       <group position={[0.8, 0.532, 0.506]} rotation={[0, Math.PI / 2, 0]}>
         <Clock />
-      </group>
-      <group position={[0.7, 0.748, 0.9]} rotation={[0, -Math.PI / 2, 0]}>
-        <Cat3 />
       </group>
       {/* <group position={[3, 2.5, -3]} scale={0.7}>
         <Thing rotate />

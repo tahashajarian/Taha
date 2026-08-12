@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { cameraIdle } from "../../constances/constances";
 import { useCameraControlStore } from "../../stores/useCameraControlStore";
+import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
 import { useTourStore } from "../../stores/useTourStore";
 
 const TOUR_STOPS = [
@@ -35,6 +36,11 @@ const TOUR_STOPS = [
     camera: [-2.2, 1.8, 1.4, -5.25, 0.85, 4],
   },
   {
+    title: "The sleeping cat",
+    text: "He is sleeping in his little cat tree. Please don't bother him.",
+    camera: [0, 1.65, -2.8, 1.35, 0.8, -5.05],
+  },
+  {
     title: "The view outside",
     text: "A calmer corner of the room, with a city beyond the window.",
     camera: [-0.4, 2.1, 2.5, 0, 2.05, 5.8],
@@ -52,12 +58,15 @@ const GuidedTour = () => {
   const setStep = useTourStore((s) => s.setStep);
   const stopTour = useTourStore((s) => s.stopTour);
   const setCameraLookAt = useCameraControlStore((s) => s.setCameraLookAt);
+  const setAnimation = useCharacterAnimationsStore((s) => s.setAnimation);
   const wheelReadyRef = useRef(true);
   const touchStartRef = useRef(0);
 
   useEffect(() => {
-    if (active) setCameraLookAt(TOUR_STOPS[step].camera);
-  }, [active, setCameraLookAt, step]);
+    if (!active) return;
+    setAnimation("typing");
+    setCameraLookAt(TOUR_STOPS[step].camera);
+  }, [active, setAnimation, setCameraLookAt, step]);
 
   const finishTour = () => {
     localStorage.setItem("guidedTourSeen", "true");

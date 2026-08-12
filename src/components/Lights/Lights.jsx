@@ -42,7 +42,7 @@ const Lights = () => {
         </group>
       )}
 
-      <FlightPoints />
+      {!isLowQuality && <FlightPoints />}
     </>
   );
 };

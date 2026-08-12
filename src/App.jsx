@@ -39,8 +39,11 @@ function App() {
     percent,
     showLoader,
     showContent,
+    loadIssue,
     handleProgressUpdate,
     handleLoadComplete,
+    handleLoadError,
+    continueLoading,
   } = useLoadingManager();
 
   useArrowControls();
@@ -89,13 +92,21 @@ function App() {
             <ProgressTracker
               onProgressUpdate={handleProgressUpdate}
               onLoadComplete={handleLoadComplete}
+              onLoadError={handleLoadError}
             />
           </Canvas>
 
           <Interface />
         </div>
 
-        {showLoader && <LoadingOverlay percent={percent} />}
+        {showLoader && (
+          <LoadingOverlay
+            percent={percent}
+            issue={loadIssue}
+            onRetry={() => window.location.reload()}
+            onContinue={continueLoading}
+          />
+        )}
       </div>
     </ErrorBoundary>
   );

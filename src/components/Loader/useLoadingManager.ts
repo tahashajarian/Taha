@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseLoadingManagerReturn {
   loaded: boolean;
   percent: number;
   showLoader: boolean;
   showContent: boolean;
+  loadIssue: string | null;
   handleProgressUpdate: (progress: number) => void;
   handleLoadComplete: () => void;
+  handleLoadError: () => void;
+  continueLoading: () => void;
 }
 
 export const useLoadingManager = (): UseLoadingManagerReturn => {
@@ -14,9 +17,11 @@ export const useLoadingManager = (): UseLoadingManagerReturn => {
   const [percent, setPercent] = useState<number>(0);
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [showContent, setShowContent] = useState<boolean>(false);
+  const [loadIssue, setLoadIssue] = useState<string | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
   const hideLoaderTimeout = useRef<NodeJS.Timeout | null>(null);
   const showContentTimeout = useRef<NodeJS.Timeout | null>(null);
+  const loadTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Fallback progress indicator for cases where loading manager doesn't report
@@ -25,6 +30,10 @@ export const useLoadingManager = (): UseLoadingManagerReturn => {
         setPercent(prev => Math.min(95, prev + 1));
       }, 300);
     }
+
+    loadTimeout.current = setTimeout(() => {
+      setLoadIssue("Loading is taking longer than expected.");
+    }, 25_000);
 
     return () => {
       if (progressInterval.current) {
@@ -41,6 +50,8 @@ export const useLoadingManager = (): UseLoadingManagerReturn => {
       }
       
       setLoaded(true);
+      setLoadIssue(null);
+      if (loadTimeout.current) clearTimeout(loadTimeout.current);
       
       // Hide loader after a short delay to allow smooth transition
       hideLoaderTimeout.current = setTimeout(() => {
@@ -64,10 +75,11 @@ export const useLoadingManager = (): UseLoadingManagerReturn => {
       if (showContentTimeout.current) {
         clearTimeout(showContentTimeout.current);
       }
+      if (loadTimeout.current) clearTimeout(loadTimeout.current);
     };
   }, []);
 
-  const handleProgressUpdate = (progress: number): void => {
+  const handleProgressUpdate = useCallback((progress: number): void => {
     // Clear the fallback interval if we're getting real progress updates
     if (progress > 10 && progressInterval.current) {
       clearInterval(progressInterval.current);
@@ -76,19 +88,35 @@ export const useLoadingManager = (): UseLoadingManagerReturn => {
     
     // Ensure we don't go backwards in progress
     setPercent(prev => Math.max(prev, Math.round(progress)));
-  };
+  }, []);
 
-  const handleLoadComplete = (): void => {
+  const handleLoadComplete = useCallback((): void => {
     // Set to 100% when loading is complete
     setPercent(100);
-  };
+  }, []);
+
+  const handleLoadError = useCallback((): void => {
+    setLoadIssue("Some scene files could not be loaded.");
+  }, []);
+
+  const continueLoading = useCallback((): void => {
+    if (progressInterval.current) clearInterval(progressInterval.current);
+    if (loadTimeout.current) clearTimeout(loadTimeout.current);
+    setLoaded(true);
+    setPercent(100);
+    setShowLoader(false);
+    setShowContent(true);
+  }, []);
 
   return {
     loaded,
     percent,
     showLoader,
     showContent,
+    loadIssue,
     handleProgressUpdate,
-    handleLoadComplete
+    handleLoadComplete,
+    handleLoadError,
+    continueLoading
   };
 };

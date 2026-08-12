@@ -46,6 +46,11 @@ const fireplaceMaxX = -4.55;
 const fireplaceMinZ = 3.25;
 const fireplaceMaxZ = 4.75;
 
+const catCornerMinX = 0.75;
+const catCornerMaxX = 1.95;
+const catCornerMinZ = -5.55;
+const catCornerMaxZ = -4.5;
+
 const isInBounds = (x, z, minX, maxX, minZ, maxZ, padding = 0) =>
   x >= minX - padding &&
   x <= maxX + padding &&
@@ -70,7 +75,7 @@ const TahaContainer = (props) => {
   const preWelcomeRotationRef = useRef(null);
 
   const { nodes, materials, animations } = useGLTF(
-    "/models/Taha.glb",
+    "/models/Taha-optimized.glb",
     "/draco/",
   );
   const { actions, names } = useAnimations(animations, group);
@@ -340,6 +345,16 @@ const TahaContainer = (props) => {
       PLAYER_RADIUS,
     );
 
+    const isInCatCorner = isInBounds(
+      nextX,
+      nextZ,
+      catCornerMinX,
+      catCornerMaxX,
+      catCornerMinZ,
+      catCornerMaxZ,
+      PLAYER_RADIUS,
+    );
+
     if (
       nextX >= roomMinX &&
       nextX <= roomMaxX &&
@@ -349,7 +364,8 @@ const TahaContainer = (props) => {
       !isInDesk &&
       !isInSofa &&
       !isInAsali &&
-      !isInFireplace
+      !isInFireplace &&
+      !isInCatCorner
     ) {
       group.current.position.set(nextX, 0, nextZ);
 
@@ -373,5 +389,5 @@ const TahaContainer = (props) => {
   );
 };
 
-useGLTF.preload("/models/Taha.glb", "/draco/");
+useGLTF.preload("/models/Taha-optimized.glb", "/draco/");
 export default TahaContainer;

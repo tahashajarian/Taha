@@ -4,13 +4,15 @@ import { useProgress } from "@react-three/drei";
 interface ProgressTrackerProps {
   onProgressUpdate: (progress: number) => void;
   onLoadComplete: () => void;
+  onLoadError: () => void;
 }
 
 const ProgressTracker: React.FC<ProgressTrackerProps> = ({ 
   onProgressUpdate, 
-  onLoadComplete 
+  onLoadComplete,
+  onLoadError
 }) => {
-  const { progress, active } = useProgress();
+  const { progress, active, errors } = useProgress();
   const lastProgress = useRef<number>(0);
   const completionTimeoutRef = useRef<number | null>(null);
   
@@ -28,6 +30,10 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
       }, 500);
     }
   }, [progress, active, onProgressUpdate, onLoadComplete]);
+
+  useEffect(() => {
+    if (errors.length > 0) onLoadError();
+  }, [errors, onLoadError]);
 
   useEffect(() => {
     return () => {

@@ -4,7 +4,7 @@ import SnoreParticles from "./SnoringParticles";
 import * as THREE from "three";
 
 export const Cat3 = (props) => {
-  const { nodes, materials } = useGLTF("/models/cat3.glb", "/draco/");
+  const { nodes, materials } = useGLTF("/models/cat3-optimized.glb", "/draco/");
   const chestRef = useRef();
 
   // Shared geometry & material for borders
@@ -61,5 +61,4 @@ export const Cat3 = (props) => {
   );
 };
 
-useGLTF.preload("/models/cat3.glb", "/draco/");
 export default memo(Cat3);

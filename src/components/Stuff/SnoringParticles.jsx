@@ -9,7 +9,7 @@ const createTextTexture = (text) => {
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.font = "100px sans-serif";
-  ctx.fillStyle = "#88f";
+  ctx.fillStyle = "#b9d7ff";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, canvas.width / 2, canvas.height / 2);
@@ -18,7 +18,6 @@ const createTextTexture = (text) => {
 
 const SnoreParticles = ({ count = 3 }) => {
   const groupRef = useRef();
-  const renderedLastFrameRef = useRef(true);
   const texture = useMemo(() => createTextTexture("Z"), []);
   
   useEffect(() => () => texture.dispose(), [texture]);
@@ -31,20 +30,16 @@ const SnoreParticles = ({ count = 3 }) => {
         0,
         Math.random() * 0.2 - 0.1
       ),
-      speed: 0.003 + Math.random() * 0.002,
-      life: 0,
+      speed: 0.075 + Math.random() * 0.035,
+      life: Math.random() * 2.5,
       opacity: 0,
       sprite: null, // will store sprite ref
     }))
   );
 
   useFrame((_, delta) => {
-    const wasRendered = renderedLastFrameRef.current;
-    renderedLastFrameRef.current = false;
-    if (!wasRendered) return;
-
     particlesRef.current.forEach((p) => {
-      p.position.y += p.speed;
+      p.position.y += p.speed * delta;
       p.life += delta;
 
       // Fade in/out
@@ -66,18 +61,20 @@ const SnoreParticles = ({ count = 3 }) => {
   });
 
   return (
-    <group ref={groupRef} position={[0.1, 0.15, 0]}>
+    <group ref={groupRef} position={[0.12, 0.16, -0.1]}>
       {particlesRef.current.map((p, i) => (
         <sprite
           key={i}
           ref={(el) => (p.sprite = el)}
-          onBeforeRender={i === 0 ? () => { renderedLastFrameRef.current = true; } : undefined}
-          scale={[0.1, 0.1, 0.1]}
+          frustumCulled={false}
+          renderOrder={10}
+          scale={[0.14, 0.14, 0.14]}
         >
           <spriteMaterial
             map={texture}
             transparent
             depthWrite={false}
+            depthTest={false}
           />
         </sprite>
       ))}

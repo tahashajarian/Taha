@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { cameraIdle, cameraLookAtConst } from "../../constances/constances";
-import EmailModal from "./EmailModal";
 import WelcomeMessage from "./WelcomeMessage";
-import PaintingModal from "./PaintingModal";
 import ArrowControls from "./ArrowControls";
 import { useCameraControlStore } from "../../stores/useCameraControlStore";
 import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import { useArrowsStore } from "../../stores/useArrowStore";
 import QualityTag from "./QualityTag";
-import GuidedTour from "./GuidedTour";
 import { useTourStore } from "../../stores/useTourStore";
+
+const EmailModal = lazy(() => import("./EmailModal"));
+const PaintingModal = lazy(() => import("./PaintingModal"));
+const GuidedTour = lazy(() => import("./GuidedTour"));
 
 const Interface = () => {
   const animation = useCharacterAnimationsStore((s) => s.animation);
@@ -119,16 +120,22 @@ const Interface = () => {
               <ArrowControls />
             </>
           )}
-          <EmailModal
-            isOpen={modalIsOpen}
-            onClose={() => setModalIsOpen(false)}
-          />
+          {modalIsOpen && (
+            <Suspense fallback={null}>
+              <EmailModal isOpen onClose={() => setModalIsOpen(false)} />
+            </Suspense>
+          )}
           <WelcomeMessage showMessage={showMessage} handleClose={handleClose} />
-          <PaintingModal
-            closeModal={() => setPaintModalIsOpen(false)}
-            modalIsOpen={paintModalIsPoen}
-          />
-          <GuidedTour />
+          {paintModalIsPoen && (
+            <Suspense fallback={null}>
+              <PaintingModal closeModal={() => setPaintModalIsOpen(false)} modalIsOpen />
+            </Suspense>
+          )}
+          {tourActive && (
+            <Suspense fallback={null}>
+              <GuidedTour />
+            </Suspense>
+          )}
         </>
       )}
       {chessMode && (

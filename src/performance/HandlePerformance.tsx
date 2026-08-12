@@ -84,7 +84,8 @@ const HandlePerformance: React.FC = () => {
             return;
           }
 
-          if (fps >= 30 && quality === "low") setQuality("medium");
+          // Devices that start or fall back to low stay there. This prevents
+          // decorative assets and effects from being added again mid-session.
         }}
       />
 

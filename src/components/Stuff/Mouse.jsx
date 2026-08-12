@@ -27,7 +27,7 @@ const dampMouseHome = (group, smoothing) => {
 
 const Mouse = (props) => {
   const { nodes, materials } = useGLTF("/models/mouse.glb", "/draco/")
-  const { nodes: characterNodes } = useGLTF("/models/Taha.glb", "/draco/")
+  const { nodes: characterNodes } = useGLTF("/models/Taha-optimized.glb", "/draco/")
   const fingertip = characterNodes.RightHandIndex4
   const palmControl = characterNodes.RightHandMiddle1
   const animation = useCharacterAnimationsStore((s) => s.animation)
