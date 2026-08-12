@@ -34,9 +34,6 @@ const TableSetup = () => {
       <group position={[-0.75, 0.71, 0.75]} rotation={[-Math.PI / 2, 0, 0]}>
         <Papers />
       </group>
-      <group position={[0.8, 0.8, 0.99]} rotation={[0, 0, 0]}>
-        {/* <Speaker /> */}
-      </group>
       <group position={[0.8, 0.532, 0.506]} rotation={[0, Math.PI / 2, 0]}>
         <Clock />
       </group>

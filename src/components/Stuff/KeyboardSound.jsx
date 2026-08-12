@@ -27,9 +27,10 @@ const KeyboardSound = () => {
       if (cancelled || !soundRef.current) return
       soundRef.current.setBuffer(buffer)
       soundRef.current.setLoop(true)
-      soundRef.current.setVolume(0.58)
-      soundRef.current.setRefDistance(0.35)
-      soundRef.current.setRolloffFactor(2.2)
+      soundRef.current.setVolume(0.9)
+      soundRef.current.setRefDistance(1.1)
+      soundRef.current.setRolloffFactor(1.25)
+      soundRef.current.setMaxDistance(12)
       soundRef.current.setDistanceModel("inverse")
       loadedRef.current = true
     })
