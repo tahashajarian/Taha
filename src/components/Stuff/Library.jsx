@@ -90,6 +90,8 @@ const Library = ({ position }) => {
         The place that I want to forever be inspired by
       </Text>
 
+      <LibraryDecor />
+
       {[...Array(3)].map((_, row) => {
         const yPos = -row * 0.5;
         return (
@@ -110,5 +112,39 @@ const Library = ({ position }) => {
     </group>
   );
 };
+
+const LibraryDecor = () => (
+  <group>
+    <group position={[-0.08, 0.1, -0.86]} rotation={[0, -Math.PI / 2, 0]}>
+      <mesh castShadow>
+        <boxGeometry args={[0.2, 0.12, 0.1]} />
+        <meshStandardMaterial color="#34231d" roughness={0.62} />
+      </mesh>
+      <mesh position={[0, 0.025, 0.057]}>
+        <circleGeometry args={[0.038, 16]} />
+        <meshStandardMaterial color="#a87832" metalness={0.55} roughness={0.35} />
+      </mesh>
+      <mesh position={[0.07, 0.09, 0]}>
+        <boxGeometry args={[0.035, 0.07, 0.035]} />
+        <meshStandardMaterial color="#46332b" />
+      </mesh>
+    </group>
+
+    <group position={[-0.08, -0.425, -0.86]}>
+      <mesh castShadow>
+        <cylinderGeometry args={[0.075, 0.1, 0.08, 14]} />
+        <meshStandardMaterial color="#2c4d46" roughness={0.8} />
+      </mesh>
+      <mesh position={[0, 0.12, 0]} castShadow>
+        <sphereGeometry args={[0.075, 16, 10]} />
+        <meshStandardMaterial color="#b18b66" roughness={0.92} />
+      </mesh>
+      <mesh position={[0, 0.2, 0]} scale={[0.75, 1, 0.72]} castShadow>
+        <sphereGeometry args={[0.055, 14, 9]} />
+        <meshStandardMaterial color="#b18b66" roughness={0.92} />
+      </mesh>
+    </group>
+  </group>
+);
 
 export default Library;

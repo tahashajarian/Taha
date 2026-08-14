@@ -28,7 +28,7 @@ const TableSetup = () => {
       <group position={[0.1, 0.715, 0.65]}>
         <Keyboard />
       </group>
-      <group position={[-0.5, 0.771, 0.55]}>
+      <group position={[0.6, 0.771, 0.7]}>
         <Mug />
       </group>
       <group position={[-0.75, 0.71, 0.75]} rotation={[-Math.PI / 2, 0, 0]}>

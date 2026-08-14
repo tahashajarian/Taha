@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useMemo } from "react"
 import { useGLTF, useTexture } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
@@ -7,6 +7,9 @@ import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 const PARTICLE_COUNT = 32
 const STEAM_SOURCE_Y = 0.06
 const MAX_FRAME_DELTA = 1 / 24
+const MUG_ART_URL = "/textures/mug-metal-art-v1.jpg"
+
+useTexture.preload(MUG_ART_URL)
 
 const createSteamParticle = () => ({
   position: new THREE.Vector3(),
@@ -54,6 +57,26 @@ export default function Mug(props) {
   const quality = useGraphicsSettings((s) => s.quality)
   const group = useRef()
   const renderedLastFrameRef = useRef(true)
+  const sourceMugTexture = useTexture(MUG_ART_URL)
+  const mugTexture = useMemo(() => {
+    const texture = sourceMugTexture.clone()
+    texture.colorSpace = THREE.SRGBColorSpace
+    texture.wrapS = THREE.RepeatWrapping
+    texture.wrapT = THREE.ClampToEdgeWrapping
+    texture.flipY = false
+    texture.needsUpdate = true
+    return texture
+  }, [sourceMugTexture])
+  const mugMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: "#ffffff",
+        map: mugTexture,
+        roughness: 0.48,
+        metalness: 0.12,
+      }),
+    [mugTexture]
+  )
   const steamParticles = useRef(
     Array.from({ length: PARTICLE_COUNT }, () => {
       const particle = createSteamParticle()
@@ -71,6 +94,14 @@ export default function Mug(props) {
     smokeTexture.anisotropy = Math.min(4, gl.capabilities.getMaxAnisotropy())
     smokeTexture.needsUpdate = true
   }, [gl, smokeTexture])
+
+  useEffect(
+    () => () => {
+      mugMaterial.dispose()
+      mugTexture.dispose()
+    },
+    [mugMaterial, mugTexture]
+  )
 
   useFrame(({ clock }, delta) => {
     const wasRendered = renderedLastFrameRef.current
@@ -128,7 +159,7 @@ export default function Mug(props) {
         castShadow
         receiveShadow
         geometry={nodes.Mug.geometry}
-        material={nodes.Mug.material}
+        material={mugMaterial}
         onBeforeRender={() => { renderedLastFrameRef.current = true }}
       />
 

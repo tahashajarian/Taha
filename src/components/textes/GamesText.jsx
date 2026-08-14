@@ -1,5 +1,5 @@
 import { Text } from "@react-three/drei";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../../constances/constances";
@@ -11,6 +11,14 @@ const Y_OFFSET = -0.4;
 const DEFAULT_ICON_SIZE = 0.25;
 const DEFAULT_ICON_SPACE = 0.85;
 const PORTAL_COLUMN_X = -0.8;
+const EXTERNAL_LINK_ICON = encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+    <path d="M4 4h12v3H7v14h14v-9h3v12H4z" fill="white" stroke="black" stroke-width="1.5"/>
+    <path d="M14 3h11v11l-4-4-8 8-3-3 8-8z" fill="#d99a3d" stroke="black" stroke-width="1.5" stroke-linejoin="round"/>
+  </svg>
+`);
+const EXTERNAL_LINK_CURSOR =
+  `url("data:image/svg+xml,${EXTERNAL_LINK_ICON}") 4 4, alias`;
 
 const TEXTURE_PATHS = [
   "/textures/flappy-bird.png",
@@ -107,6 +115,15 @@ export default function GamesText() {
     [],
   );
   const openModal = useCallback(() => setModalIsOpen(true), [setModalIsOpen]);
+  const showLinkCursor = useCallback((event) => {
+    event.stopPropagation();
+    document.body.style.cursor = EXTERNAL_LINK_CURSOR;
+  }, []);
+  const hideLinkCursor = useCallback(() => {
+    document.body.style.cursor = "default";
+  }, []);
+
+  useEffect(() => hideLinkCursor, [hideLinkCursor]);
 
   return (
     <group
@@ -136,6 +153,8 @@ export default function GamesText() {
               key={item.label}
               position={[0, -3 - i * Y_OFFSET, 0]}
               onClick={hasLink ? () => navigateTo(item.link) : undefined}
+              onPointerOver={hasLink ? showLinkCursor : undefined}
+              onPointerOut={hasLink ? hideLinkCursor : undefined}
             >
             <group position={[PORTAL_COLUMN_X, 0, 0]}>
               <PortalShader disabled={!hasLink} />
@@ -174,12 +193,16 @@ export default function GamesText() {
         </mesh>
       </group>
 
-      <group position={[2.82, -2.3, 0]}>
+      <group
+        position={[2.82, -2.3, 0]}
+        onClick={() => navigateTo("https://github.com/tahashajarian")}
+        onPointerOver={showLinkCursor}
+        onPointerOut={hideLinkCursor}
+      >
         <Text
           font={FONT_URL}
           fontSize={0.2}
           color="silver"
-          onClick={() => navigateTo("https://github.com/tahashajarian")}
         >
           My Github
         </Text>
