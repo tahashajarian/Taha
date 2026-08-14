@@ -56,6 +56,22 @@ const Curtain = () => {
             float foldLight = clamp(0.9 + vWave * 1.25, 0.72, 1.08);
             float foldHighlight = smoothstep(-0.02, 0.1, vWave) * 0.09;
             vec3 shadedColor = artColor * foldLight + vec3(foldHighlight);
+
+            vec2 frameInset = vec2(0.03, 0.025);
+            vec2 frameWidth = vec2(0.015, 0.018);
+            float outerFrame = step(frameInset.x, vUv.x)
+              * step(frameInset.x, 1.0 - vUv.x)
+              * step(frameInset.y, vUv.y)
+              * step(frameInset.y, 1.0 - vUv.y);
+            vec2 innerInset = frameInset + frameWidth;
+            float innerFrame = step(innerInset.x, vUv.x)
+              * step(innerInset.x, 1.0 - vUv.x)
+              * step(innerInset.y, vUv.y)
+              * step(innerInset.y, 1.0 - vUv.y);
+            float frame = outerFrame - innerFrame;
+            vec3 frameColor = vec3(0.72, 0.43, 0.14) * foldLight;
+            shadedColor = mix(shadedColor, frameColor, frame * 0.9);
+
             gl_FragColor = vec4(shadedColor, uOpacity);
           }
         `,
@@ -88,6 +104,7 @@ const Curtain = () => {
   };
 
   const handleCurtainClick = (event) => {
+    if (event.delta > 3) return;
     if (!isFrontmostCurtainHit(event)) return;
     event.stopPropagation();
     setCurtainOpen(!curtainOpen);

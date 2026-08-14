@@ -47,6 +47,7 @@ const Taha = ({ charRef, nodes, materials }) => {
       ref={charRef}
       dispose={null}
       frustumCulled={false}
+      onClick={(event) => event.stopPropagation()}
     >
       <SoftCharacterShadow />
       <group receiveShadow castShadow name="Scene">

@@ -282,7 +282,7 @@ const Monitor2 = (props) => {
   )
 
   return (
-    <group {...props} dispose={null}>
+    <group {...props} dispose={null} onClick={(event) => event.stopPropagation()}>
       <mesh
         castShadow
         receiveShadow
