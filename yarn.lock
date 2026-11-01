@@ -583,9 +583,9 @@ base64-js@^1.3.1, base64-js@^1.5.1:
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
 baseline-browser-mapping@^2.9.0:
-  version "2.9.11"
-  resolved "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.9.11.tgz"
-  integrity sha512-Sg0xJUNDU1sJNGdfGWhVHX0kkZ+HWcvmVymJbj6NSgZZmW/8S9Y2HQ5euytnIgakgxN6papOAWiwDo1ctFDcoQ==
+  version "2.11.34"
+  resolved "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.11.34.tgz"
+  integrity sha512-Aqr8mA1kIvyJ3UY5YAY7ib8LSo1DmDMbMnVqGPtsKW1LxaFQFwn9Eb3yvq2fUKJsRvaXjnAV7R5osqETapzNiA==
 
 bidi-js@^1.0.2:
   version "1.0.2"
@@ -642,10 +642,10 @@ camera-controls@^2.9.0:
   resolved "https://registry.npmjs.org/camera-controls/-/camera-controls-2.10.1.tgz"
   integrity sha512-KnaKdcvkBJ1Irbrzl8XD6WtZltkRjp869Jx8c0ujs9K+9WD+1D7ryBsCiVqJYUqt6i/HR5FxT7RLASieUD+Q5w==
 
-caniuse-lite@^1.0.30001599, caniuse-lite@^1.0.30001759, caniuse-lite@^1.0.30001766:
-  version "1.0.30001766"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001766.tgz"
-  integrity sha512-4C0lfJ0/YPjJQHagaE9x2Elb69CIqEPZeG0anQt9SIvIoOH4a4uaRl73IavyO+0qZh6MDLH//DrXThEYKHkmYA==
+caniuse-lite@^1.0.30001599, caniuse-lite@^1.0.30001759:
+  version "1.0.30001820"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001820.tgz"
+  integrity sha512-gfWD6MxqVCqAOwmODfZf7DchWvlrA+SRdNX7ceLfg3xRqe5ssjjpF7EgslC/0tiLiNTajdaNN/q8c/5u/7Gz8w==
 
 chokidar@^3.5.3:
   version "3.6.0"

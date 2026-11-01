@@ -45,7 +45,6 @@ const Lamp = (props) => {
         color="#ffaaaa"
         distance={4}
         decay={0.5}
-        power={10}
         intensity={lampIsOn ? 8 : 0}
         castShadow={false}
       />

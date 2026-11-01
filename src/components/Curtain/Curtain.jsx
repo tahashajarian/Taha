@@ -4,7 +4,7 @@ import { useTexture } from "@react-three/drei";
 import { useSpring, a } from "@react-spring/three";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 
-const CURTAIN_ART_URL = "/textures/curtain-art-v1.jpg";
+const CURTAIN_ART_URL = "/textures/curtain-art-v1.webp";
 
 useTexture.preload(CURTAIN_ART_URL);
 
