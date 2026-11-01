@@ -1,5 +1,5 @@
 import { Text } from "@react-three/drei";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { wallHeight, wallSize } from "../../constances/constances";
@@ -32,7 +32,10 @@ const TEXTURE_PATHS = [
   "/textures/slot.png",
   "/textures/platformer.png",
   "/textures/comma.png",
+  "/textures/resume.png",
 ];
+
+const RESUME_URL = "/Taha_Shajarian_F.pdf";
 
 const ProjectItem = ({ item, position, onNavigate, onOver, onOut }) => {
   const hasLink = Boolean(item.link);
@@ -69,6 +72,44 @@ const ProjectItem = ({ item, position, onNavigate, onOver, onOut }) => {
   );
 };
 
+// Contact links share one left edge; each icon sits a fixed gap after the
+// label's measured width, so the column stays aligned whatever the text.
+const CONTACT_LEFT_X = 2.35;
+const CONTACT_ICON_GAP = 0.12;
+
+const ContactLink = ({ y, label, icon, iconSize = 0.3, iconY = 0.05, onClick, onOver, onOut }) => {
+  const [textWidth, setTextWidth] = useState(0);
+  const handleSync = useCallback((text) => {
+    const bounds = text.textRenderInfo?.blockBounds;
+    if (bounds) setTextWidth(bounds[2] - bounds[0]);
+  }, []);
+
+  return (
+    <group
+      position={[CONTACT_LEFT_X, y, 0]}
+      onClick={onClick}
+      onPointerOver={onOver}
+      onPointerOut={onOut}
+    >
+      <Text
+        font={FONT_URL}
+        fontSize={0.2}
+        color="silver"
+        anchorX="left"
+        onSync={handleSync}
+      >
+        {label}
+      </Text>
+      {textWidth > 0 && (
+        <mesh position={[textWidth + CONTACT_ICON_GAP + iconSize / 2, iconY, 0]}>
+          <planeGeometry args={[iconSize, iconSize]} />
+          <meshBasicMaterial map={icon} transparent />
+        </mesh>
+      )}
+    </group>
+  );
+};
+
 export default function GamesText() {
   const textures = useLoader(TextureLoader, TEXTURE_PATHS);
 
@@ -85,6 +126,7 @@ export default function GamesText() {
       slot: textures[8],
       platformer: textures[9],
       comma: textures[10],
+      resume: textures[11],
     }),
     [textures],
   );
@@ -231,34 +273,30 @@ export default function GamesText() {
         ))}
       </group>
 
-      <group position={[3, -2.8, 0]}>
-        <Text font={FONT_URL} fontSize={0.2} color="silver" onClick={openModal}>
-          Send an Email
-        </Text>
-        <mesh position={[1, 0.1, 0]}>
-          <planeGeometry args={[0.4, 0.4]} />
-          <meshBasicMaterial map={textureMap.envelope} transparent />
-        </mesh>
-      </group>
-
-      <group
-        position={[2.82, -2.3, 0]}
+      <ContactLink
+        y={-1.8}
+        label="My Resume"
+        icon={textureMap.resume}
+        onClick={() => navigateTo(RESUME_URL)}
+        onOver={showLinkCursor}
+        onOut={hideLinkCursor}
+      />
+      <ContactLink
+        y={-2.3}
+        label="My Github"
+        icon={textureMap.github}
         onClick={() => navigateTo("https://github.com/tahashajarian")}
-        onPointerOver={showLinkCursor}
-        onPointerOut={hideLinkCursor}
-      >
-        <Text
-          font={FONT_URL}
-          fontSize={0.2}
-          color="silver"
-        >
-          My Github
-        </Text>
-        <mesh position={[0.7, 0.06, 0]}>
-          <planeGeometry args={[0.3, 0.3]} />
-          <meshBasicMaterial map={textureMap.github} transparent />
-        </mesh>
-      </group>
+        onOver={showLinkCursor}
+        onOut={hideLinkCursor}
+      />
+      <ContactLink
+        y={-2.8}
+        label="Send an Email"
+        icon={textureMap.envelope}
+        iconSize={0.4}
+        iconY={0.08}
+        onClick={openModal}
+      />
     </group>
   );
 }

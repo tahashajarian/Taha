@@ -22,6 +22,10 @@ const savePainting = async (image) => {
 
 export const usePaintingStore = create((set, get) => ({
   paintingImage: "",
+  // True once the server answered with a valid painting (or a valid "none yet").
+  // The paint canvas stays locked until then so a stroke on an empty canvas
+  // can never overwrite the real painting.
+  paintingLoaded: false,
   loading: true, // CHANGE: Start with loading=true to avoid flash
   brushType: "spray",
   brushColor: "#ffffff",
@@ -37,10 +41,11 @@ export const usePaintingStore = create((set, get) => ({
     saveTimer = setTimeout(() => savePainting(image), 700);
   },
 
+  // Resolves to false when the server didn't return a usable answer.
   fetchPainting: async ({ background = false } = {}) => {
-    if (get().loading && get().paintingImage !== "") return; // Don't refetch if already loading with data
+    if (get().loading && get().paintingImage !== "") return true; // Don't refetch if already loading with data
     // A background refresh must not replace a local edit that may not be saved yet.
-    if (background && Date.now() - lastLocalEditAt < 10_000) return;
+    if (background && Date.now() - lastLocalEditAt < 10_000) return true;
     if (!background) set({ loading: true });
     const startedAt = Date.now();
     try {
@@ -48,12 +53,21 @@ export const usePaintingStore = create((set, get) => ({
         "https://taha-shajarian.ir/server/load_painting.php"
       );
       const data = await res.text();
-      if (background && lastLocalEditAt >= startedAt) return; // user painted meanwhile
+      // Anything other than an image (an error page, a DB error message) must
+      // never replace the painting: it would show up as an empty board.
+      if (!res.ok || (data && !data.startsWith("data:image/"))) {
+        console.warn("Ignoring invalid painting response", res.status);
+        return false;
+      }
+      if (background && lastLocalEditAt >= startedAt) return true; // user painted meanwhile
       if (data && data !== get().paintingImage) {
         set({ paintingImage: data });
       }
+      if (!get().paintingLoaded) set({ paintingLoaded: true });
+      return true;
     } catch (err) {
       console.error("Error fetching painting:", err);
+      return false;
     } finally {
       if (!background) set({ loading: false });
     }

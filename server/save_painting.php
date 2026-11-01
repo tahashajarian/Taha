@@ -8,6 +8,8 @@ const MAX_WIDTH = 1200;
 const MAX_HEIGHT = 900;
 // A full, noisy 1200x900 PNG stays well under this as base64
 const MAX_PAYLOAD_BYTES = 6 * 1024 * 1024;
+// Only the latest painting is shown, so only the latest is kept
+const KEEP_PAINTINGS = 1;
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -53,23 +55,32 @@ try {
         throw new Exception("Failed to decode image");
     }
 
-    // 4. Blank canvas detection
+    // 4. Blank canvas detection. The canvas background is transparent and the
+    // default brush is white, so "blank" means every pixel is transparent.
+    // Shrink to a thumbnail (averaging keeps thin strokes visible) and scan it
+    // fully instead of sampling a few random pixels.
     $width = imagesx($image);
     $height = imagesy($image);
+    $thumbW = 120;
+    $thumbH = 90;
+    $thumb = imagecreatetruecolor($thumbW, $thumbH);
+    imagealphablending($thumb, false);
+    imagesavealpha($thumb, true);
+    imagefill($thumb, 0, 0, imagecolorallocatealpha($thumb, 0, 0, 0, 127));
+    imagecopyresampled($thumb, $image, 0, 0, 0, 0, $thumbW, $thumbH, $width, $height);
+
     $blank = true;
-    
-    // Check 20 random pixels
-    for ($i = 0; $i < 20 && $blank; $i++) {
-        $x = rand(0, $width - 1);
-        $y = rand(0, $height - 1);
-        $color = imagecolorat($image, $x, $y);
-        $rgba = imagecolorsforindex($image, $color);
-        
-        if ($rgba['red'] < 250 || $rgba['green'] < 250 || $rgba['blue'] < 250) {
-            $blank = false;
+    for ($y = 0; $y < $thumbH && $blank; $y++) {
+        for ($x = 0; $x < $thumbW && $blank; $x++) {
+            $rgba = imagecolorsforindex($thumb, imagecolorat($thumb, $x, $y));
+            // GD alpha: 0 = opaque, 127 = fully transparent
+            if ($rgba['alpha'] < 120) {
+                $blank = false;
+            }
         }
     }
-    
+
+    imagedestroy($thumb);
     imagedestroy($image);
     
     if ($blank) {
@@ -97,6 +108,23 @@ try {
     }
     
     $stmt->close();
+
+    // Prune everything older than the newest KEEP_PAINTINGS rows. A failure
+    // here is only logged: the painting itself was already saved.
+    $oldest = $conn->query(
+        "SELECT id FROM paintings ORDER BY id DESC LIMIT 1 OFFSET " . (KEEP_PAINTINGS - 1)
+    );
+    if ($oldest && ($row = $oldest->fetch_assoc())) {
+        $prune = $conn->prepare("DELETE FROM paintings WHERE id < ?");
+        if ($prune) {
+            $prune->bind_param("i", $row['id']);
+            if (!$prune->execute()) {
+                error_log('painting prune failed: ' . $prune->error);
+            }
+            $prune->close();
+        }
+    }
+
     $conn->close();
 
 } catch (Exception $e) {

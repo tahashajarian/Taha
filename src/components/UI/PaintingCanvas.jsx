@@ -9,6 +9,7 @@ const HISTORY_LIMIT = 12;
 
 const PaintingCanvas = ({ width, height, onSave }) => {
   const paintingImage = usePaintingStore((s) => s.paintingImage);
+  const paintingLoaded = usePaintingStore((s) => s.paintingLoaded);
   const canvasRef = usePaintingStore((s) => s.canvasRef);
   const brushType = usePaintingStore((s) => s.brushType);
   const brushColor = usePaintingStore((s) => s.brushColor);
@@ -18,6 +19,10 @@ const PaintingCanvas = ({ width, height, onSave }) => {
   const setBrushSize = usePaintingStore((s) => s.setBrushSize);
   const cursorRef = useRef(null);
   const currentImageRef = useRef("");
+  // Strokes are blocked until the saved painting is on the canvas; otherwise
+  // the first stroke would save a mostly empty canvas over it.
+  const [baseReady, setBaseReady] = useState(false);
+  const baseReadyRef = useRef(false);
   const historyRef = useRef({ undo: [], redo: [] });
   const [historyState, setHistoryState] = useState({
     canUndo: false,
@@ -36,14 +41,22 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
     if (!imageData) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
       done?.();
       return;
     }
 
+    // Clear only once the new image is decoded, so the canvas is never blank
+    // while it loads.
     const image = new Image();
+    image.onerror = () => {
+      console.error("Could not decode painting");
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      done?.();
+    };
     image.onload = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
       const scale = Math.min(
         canvas.width / image.naturalWidth,
         canvas.height / image.naturalHeight,
@@ -62,9 +75,14 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     image.src = imageData;
   }, [canvasRef]);
 
+  const markBaseReady = useCallback(() => {
+    baseReadyRef.current = true;
+    setBaseReady(true);
+  }, []);
+
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !paintingLoaded) return;
 
     if (paintingImage === currentImageRef.current && currentImageRef.current) {
       return;
@@ -75,6 +93,7 @@ const PaintingCanvas = ({ width, height, onSave }) => {
     }
     if (!paintingImage) {
       currentImageRef.current = canvas.toDataURL("image/png");
+      markBaseReady();
       return;
     }
 
@@ -82,8 +101,9 @@ const PaintingCanvas = ({ width, height, onSave }) => {
       currentImageRef.current = paintingImage;
       historyRef.current = { undo: [], redo: [] };
       updateHistoryState();
+      markBaseReady();
     });
-  }, [canvasRef, drawImage, paintingImage, updateHistoryState]);
+  }, [canvasRef, drawImage, markBaseReady, paintingImage, paintingLoaded, updateHistoryState]);
 
   const rememberCurrentImage = useCallback(() => {
     const imageData = currentImageRef.current;
@@ -96,6 +116,7 @@ const PaintingCanvas = ({ width, height, onSave }) => {
   }, [updateHistoryState]);
 
   const saveImage = useCallback((imageData) => {
+    if (!baseReadyRef.current) return;
     currentImageRef.current = imageData;
     onSave(imageData);
   }, [onSave]);
@@ -149,8 +170,17 @@ const PaintingCanvas = ({ width, height, onSave }) => {
             if (cursorRef.current) cursorRef.current.style.opacity = "0";
           }}
           className="block h-full w-full"
-          style={{ cursor: "none", touchAction: "none" }}
+          style={{
+            cursor: "none",
+            touchAction: "none",
+            pointerEvents: baseReady ? "auto" : "none",
+          }}
         />
+        {!baseReady && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-white/70">
+            Loading the painting…
+          </div>
+        )}
         <div
           ref={cursorRef}
           className="pointer-events-none fixed z-[1000] rounded-full border opacity-0"
