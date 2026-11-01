@@ -43,7 +43,6 @@
 - Painting defaults:
   - Color is white (`#ffffff`) in `src/components/UI/PaintingCanvas.jsx`.
   - Brush type is `spray` in `src/components/UI/PaintingCanvas.jsx`.
-- `Thing` movement and deformation live in `src/components/Stuff/Thing.jsx`.
 
 ## Code Style + Editing Rules
 - Preserve existing per-file style (some files use semicolons heavily, some less so).

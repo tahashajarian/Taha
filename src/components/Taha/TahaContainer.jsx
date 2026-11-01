@@ -7,7 +7,6 @@ import Taha from "./Taha";
 import { useCharacterAnimationsStore } from "../../stores/useCharacterAnimationsStore";
 import { useArrowsStore } from "../../stores/useArrowStore";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
-import { useArrowControls } from "../../hooks/useArrowControls";
 import { useTourStore } from "../../stores/useTourStore";
 import { tableRotation } from "../../constances/constances";
 
@@ -64,7 +63,6 @@ const vCamRight = new THREE.Vector3();
 const vMove = new THREE.Vector3();
 const vOffset = new THREE.Vector3();
 const qTarget = new THREE.Quaternion();
-const eulerTmp = new THREE.Euler();
 /* =================================================== */
 
 const TahaContainer = (props) => {
@@ -97,8 +95,6 @@ const TahaContainer = (props) => {
   const welcomeOpen = useAppStatusStore((s) => s.welcomeOpen);
   const tourActive = useTourStore((s) => s.active);
   const { camera } = useThree();
-
-  useArrowControls();
 
   useEffect(() => {
     if (!welcomeOpen || !group.current) return;
@@ -375,11 +371,6 @@ const TahaContainer = (props) => {
 
       const t = 1 - Math.exp(-ROTATION_DAMPING * delta);
       group.current.quaternion.slerp(qTarget, t);
-
-      setPosition?.([nextX, 0, nextZ]);
-
-      eulerTmp.setFromQuaternion(group.current.quaternion, "YXZ");
-      setRotation?.([0, eulerTmp.y, 0]);
     }
   });
 

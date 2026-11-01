@@ -10,4 +10,17 @@ export default defineConfig({
     compression(),
     glsl(), // Add this line to handle GLSL files
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        // Libraries change far less often than app code, so keep them in
+        // their own chunk and let browsers reuse it across deploys. emailjs is
+        // left out so it stays in the lazy EmailModal chunk.
+        manualChunks: (id) =>
+          id.includes("node_modules") && !id.includes("@emailjs")
+            ? "vendor"
+            : undefined,
+      },
+    },
+  },
 });

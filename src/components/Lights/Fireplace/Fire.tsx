@@ -337,7 +337,7 @@ function Fire({
     <mesh
       ref={ref}
       {...props}
-      scale={new THREE.Vector3(1.2, 2, 1.2)}
+      scale={[1.2, 2, 1.2]}
       position={[0, 0, 0]}
       onBeforeRender={() => { renderedLastFrameRef.current = true; }}
     >

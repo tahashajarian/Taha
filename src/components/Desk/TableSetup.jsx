@@ -1,7 +1,6 @@
 import React from "react";
 import { tablePosition, tableRotation } from "../../constances/constances";
 
-import Textes from "../textes/Textes";
 import Chair from "../Stuff/Chair";
 import Desk from "../Stuff/Desk";
 import Keyboard from "../Stuff/Keyboard";
@@ -10,7 +9,6 @@ import Monitor2 from "../Stuff/Monitor2";
 import Mug from "../Stuff/Mug";
 import Papers from "../Stuff/Papers";
 import Clock from "../Stuff/Clock";
-import Thing from "../Stuff/Thing";
 
 const TableSetup = () => {
   return (
@@ -37,9 +35,6 @@ const TableSetup = () => {
       <group position={[0.8, 0.532, 0.506]} rotation={[0, Math.PI / 2, 0]}>
         <Clock />
       </group>
-      {/* <group position={[3, 2.5, -3]} scale={0.7}>
-        <Thing rotate />
-      </group> */}
     </group>
   );
 };

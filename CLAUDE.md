@@ -24,7 +24,7 @@ Global hooks run once in `App`: `useArrowControls` (keyboard → `useArrowStore`
 Components talk to each other through stores, not props:
 - `useCameraControlStore` — camera look-at target and modes like `chessMode`.
 - `useTourStore` — guided tour (`GuidedTour.jsx`). While `active` is true, `TahaContainer` changes character behavior, so tour changes usually touch both files.
-- `useGraphicsSettings` — quality tier (`high` / `medium` / `low` / `ultra-low`, each mapped to a DPR preset) plus a staged `highQualityStage` used for gradual upgrades. Many scene components read `quality` to gate expensive features (lights, fire, birds, outside, monitor, mug, keyboard, `Thing`).
+- `useGraphicsSettings` — quality tier (`high` / `medium` / `low` / `ultra-low`, each mapped to a DPR preset) plus a staged `highQualityStage` used for gradual upgrades. Many scene components read `quality` to gate expensive features (lights, fire, birds, outside, monitor, mug, keyboard).
 - `useArrowStore`, `useCharacterAnimationsStore`, `usePaintingStore`, `useAppStatusStore`.
 
 Outside React (e.g. inside `useFrame`), read stores with `useStore.getState()` so the component doesn't subscribe and rerender.
