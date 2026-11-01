@@ -11,6 +11,59 @@ const MUG_ART_URL = "/textures/mug-metal-art-v1.jpg"
 
 useTexture.preload(MUG_ART_URL)
 
+// All steam puffs render as one Points draw call. The shader reproduces what
+// the old per-puff SpriteMaterial did: a camera-facing rectangle with its own
+// size, aspect, screen-space rotation and opacity.
+const steamVertexShader = /* glsl */ `
+  attribute vec2 aSize;
+  attribute float aOpacity;
+  attribute float aRotation;
+  uniform float uViewportHalfHeight;
+  varying vec2 vSize;
+  varying float vOpacity;
+  varying float vRotation;
+  varying float vExtent;
+
+  void main() {
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * mvPosition;
+    vSize = aSize;
+    vOpacity = aOpacity;
+    vRotation = aRotation;
+    // The point square has to hold the rotated rectangle, so use its diagonal.
+    vExtent = length(aSize);
+    // Like a sprite, take the parent group's scale into account.
+    float worldScale = length(modelMatrix[0].xyz);
+    gl_PointSize = aOpacity > 0.0
+      ? vExtent * worldScale * projectionMatrix[1][1] * uViewportHalfHeight / -mvPosition.z
+      : 0.0;
+  }
+`
+
+const steamFragmentShader = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform vec3 uColor;
+  varying vec2 vSize;
+  varying float vOpacity;
+  varying float vRotation;
+  varying float vExtent;
+
+  void main() {
+    vec2 p = (vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y) - 0.5) * vExtent;
+    float c = cos(vRotation);
+    float s = sin(vRotation);
+    // Undo the screen-space rotation, then map into the puff's rectangle.
+    p = vec2(c * p.x + s * p.y, -s * p.x + c * p.y);
+    vec2 uv = p / vSize + 0.5;
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) discard;
+
+    vec4 texel = texture2D(uMap, uv);
+    gl_FragColor = vec4(uColor * texel.rgb, vOpacity * texel.a);
+    if (gl_FragColor.a < 0.007) discard;
+    #include <colorspace_fragment>
+  }
+`
+
 const createSteamParticle = () => ({
   position: new THREE.Vector3(),
   baseX: 0,
@@ -27,7 +80,6 @@ const createSteamParticle = () => ({
   sizeEnd: 0,
   opacityPeak: 0,
   rotationFactor: 0,
-  sprite: null,
 })
 
 const resetSteamParticle = (particle, randomizeAge = false) => {
@@ -87,7 +139,50 @@ export default function Mug(props) {
 
   const smokeTexture = useTexture("/textures/smoke.png")
 
+  const steamGeometry = useMemo(() => {
+    const geometry = new THREE.BufferGeometry()
+    const attributes = {
+      position: new THREE.BufferAttribute(new Float32Array(PARTICLE_COUNT * 3), 3),
+      aSize: new THREE.BufferAttribute(new Float32Array(PARTICLE_COUNT * 2), 2),
+      aOpacity: new THREE.BufferAttribute(new Float32Array(PARTICLE_COUNT), 1),
+      aRotation: new THREE.BufferAttribute(new Float32Array(PARTICLE_COUNT), 1),
+    }
+    Object.entries(attributes).forEach(([name, attribute]) => {
+      attribute.setUsage(THREE.DynamicDrawUsage)
+      geometry.setAttribute(name, attribute)
+    })
+    return geometry
+  }, [])
+
+  const steamMaterial = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: steamVertexShader,
+        fragmentShader: steamFragmentShader,
+        uniforms: {
+          uMap: { value: smokeTexture },
+          uColor: { value: new THREE.Color("#dbe1ea") },
+          uViewportHalfHeight: { value: 1 },
+        },
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.NormalBlending,
+      }),
+    [smokeTexture]
+  )
+
+  useEffect(
+    () => () => {
+      steamGeometry.dispose()
+      steamMaterial.dispose()
+    },
+    [steamGeometry, steamMaterial]
+  )
+
   useEffect(() => {
+    // R3F only auto-tags textures as sRGB when they're set as a JSX map prop;
+    // this one goes into a shader uniform, so tag it here.
+    smokeTexture.colorSpace = THREE.SRGBColorSpace
     smokeTexture.generateMipmaps = true
     smokeTexture.magFilter = THREE.LinearFilter
     smokeTexture.minFilter = THREE.LinearMipmapLinearFilter
@@ -103,19 +198,24 @@ export default function Mug(props) {
     [mugMaterial, mugTexture]
   )
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock, size, gl: renderer }, delta) => {
     const wasRendered = renderedLastFrameRef.current
     renderedLastFrameRef.current = false
     // Skip steam animation only on ultra-low quality
     if (quality === "ultra-low" || !wasRendered) return
 
+    steamMaterial.uniforms.uViewportHalfHeight.value =
+      size.height * renderer.getPixelRatio() * 0.5
+
     const dt = Math.min(delta, MAX_FRAME_DELTA)
     const elapsed = clock.elapsedTime
+    const positions = steamGeometry.attributes.position.array
+    const sizes = steamGeometry.attributes.aSize.array
+    const opacities = steamGeometry.attributes.aOpacity.array
+    const rotations = steamGeometry.attributes.aRotation.array
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const particle = steamParticles.current[i]
-      const sprite = particle.sprite
-      if (!sprite) continue
 
       particle.age += dt
       if (particle.age >= particle.lifeSpan) {
@@ -146,11 +246,17 @@ export default function Mug(props) {
       const width = THREE.MathUtils.lerp(particle.sizeStart, particle.sizeEnd, lifeT)
       const height = width * THREE.MathUtils.lerp(1.2, 1.55, lifeT)
 
-      sprite.position.copy(particle.position)
-      sprite.scale.set(width, height, 1)
-      sprite.material.opacity = opacity
-      sprite.material.rotation = Math.sin(swirlPhase * 0.8) * particle.rotationFactor
+      particle.position.toArray(positions, i * 3)
+      sizes[i * 2] = width
+      sizes[i * 2 + 1] = height
+      opacities[i] = opacity
+      rotations[i] = Math.sin(swirlPhase * 0.8) * particle.rotationFactor
     }
+
+    steamGeometry.attributes.position.needsUpdate = true
+    steamGeometry.attributes.aSize.needsUpdate = true
+    steamGeometry.attributes.aOpacity.needsUpdate = true
+    steamGeometry.attributes.aRotation.needsUpdate = true
   })
 
   return (
@@ -168,28 +274,12 @@ export default function Mug(props) {
         <meshStandardMaterial color="#6F4F37" />
       </mesh>
 
-      <group>
-        {steamParticles.current.map((particle, i) => (
-          <sprite
-            key={i}
-            ref={(node) => {
-              particle.sprite = node
-            }}
-            position={particle.position}
-          >
-            <spriteMaterial
-              map={smokeTexture}
-              color="#dbe1ea"
-              transparent
-              alphaTest={0.007}
-              depthWrite={false}
-              blending={THREE.NormalBlending}
-              toneMapped={false}
-              opacity={0}
-            />
-          </sprite>
-        ))}
-      </group>
+      <points
+        geometry={steamGeometry}
+        material={steamMaterial}
+        visible={quality !== "ultra-low"}
+        frustumCulled={false}
+      />
     </group>
   )
 }
