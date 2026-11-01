@@ -31,7 +31,43 @@ const TEXTURE_PATHS = [
   "/textures/snake.png",
   "/textures/slot.png",
   "/textures/platformer.png",
+  "/textures/comma.png",
 ];
+
+const ProjectItem = ({ item, position, onNavigate, onOver, onOut }) => {
+  const hasLink = Boolean(item.link);
+  return (
+    <group
+      position={position}
+      onClick={hasLink ? () => onNavigate(item.link) : undefined}
+      onPointerOver={hasLink ? onOver : undefined}
+      onPointerOut={hasLink ? onOut : undefined}
+    >
+      <group position={[PORTAL_COLUMN_X, 0, 0]}>
+        <PortalShader disabled={!hasLink} />
+      </group>
+
+      <group position={[item.margin ?? 0, 0, 0]}>
+        <Text
+          font={FONT_URL}
+          fontSize={0.2}
+          color={hasLink ? "silver" : "#7f8592"}
+        >
+          {item.label}
+        </Text>
+        <mesh position={[item.space ?? DEFAULT_ICON_SPACE, 0.033, 0]}>
+          <planeGeometry
+            args={[
+              item.iconSize ?? DEFAULT_ICON_SIZE,
+              item.iconSize ?? DEFAULT_ICON_SIZE,
+            ]}
+          />
+          <meshBasicMaterial map={item.texture} transparent />
+        </mesh>
+      </group>
+    </group>
+  );
+};
 
 export default function GamesText() {
   const textures = useLoader(TextureLoader, TEXTURE_PATHS);
@@ -48,6 +84,7 @@ export default function GamesText() {
       snake: textures[7],
       slot: textures[8],
       platformer: textures[9],
+      comma: textures[10],
     }),
     [textures],
   );
@@ -109,6 +146,20 @@ export default function GamesText() {
     [textureMap],
   );
 
+  const webItems = useMemo(
+    () => [
+      {
+        label: "Comma",
+        link: "https://comma.cam/?lang=en&theme=dark",
+        texture: textureMap.comma,
+        margin: -0.2,
+        iconSize: 0.32,
+        space: 0.54,
+      },
+    ],
+    [textureMap],
+  );
+
   const setModalIsOpen = useAppStatusStore((s) => s.setModalIsOpen);
   const navigateTo = useCallback(
     (url) => url && window.open(url, "_blank"),
@@ -146,41 +197,38 @@ export default function GamesText() {
           </mesh>
         </group>
 
-        {items.map((item, i) => {
-          const hasLink = Boolean(item.link);
-          return (
-            <group
-              key={item.label}
-              position={[0, -3 - i * Y_OFFSET, 0]}
-              onClick={hasLink ? () => navigateTo(item.link) : undefined}
-              onPointerOver={hasLink ? showLinkCursor : undefined}
-              onPointerOut={hasLink ? hideLinkCursor : undefined}
-            >
-            <group position={[PORTAL_COLUMN_X, 0, 0]}>
-              <PortalShader disabled={!hasLink} />
-            </group>
+        {items.map((item, i) => (
+          <ProjectItem
+            key={item.label}
+            item={item}
+            position={[0, -3 - i * Y_OFFSET, 0]}
+            onNavigate={navigateTo}
+            onOver={showLinkCursor}
+            onOut={hideLinkCursor}
+          />
+        ))}
+      </group>
 
-            <group position={[item.margin ?? 0, 0, 0]}>
-              <Text
-                font={FONT_URL}
-                fontSize={0.2}
-                color={hasLink ? "silver" : "#7f8592"}
-              >
-                {item.label}
-              </Text>
-              <mesh position={[item.space ?? DEFAULT_ICON_SPACE, 0.033, 0]}>
-                <planeGeometry
-                  args={[
-                    item.iconSize ?? DEFAULT_ICON_SIZE,
-                    item.iconSize ?? DEFAULT_ICON_SIZE,
-                  ]}
-                />
-                <meshBasicMaterial map={item.texture} transparent />
-              </mesh>
-            </group>
-            </group>
-          );
-        })}
+      <group position={[3.3, 0, 0]}>
+        <Text
+          font={FONT_URL}
+          fontSize={0.4}
+          maxWidth={wallSize}
+          color="silver"
+        >
+          Web Projects
+        </Text>
+
+        {webItems.map((item, i) => (
+          <ProjectItem
+            key={item.label}
+            item={item}
+            position={[0, -0.6 + i * Y_OFFSET, 0]}
+            onNavigate={navigateTo}
+            onOver={showLinkCursor}
+            onOut={hideLinkCursor}
+          />
+        ))}
       </group>
 
       <group position={[3, -2.8, 0]}>

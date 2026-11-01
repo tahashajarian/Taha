@@ -45,8 +45,8 @@ const TOUR_STOPS = [
     camera: [-0.4, 2.1, 2.5, 0, 2.05, 5.8],
   },
   {
-    title: "Let's connect",
-    text: "Open GitHub or send a message directly from the room.",
+    title: "Web projects & contact",
+    text: "Visit my web projects, open GitHub, or send a message directly from the room.",
     camera: [-3, 1.65, 2.1, -3, 1.05, 5.8],
   },
 ];
