@@ -6,7 +6,7 @@ import { useGraphicsSettings } from "../../stores/useGraphicsSettings"
 const Lamp = (props) => {
   const { nodes, materials } = useGLTF("/models/lamp.glb", "/draco/")
   const [lampIsOn, setLampIsOn] = useState(true)
-  const { quality } = useGraphicsSettings()
+  const quality = useGraphicsSettings((s) => s.quality)
 
   const isLowQuality = quality === "low" || quality === "ultra-low"
 

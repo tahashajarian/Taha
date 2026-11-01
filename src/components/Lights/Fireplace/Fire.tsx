@@ -197,16 +197,18 @@ export default function FireCube() {
           />
         </mesh>
 
-        {/* pointLight: expensive only on higher quality */}
-        <pointLight
-          ref={lightRef}
-          distance={1}
-          decay={1}
-          position={[0, 0.5, 0]}
-          color={"#ffaaaa"}
-          intensity={baseLightIntensity} // off on ultra-low
-          castShadow={false}
-        />
+        {/* pointLight: not mounted on low — a zero-intensity light still costs per-pixel */}
+        {!isLowQuality && (
+          <pointLight
+            ref={lightRef}
+            distance={1}
+            decay={1}
+            position={[0, 0.5, 0]}
+            color={"#ffaaaa"}
+            intensity={baseLightIntensity}
+            castShadow={false}
+          />
+        )}
       </group>
 
       <group
@@ -341,7 +343,8 @@ function Fire({
     >
       <boxGeometry args={[1, 1, 1]} />
       {/* your custom shader material (from extend) */}
-      <fireMaterial transparent={!isUltraLow} opacity={1} side={THREE.DoubleSide} />
+      {/* FrontSide: back-face rays march away from the volume and add ~nothing, but cost a second pass */}
+      <fireMaterial transparent={!isUltraLow} opacity={1} side={THREE.FrontSide} />
     </mesh>
   );
 }

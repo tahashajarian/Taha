@@ -7,7 +7,7 @@ import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 
 const Outside = () => {
   const ref = useRef();
-  const texture = useLoader(TextureLoader, "/textures/city-skyline.jpg");
+  const texture = useLoader(TextureLoader, "/textures/city-skyline.webp");
   const gl = useThree((state) => state.gl);
   const quality = useGraphicsSettings((s) => s.quality);
 

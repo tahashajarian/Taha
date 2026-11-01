@@ -1,7 +1,6 @@
 import React from "react";
-import { wallHeight, wallSize } from "../../constances/constances";
+import { wallSize } from "../../constances/constances";
 import FloatingPoints from "./FloatingLight";
-import RectAreaLightComponent from "./RectArealLightComponent";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
 import { useGraphicsSettings } from "../../stores/useGraphicsSettings";
 
@@ -29,38 +28,6 @@ const FlightPoints = () => {
           <FloatingPoints points={points} />
         </>
       )}
-      {!isLowQuality && <RectAreaLightComponent
-        color={"green"}
-        intensity={50}
-        width={wallSize - 0.05}
-        height={0.1}
-        position={[-wallSize / 2 + 0.05, wallHeight - 0.01, 0]}
-        rotation={[0, Math.PI / 2, 0]}
-      />}
-      {!isLowQuality && <RectAreaLightComponent
-        color={"green"}
-        intensity={50}
-        width={wallSize - 0.05}
-        height={0.1}
-        position={[wallSize / 2 - 0.05, wallHeight - 0.01, 0]}
-        rotation={[0, -Math.PI / 2, 0]}
-      />}
-      {!isLowQuality && <RectAreaLightComponent
-        color={"green"}
-        intensity={50}
-        width={wallSize - 0.05}
-        height={0.1}
-        position={[0, wallHeight - 0.01, -wallSize / 2 + 0.05]}
-        rotation={[0, 0, 0]}
-      />}
-      {!isLowQuality && <RectAreaLightComponent
-        color={"green"}
-        intensity={50}
-        width={wallSize - 0.05}
-        height={0.1}
-        position={[0, wallHeight - 0.01, wallSize / 2 - 0.05]}
-        rotation={[Math.PI, 0, 0]}
-      />}
     </>
   );
 };

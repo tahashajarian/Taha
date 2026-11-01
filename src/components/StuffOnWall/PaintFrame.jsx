@@ -1,13 +1,8 @@
 import React, { useRef, useMemo, useEffect, useState } from "react";
 import { TextureLoader } from "three";
 import { useFrame } from "@react-three/fiber";
-import { useTexture } from "@react-three/drei";
 import { usePaintingStore } from "../../stores/usePaintingStore";
 import { useAppStatusStore } from "../../stores/useAppStatusStore";
-
-const REFRESH_TEXTURE_URL = "/textures/refresh.png";
-
-useTexture.preload(REFRESH_TEXTURE_URL);
 
 const Frame = React.memo(
   ({ width, height, thickness, color, position, isLoading }) => {
@@ -95,21 +90,8 @@ const Picture = React.memo(({ width, height, map }) => {
   );
 });
 
-const RefreshIcon = React.memo(({ onClick }) => {
-  const ref = useRef();
-  const texture = useTexture(REFRESH_TEXTURE_URL);
-
-  return (
-    <mesh position={[-2.6, 1.5, 0.1]} ref={ref} onClick={onClick}>
-      <planeGeometry args={[0.3, 0.3]} />
-      <meshStandardMaterial map={texture} color="#111111" transparent />
-    </mesh>
-  );
-});
-
 const ShaderFrame = () => {
   const paintingImage = usePaintingStore((s) => s.paintingImage);
-  const fetchPainting = usePaintingStore((s) => s.fetchPainting);
   const loading = usePaintingStore((s) => s.loading);
   const setPaintModalIsOpen = useAppStatusStore((s) => s.setPaintModalIsOpen);
 
@@ -119,9 +101,6 @@ const ShaderFrame = () => {
 
   return (
     <>
-      <group onClick={fetchPainting}>
-        <RefreshIcon />
-      </group>
       <group onClick={() => setPaintModalIsOpen(true)} scale={1.5}>
         <Frame
           width={pictureWidth}

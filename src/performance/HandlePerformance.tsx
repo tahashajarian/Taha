@@ -1,7 +1,6 @@
 import React from "react";
 import { PerformanceMonitor } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import WebGLPerformanceManager from "./WebGLPerformanceManager";
 import { useRecalculateDPR } from "../hooks/useRecalculateDPR";
 import { useGraphicsSettings } from "../stores/useGraphicsSettings";
 
@@ -93,8 +92,6 @@ const HandlePerformance: React.FC = () => {
         lockedLowModeRef={lockedLowModeRef}
         cooldownUntilRef={cooldownUntilRef}
       />
-
-      <WebGLPerformanceManager />
     </>
   );
 };

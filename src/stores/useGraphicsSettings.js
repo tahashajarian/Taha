@@ -72,13 +72,13 @@ const getInitialQuality = () => {
 
   try {
     const savedQuality = localStorage.getItem('graphics-quality')
-    if (
-      savedQuality &&
-      ['high', 'medium', 'low', 'ultra-low'].includes(savedQuality)
-    ) {
+    // Only upgrades are persisted. Older builds also saved automatic
+    // downgrades, which pinned a device to low forever after one bad
+    // session, so saved low values are ignored.
+    if (savedQuality === 'high' || savedQuality === 'medium') {
       // Never cold-start with the most expensive preset. The performance
       // monitor can safely raise quality after the scene has warmed up.
-      return savedQuality === 'high' ? 'medium' : savedQuality
+      return 'medium'
     }
   } catch (e) {
     console.warn('Could not access localStorage:', e)
@@ -99,12 +99,7 @@ export const useGraphicsSettings = create((set, get) => {
     setQuality: (q) => {
       cancelHighTransition()
 
-      try {
-        localStorage.setItem('graphics-quality', q)
-      } catch (e) {
-        console.warn('Could not save to localStorage:', e)
-      }
-
+      // Automatic downgrades last for this session only (see getInitialQuality).
       set({
         quality: q,
         highQualityStage: q === 'high' ? 3 : 0,

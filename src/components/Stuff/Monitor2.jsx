@@ -318,14 +318,16 @@ const Monitor2 = (props) => {
           />
         </mesh>
 
-        <rectAreaLight
-          color="#ffffff"
-          intensity={8}
-          width={0.4}
-          height={0.25}
-          rotation={[-Math.PI, Math.PI / 2, Math.PI]}
-          position={[-0.1, 0, 0]}
-        />
+        {quality !== "low" && quality !== "ultra-low" && (
+          <rectAreaLight
+            color="#ffffff"
+            intensity={8}
+            width={0.4}
+            height={0.25}
+            rotation={[-Math.PI, Math.PI / 2, Math.PI]}
+            position={[-0.1, 0, 0]}
+          />
+        )}
       </group>
     </group>
   )

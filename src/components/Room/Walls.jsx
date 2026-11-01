@@ -37,6 +37,8 @@ const Walls = ({ onCollidersReady }) => {
           rotation={wall.rot}
           windowPosition={wall.windowPosition || undefined}
           windowSize={wall.windowSize || undefined}
+          // every wall except the ceiling had a green strip light washing it
+          bakeStrip={Math.abs(wall.rot[0] - 0.5 * Math.PI) > 0.01}
         />
       ))}
 

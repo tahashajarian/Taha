@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useGraphicsSettings } from '../stores/useGraphicsSettings'
 
 export const useRecalculateDPR = () => {
-  const { recalculatePixelRatio } = useGraphicsSettings()
+  const recalculatePixelRatio = useGraphicsSettings((s) => s.recalculatePixelRatio)
 
   useEffect(() => {
     // Recalculate after mount to ensure proper DPR

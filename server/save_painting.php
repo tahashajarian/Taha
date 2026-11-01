@@ -1,20 +1,17 @@
 <?php
 header('Content-Type: application/json');
+require __DIR__ . '/db.php';
 $response = ['success' => false, 'message' => ''];
 
-// Database credentials
-$servername = "127.0.0.1";
-$username = "h215195_taha";
-$password = "jJ1-hI2-eX1_cF5_";
-$dbname = "h215195_db";
+// Must match CANVAS_WIDTH / CANVAS_HEIGHT in src/components/UI/PaintingCanvas.jsx
+const MAX_WIDTH = 1200;
+const MAX_HEIGHT = 900;
+// A full, noisy 1200x900 PNG stays well under this as base64
+const MAX_PAYLOAD_BYTES = 6 * 1024 * 1024;
 
 try {
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    
-    // Check connection
-    if ($conn->connect_error) {
-        throw new Exception("Database connection failed: " . $conn->connect_error);
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("POST required");
     }
 
     // Validate input
@@ -24,9 +21,12 @@ try {
 
     $image_data = $_POST['image_data'];
 
-    // 1. Check for empty data
+    // 1. Check for empty or oversized data
     if (empty($image_data)) {
         throw new Exception("Empty image data");
+    }
+    if (strlen($image_data) > MAX_PAYLOAD_BYTES) {
+        throw new Exception("Image too large");
     }
 
     // 2. Validate base64 format
@@ -36,8 +36,19 @@ try {
 
     // 3. Extract and decode image
     $base64 = preg_replace('/^data:image\/(png|jpeg);base64,/', '', $image_data);
-    $image = imagecreatefromstring(base64_decode($base64));
-    
+    $binary = base64_decode($base64, true);
+    if ($binary === false) {
+        throw new Exception("Failed to decode image");
+    }
+
+    // Check dimensions from the header before decoding the full bitmap
+    $info = getimagesizefromstring($binary);
+    if ($info === false || $info[0] > MAX_WIDTH || $info[1] > MAX_HEIGHT) {
+        throw new Exception("Invalid image size");
+    }
+
+    $image = imagecreatefromstring($binary);
+
     if ($image === false) {
         throw new Exception("Failed to decode image");
     }
@@ -66,7 +77,12 @@ try {
     }
 
     // 5. Secure database insertion
+    $conn = painting_db();
     $stmt = $conn->prepare("INSERT INTO paintings (image_data) VALUES (?)");
+    if ($stmt === false) {
+        error_log('painting prepare failed: ' . $conn->error);
+        throw new Exception("Could not save painting");
+    }
     $stmt->bind_param("s", $image_data);
     
     if ($stmt->execute()) {
@@ -76,7 +92,8 @@ try {
             'id' => $stmt->insert_id
         ];
     } else {
-        throw new Exception("Database error: " . $stmt->error);
+        error_log('painting insert failed: ' . $stmt->error);
+        throw new Exception("Could not save painting");
     }
     
     $stmt->close();
@@ -84,7 +101,7 @@ try {
 
 } catch (Exception $e) {
     $response['message'] = $e->getMessage();
-    if (isset($conn) && $conn->ping()) {
+    if (isset($conn) && $conn instanceof mysqli) {
         $conn->close();
     }
 }

@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Real server credentials (see server/config.example.php)
+server/config.php

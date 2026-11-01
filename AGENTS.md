@@ -37,7 +37,6 @@
   - `src/stores/usePaintingStore.js`
 - Performance:
   - `src/performance/HandlePerformance.tsx`
-  - `src/performance/WebGLPerformanceManager.tsx`
   - `src/stores/useGraphicsSettings.js`
 
 ## Current Behavior Defaults (Do Not Accidentally Regress)
